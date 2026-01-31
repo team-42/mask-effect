@@ -44,7 +44,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Design & Implement mask assignment UI (IMGUI side panel with colored mask buttons).
   - [x] Implement LobbyScene with UIToolkit start menu and scene transition to BattleArenaScene.
   - [ ] Design & Implement Basic HUD (Health bars, timer).
-  - [ ] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
+  - [x] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator, **mech death particle effect using EnergyExplosion VFX**).
   - [ ] Implement Game Over UI.
 
 ### Phase 2: Refinement & Polish (Next 12-18 Hours)
@@ -58,6 +58,10 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [ ] Create Placeholder Mask Icons (3 icons).
   - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
   - [ ] Integrate Background Music.
+- [x] **Render Pipeline & Material Compatibility:**
+  - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
+  - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
+  - [x] Ensured all new materials use the `Universal Render Pipeline/Lit` shader.
 - [ ] **AI Tool Integration (Ongoing):**
   - [ ] Utilize AI for small utility scripts.
   - [ ] Utilize AI for placeholder textures/materials.

@@ -37,6 +37,9 @@ namespace MaskEffect
         public StatusEffectHandler statusHandler;
         public MechMovement movement;
 
+        [Header("VFX")]
+        public GameObject deathEffectPrefab;
+
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
@@ -198,6 +201,21 @@ namespace MaskEffect
             {
                 int tile = grid.GetNearestTile(transform.position);
                 grid.ClearTile(tile);
+            }
+
+            // Instantiate death effect
+            if (deathEffectPrefab != null)
+            {
+                GameObject effect = Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+                ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+                if (ps != null)
+                {
+                    Destroy(effect, ps.main.duration);
+                }
+                else
+                {
+                    Destroy(effect, 3f); // Default destroy time if no ParticleSystem found
+                }
             }
 
             gameObject.SetActive(false);

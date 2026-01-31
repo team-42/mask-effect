@@ -6,10 +6,10 @@ This document outlines the specific visual effects (VFX) related tasks for the '
 
 ## Sub-tasks
 
-- [ ] Create visual effects for Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
+- [x] Create visual effects for Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator, **mech death particle effect using EnergyExplosion VFX**).
 - [ ] Utilize AI for placeholder textures/materials for VFX.
 
 ## CURRENT_STATUS.md
 
-- [ ] Visual effects for mask procs created.
+- [x] Visual effects for mask procs created (including mech death particle effect).
 - [ ] AI-generated placeholder textures/materials for VFX integrated.
