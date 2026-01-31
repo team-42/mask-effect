@@ -21,6 +21,11 @@ MonoBehaviour:
   range: 4
   moveSpeed: 2.5
   evasion: 0.2
+  isRanged: 1
+  projectilePrefab: {fileID: 100589467397473233, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
+  baseDamageType: 0
+  resistanceType: 0
+  resistanceValue: 0
   indicatorHeight: 1
   indicatorRadius: 0.3
   modelRotationOffset: {x: 0, y: 0, z: 0}

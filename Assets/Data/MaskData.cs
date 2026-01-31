@@ -18,6 +18,10 @@ namespace MaskEffect
         public float bonusAttackInterval;
         public float bonusEvasion;
 
+        [Header("Damage Modifiers")]
+        public DamageType damageTypeOverride = DamageType.Physical; // Mask can change damage type
+        public float damageMultiplier = 1f; // e.g., 1.2 for 20% more damage
+
         [Header("Abilities (one per chassis type)")]
         public MaskAbilityData scoutAbility;
         public MaskAbilityData jetAbility;

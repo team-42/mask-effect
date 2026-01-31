@@ -22,6 +22,9 @@ namespace MaskEffect
         public float range;
         public float moveSpeed;
         public float evasion;
+        public DamageType currentDamageType;
+        public ResistanceType currentResistanceType;
+        public float currentResistanceValue;
 
         [Header("Combat State")]
         public bool isAlive = true;
@@ -39,7 +42,7 @@ namespace MaskEffect
 
         // References set by BattleManager
         private IBattleGrid grid;
-        private List<MechController> allMechs;
+        public List<MechController> allMechs; // Made public for TilePathfinder
 
         private const float RETARGET_INTERVAL = 0.5f;
 
@@ -121,6 +124,9 @@ namespace MaskEffect
             range = chassisData.range;
             moveSpeed = chassisData.moveSpeed;
             evasion = chassisData.evasion;
+            currentDamageType = chassisData.baseDamageType;
+            currentResistanceType = chassisData.resistanceType;
+            currentResistanceValue = chassisData.resistanceValue;
 
             if (equippedMask != null)
             {
@@ -129,6 +135,11 @@ namespace MaskEffect
                 attackDamage += equippedMask.bonusAttackDamage;
                 attackInterval += equippedMask.bonusAttackInterval;
                 evasion += equippedMask.bonusEvasion;
+
+                currentDamageType = equippedMask.damageTypeOverride;
+                currentResistanceType = chassisData.resistanceType; // Mask doesn't change resistance type, only chassis
+                currentResistanceValue = chassisData.resistanceValue;
+                attackDamage = Mathf.FloorToInt(attackDamage * equippedMask.damageMultiplier);
             }
 
             attackInterval = Mathf.Max(attackInterval, 0.1f);
@@ -144,7 +155,7 @@ namespace MaskEffect
 
             if (evaded) return;
 
-            CombatMath.ApplyDamage(rawDamage, armor, markMultiplier, ref currentHP, statusHandler);
+            CombatMath.ApplyDamage(rawDamage, attacker.currentDamageType, armor, currentResistanceType, currentResistanceValue, markMultiplier, ref currentHP, statusHandler);
 
             if (currentHP <= 0)
             {
@@ -219,7 +230,19 @@ namespace MaskEffect
             if (dir != Vector3.zero)
                 transform.forward = dir;
 
-            currentTarget.TakeDamage(attackDamage, this);
+            if (chassisData.isRanged && chassisData.projectilePrefab != null)
+            {
+                GameObject projectileGO = Instantiate(chassisData.projectilePrefab, transform.position, Quaternion.identity);
+                Projectile projectile = projectileGO.GetComponent<Projectile>();
+                if (projectile != null)
+                {
+                    projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
+                }
+            }
+            else
+            {
+                currentTarget.TakeDamage(attackDamage, this);
+            }
 
             if (activeAbility != null)
                 activeAbility.OnAttackLanded(currentTarget, attackDamage);
