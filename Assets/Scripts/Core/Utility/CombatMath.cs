@@ -19,10 +19,18 @@ namespace MaskEffect
         /// Apply damage to a mech. Shield absorbs first, then HP.
         /// Returns actual damage dealt to HP.
         /// </summary>
-        public static int ApplyDamage(int rawDamage, int armor, float markMultiplier,
+        public static int ApplyDamage(int rawDamage, DamageType damageType, int armor, ResistanceType resistanceType, float resistanceValue, float markMultiplier,
             ref int currentHP, StatusEffectHandler statusHandler)
         {
-            int damage = CalculateArmorReduction(rawDamage, armor);
+            int damage = rawDamage;
+
+            // Apply damage type vs resistance
+            if (damageType != DamageType.True && resistanceType.ToString() == damageType.ToString())
+            {
+                damage = Mathf.FloorToInt(damage * (1f - resistanceValue));
+            }
+
+            damage = CalculateArmorReduction(damage, armor);
             damage = Mathf.FloorToInt(damage * markMultiplier);
             damage = Mathf.Max(damage, 1);
 

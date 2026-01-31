@@ -48,14 +48,14 @@ namespace MaskEffect
                 int enemyTile = grid.GetMirroredTile(playerTile);
 
                 // Spawn player mech
-                Vector3 playerPos = grid.GetWorldPosition(playerTile);
+                Vector3 playerPos = grid.GetTileWorldPosition(playerTile);
                 MechController playerMech = CreateMech(lineup[i], Team.Player, playerPos, MechIdProvider.GetNextId());
                 playerMech.transform.rotation = Quaternion.LookRotation(Vector3.right);
                 grid.SetTileOccupant(playerTile, playerMech);
                 playerMechs.Add(playerMech);
 
                 // Spawn mirrored enemy mech (same chassis, mirrored tile)
-                Vector3 enemyPos = grid.GetWorldPosition(enemyTile);
+                Vector3 enemyPos = grid.GetTileWorldPosition(enemyTile);
                 MechController enemyMech = CreateMech(lineup[i], Team.Enemy, enemyPos, MechIdProvider.GetNextId());
                 enemyMech.transform.rotation = Quaternion.LookRotation(Vector3.left);
                 grid.SetTileOccupant(enemyTile, enemyMech);

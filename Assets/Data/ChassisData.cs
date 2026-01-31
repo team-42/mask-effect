@@ -18,6 +18,11 @@ namespace MaskEffect
         [Range(0f, 1f)]
         public float evasion = 0.1f;
 
+        [Header("Damage & Resistance")]
+        public DamageType baseDamageType = DamageType.Physical;
+        public ResistanceType resistanceType = ResistanceType.Physical;
+        public float resistanceValue = 0f; // e.g., 0.1 for 10% resistance
+
         [Header("Visuals (Placeholder)")]
         public PrimitiveType primitiveShape = PrimitiveType.Cube;
         public Color chassisColor = Color.gray;

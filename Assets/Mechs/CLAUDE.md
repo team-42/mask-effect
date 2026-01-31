@@ -14,6 +14,9 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Implement two-tone mech visuals (bottom half=team color, top half=mask color via EquipMask).
 - [x] Add BoxCollider to root mech GameObject for raycast-based interaction (drag & mask assignment).
 - [x] Set mech layer to "Mech" for layer-filtered raycasting.
+- [ ] Implement advanced pathfinding for Mechs using A* algorithm.
+- [ ] Integrate collision boxes and pathing logic for Mechs.
+- [ ] Implement damage types and resistances for Mechs and Masks.
 
 ## CURRENT_STATUS.md
 

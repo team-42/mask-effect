@@ -4,14 +4,14 @@ namespace MaskEffect
 {
     public interface IBattleGrid
     {
-        Vector3 GetWorldPosition(int tileIndex);
         int GetNearestTile(Vector3 worldPos);
         bool IsTileOccupied(int tileIndex);
         void SetTileOccupant(int tileIndex, MechController mech);
         void ClearTile(int tileIndex);
-        float GetDistance(int tileA, int tileB);
+        float GetDistanceBetweenTiles(int tileA, int tileB);
+        Vector3 GetTileWorldPosition(int tileIndex); // Added for pathfinding
+        int[] GetNeighbors(int tileIndex); // Added for pathfinding
         int[] GetSpawnTiles(Team team);
-        int[] GetAdjacentTiles(int tileIndex);
         bool IsBackline(int tileIndex, Team relativeTo);
         int GetMirroredTile(int tileIndex);
         int GetTileCount();

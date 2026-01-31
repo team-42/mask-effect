@@ -35,7 +35,7 @@ namespace MaskEffect
         private void HealAdjacentAllies()
         {
             int ownerTile = grid.GetNearestTile(owner.transform.position);
-            int[] adjacent = grid.GetAdjacentTiles(ownerTile);
+            int[] adjacent = grid.GetNeighbors(ownerTile);
 
             for (int i = 0; i < allMechs.Count; i++)
             {

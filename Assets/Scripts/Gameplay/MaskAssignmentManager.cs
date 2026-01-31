@@ -136,7 +136,7 @@ namespace MaskEffect
             {
                 Vector3 worldPoint = ray.GetPoint(dist);
                 int tileIndex = grid.GetNearestTile(worldPoint);
-                Vector3 tilePos = grid.GetWorldPosition(tileIndex);
+                Vector3 tilePos = grid.GetTileWorldPosition(tileIndex);
                 draggedMech.transform.position = tilePos;
 
                 UpdateTileHighlight(tileIndex);
@@ -160,7 +160,7 @@ namespace MaskEffect
             {
                 grid.ClearTile(mechOriginalTile);
                 grid.SetTileOccupant(targetTile, draggedMech);
-                draggedMech.transform.position = grid.GetWorldPosition(targetTile);
+                draggedMech.transform.position = grid.GetTileWorldPosition(targetTile);
             }
             else
             {

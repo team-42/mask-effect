@@ -51,7 +51,7 @@ namespace MaskEffect
             if (farthest == null) return;
 
             int ownerTile = grid.GetNearestTile(owner.transform.position);
-            int[] adjacent = grid.GetAdjacentTiles(ownerTile);
+            int[] adjacent = grid.GetNeighbors(ownerTile);
 
             for (int i = 0; i < adjacent.Length; i++)
             {
@@ -59,7 +59,7 @@ namespace MaskEffect
                 {
                     int oldTile = grid.GetNearestTile(farthest.transform.position);
                     grid.ClearTile(oldTile);
-                    farthest.transform.position = grid.GetWorldPosition(adjacent[i]);
+                    farthest.transform.position = grid.GetTileWorldPosition(adjacent[i]);
                     grid.SetTileOccupant(adjacent[i], farthest);
 
                     farthest.statusHandler.ApplyEffect(new StatusEffect(

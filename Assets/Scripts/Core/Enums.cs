@@ -40,6 +40,19 @@ namespace MaskEffect
         Taunt
     }
 
+    public enum DamageType
+    {
+        Physical,
+        Magical,
+        True
+    }
+
+    public enum ResistanceType
+    {
+        Physical,
+        Magical
+    }
+
     public enum BattleState
     {
         Setup,

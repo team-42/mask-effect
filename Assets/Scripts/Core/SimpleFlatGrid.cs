@@ -48,7 +48,7 @@ namespace MaskEffect
                 for (int x = 0; x < gridWidth; x++)
                 {
                     int idx = ToIndex(x, z);
-                    Vector3 worldPos = GetWorldPosition(idx);
+                    Vector3 worldPos = GetTileWorldPosition(idx);
 
                     GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     tile.name = $"Tile_{x}_{z}";
@@ -115,7 +115,7 @@ namespace MaskEffect
             return (x, z);
         }
 
-        public Vector3 GetWorldPosition(int tileIndex)
+        public Vector3 GetTileWorldPosition(int tileIndex)
         {
             var (x, z) = FromIndex(tileIndex);
             return gridOrigin + new Vector3(x * tileSize + tileSize * 0.5f, 0f, z * tileSize + tileSize * 0.5f);
@@ -144,9 +144,9 @@ namespace MaskEffect
             occupants.Remove(tileIndex);
         }
 
-        public float GetDistance(int tileA, int tileB)
+        public float GetDistanceBetweenTiles(int tileA, int tileB)
         {
-            return Vector3.Distance(GetWorldPosition(tileA), GetWorldPosition(tileB));
+            return Vector3.Distance(GetTileWorldPosition(tileA), GetTileWorldPosition(tileB));
         }
 
         public int[] GetSpawnTiles(Team team)
@@ -178,7 +178,7 @@ namespace MaskEffect
             return tiles.ToArray();
         }
 
-        public int[] GetAdjacentTiles(int tileIndex)
+        public int[] GetNeighbors(int tileIndex)
         {
             var (x, z) = FromIndex(tileIndex);
             List<int> adj = new List<int>();

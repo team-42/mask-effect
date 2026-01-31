@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MaskEffect
@@ -6,15 +7,19 @@ namespace MaskEffect
     {
         private MechController mech;
         private IBattleGrid grid;
+        private List<int> currentPath;
+        private int pathIndex;
 
         public void Initialize(MechController mech, IBattleGrid grid)
         {
             this.mech = mech;
             this.grid = grid;
+            currentPath = null;
+            pathIndex = 0;
         }
 
         /// <summary>
-        /// Move towards the target. Returns true if within attack range.
+        /// Move towards the target using pathfinding. Returns true if within attack range.
         /// </summary>
         public bool MoveToward(MechController target, float dt)
         {
@@ -22,45 +27,81 @@ namespace MaskEffect
             if (grid == null || mech == null) return false;
             if (mech.statusHandler.IsRooted()) return IsInRange(target);
 
-            float dist = Vector3.Distance(transform.position, target.transform.position);
-            if (dist <= mech.range) return true;
-
-            float speed = GetEffectiveMoveSpeed();
-            Vector3 direction = (target.transform.position - transform.position).normalized;
-            Vector3 nextPos = transform.position + direction * speed * dt;
-
-            int currentTile = grid.GetNearestTile(transform.position);
-            int nextTile = grid.GetNearestTile(nextPos);
-
-            if (nextTile == currentTile || !grid.IsTileOccupied(nextTile))
+            // If target is in range, stop moving and return true
+            if (IsInRange(target))
             {
-                if (nextTile != currentTile)
+                currentPath = null; // Clear path once in range
+                return true;
+            }
+
+            // If no path or current path is invalid, find a new one
+            int startTile = grid.GetNearestTile(transform.position);
+            int targetTile = grid.GetNearestTile(target.transform.position);
+
+            if (currentPath == null || pathIndex >= currentPath.Count || currentPath[pathIndex] != startTile)
+            {
+                currentPath = TilePathfinder.FindPath(grid, startTile, targetTile, mech.allMechs);
+                pathIndex = 0;
+                if (currentPath != null && currentPath.Count > 0 && currentPath[0] == startTile)
                 {
-                    grid.ClearTile(currentTile);
-                    grid.SetTileOccupant(nextTile, mech);
+                    pathIndex = 1; // Start from the next tile in the path
                 }
-                transform.position = nextPos;
+            }
+
+            // Follow the path
+            if (currentPath != null && pathIndex < currentPath.Count)
+            {
+                int nextTile = currentPath[pathIndex];
+                Vector3 targetPos = grid.GetTileWorldPosition(nextTile);
+                Vector3 currentPos = transform.position;
+
+                float step = GetEffectiveMoveSpeed() * dt;
+                Vector3 newPos = Vector3.MoveTowards(currentPos, targetPos, step);
+
+                int oldTile = grid.GetNearestTile(currentPos);
+                int newTile = grid.GetNearestTile(newPos);
+
+                if (oldTile != newTile)
+                {
+                    if (grid.IsTileOccupied(newTile) && newTile != targetTile)
+                    {
+                        // Path blocked, recalculate
+                        currentPath = null;
+                        return false;
+                    }
+                    grid.ClearTile(oldTile);
+                    grid.SetTileOccupant(newTile, mech);
+                }
+                transform.position = newPos;
+
+                // If we reached the next tile in the path, advance to the next one
+                if (Vector3.Distance(transform.position, targetPos) < 0.01f)
+                {
+                    pathIndex++;
+                }
             }
             else
             {
-                // Blocked — try perpendicular movement
-                Vector3 perp = Vector3.Cross(direction, Vector3.up).normalized;
-                TryAlternativeMove(currentTile, transform.position + perp * speed * dt, dt);
+                // If no path found or path completed, fall back to direct movement (or wait)
+                // This can happen if target is unreachable or pathfinding failed
+                Vector3 direction = (target.transform.position - transform.position).normalized;
+                Vector3 nextPos = transform.position + direction * GetEffectiveMoveSpeed() * dt;
+
+                int currentTile = grid.GetNearestTile(transform.position);
+                int nextTile = grid.GetNearestTile(nextPos);
+
+                if (nextTile == currentTile || !grid.IsTileOccupied(nextTile))
+                {
+                    if (nextTile != currentTile)
+                    {
+                        grid.ClearTile(currentTile);
+                        grid.SetTileOccupant(nextTile, mech);
+                    }
+                    transform.position = nextPos;
+                }
             }
 
             return IsInRange(target);
-        }
-
-        private void TryAlternativeMove(int currentTile, Vector3 altPos, float dt)
-        {
-            int altTile = grid.GetNearestTile(altPos);
-            if (altTile != currentTile && !grid.IsTileOccupied(altTile))
-            {
-                grid.ClearTile(currentTile);
-                grid.SetTileOccupant(altTile, mech);
-                transform.position = altPos;
-            }
-            // else: completely blocked, wait
         }
 
         public bool IsInRange(MechController target)
