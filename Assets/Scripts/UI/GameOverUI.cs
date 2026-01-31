@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Mirror;
 
 namespace MaskEffect
 {
@@ -134,7 +135,15 @@ namespace MaskEffect
             if (GUILayout.Button("Zurueck zur Lobby", btnStyle, GUILayout.Height(50f)))
             {
                 visible = false;
-                SceneManager.LoadScene("LobbyScene");
+                // Stop Mirror host/server before returning to lobby
+                if (NetworkManager.singleton != null && NetworkServer.active)
+                {
+                    NetworkManager.singleton.StopHost();
+                }
+                else
+                {
+                    SceneManager.LoadScene("LobbyScene");
+                }
             }
 
             GUILayout.EndArea();

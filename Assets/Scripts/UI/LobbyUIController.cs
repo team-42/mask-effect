@@ -8,6 +8,8 @@ public class LobbyUIController : MonoBehaviour
     public string battleArenaSceneName = "BattleArenaScene";
     public string multiplayerSceneName = "BattleArenaMultiplayer";
 
+    private TextField ipField;
+
     void OnEnable()
     {
         var uiDocument = GetComponent<UIDocument>();
@@ -23,9 +25,20 @@ public class LobbyUIController : MonoBehaviour
         if (startGameButton != null)
             startGameButton.clicked += LoadBattleArenaScene;
 
+        var hostButton = root.Q<Button>("multiplayerHostButton");
+        if (hostButton != null)
+            hostButton.clicked += HostMultiplayerGame;
+
+        var joinButton = root.Q<Button>("multiplayerJoinButton");
+        if (joinButton != null)
+            joinButton.clicked += JoinMultiplayerGame;
+
+        ipField = root.Q<TextField>("ipAddressField");
+
+        // Legacy: support old single "multiplayerButton" as host
         var multiplayerButton = root.Q<Button>("multiplayerButton");
         if (multiplayerButton != null)
-            multiplayerButton.clicked += LoadMultiplayerScene;
+            multiplayerButton.clicked += HostMultiplayerGame;
     }
 
     void OnDisable()
@@ -40,9 +53,17 @@ public class LobbyUIController : MonoBehaviour
         if (startGameButton != null)
             startGameButton.clicked -= LoadBattleArenaScene;
 
+        var hostButton = root.Q<Button>("multiplayerHostButton");
+        if (hostButton != null)
+            hostButton.clicked -= HostMultiplayerGame;
+
+        var joinButton = root.Q<Button>("multiplayerJoinButton");
+        if (joinButton != null)
+            joinButton.clicked -= JoinMultiplayerGame;
+
         var multiplayerButton = root.Q<Button>("multiplayerButton");
         if (multiplayerButton != null)
-            multiplayerButton.clicked -= LoadMultiplayerScene;
+            multiplayerButton.clicked -= HostMultiplayerGame;
     }
 
     void LoadBattleArenaScene()
@@ -52,7 +73,8 @@ public class LobbyUIController : MonoBehaviour
         {
             nm.onlineScene = battleArenaSceneName;
             nm.autoCreatePlayer = false; // No player prefab needed in singleplayer
-            nm.StartHost(); // Local host - Mirror handles scene transition
+            nm.networkAddress = "localhost"; // Restrict to localhost for SP
+            nm.StartHost();
         }
         else
         {
@@ -60,18 +82,33 @@ public class LobbyUIController : MonoBehaviour
         }
     }
 
-    void LoadMultiplayerScene()
+    void HostMultiplayerGame()
     {
         var nm = NetworkManager.singleton;
         if (nm != null)
         {
             nm.onlineScene = multiplayerSceneName;
-            nm.autoCreatePlayer = true; // Multiplayer needs player prefabs
-            nm.StartHost(); // Host starts, clients join separately
+            nm.autoCreatePlayer = true;
+            nm.StartHost();
         }
         else
         {
             SceneManager.LoadScene(multiplayerSceneName);
         }
+    }
+
+    void JoinMultiplayerGame()
+    {
+        var nm = NetworkManager.singleton;
+        if (nm == null) return;
+
+        string ip = ipField != null ? ipField.value : "localhost";
+        if (string.IsNullOrWhiteSpace(ip))
+            ip = "localhost";
+
+        nm.onlineScene = multiplayerSceneName;
+        nm.autoCreatePlayer = true;
+        nm.networkAddress = ip;
+        nm.StartClient();
     }
 }

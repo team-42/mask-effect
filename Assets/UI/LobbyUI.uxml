@@ -1,6 +1,12 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" name="LobbyUI" editor-extension-namespaces="UnityEditor.UIElements" editor-extension-style-sheets="UnityEditor.UIElements/Controls.uss">
     <ui:VisualElement style="flex-grow: 1; justify-content: center; align-items: center;">
-        <ui:Button name="startGameButton" text="Singleplayer" style="width: 200px; height: 50px; font-size: 24px;" />
-        <ui:Button name="multiplayerButton" text="Multiplayer" style="width: 200px; height: 50px; font-size: 24px; margin-top: 10px;" />
+        <ui:Button name="startGameButton" text="Singleplayer" style="width: 250px; height: 50px; font-size: 24px;" />
+        <ui:VisualElement style="height: 30px;" />
+        <ui:Label text="Multiplayer" style="font-size: 20px; -unity-font-style: bold; margin-bottom: 5px;" />
+        <ui:Button name="multiplayerHostButton" text="Host Game" style="width: 250px; height: 50px; font-size: 24px;" />
+        <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 10px;">
+            <ui:TextField name="ipAddressField" value="localhost" style="width: 160px; height: 40px; font-size: 16px;" />
+            <ui:Button name="multiplayerJoinButton" text="Join" style="width: 80px; height: 40px; font-size: 20px; margin-left: 5px;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
