@@ -15,7 +15,7 @@ This document outlines the specific UI script-related tasks for the 'Mask Effect
 ## CURRENT_STATUS.md
 
 - [x] MaskPanelUI implemented (IMGUI left-side panel: mask selection buttons, counter, used-state tracking).
-- [ ] HUD scripts implemented.
-- [ ] Mask effect visual proc scripts implemented.
+- [ ] HUD scripts implemented (Health bars, timer).
+- [ ] Mask effect visual proc scripts implemented (shield icons, mark icons, grapple animation, taunt indicator).
 - [ ] Main Menu UI scripts implemented.
 - [ ] Game Over UI scripts implemented.

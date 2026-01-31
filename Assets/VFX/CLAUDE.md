@@ -11,5 +11,5 @@ This document outlines the specific visual effects (VFX) related tasks for the '
 
 ## CURRENT_STATUS.md
 
-- [x] Visual effects for mask procs created (including mech death particle effect).
+- [x] Visual effects for mask procs created (including mech death particle effect via EnergyExplosion VFX).
 - [ ] AI-generated placeholder textures/materials for VFX integrated.

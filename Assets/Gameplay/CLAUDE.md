@@ -47,4 +47,4 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] BattleManager: autoStartCombat toggle, PlayerAssignMask(), enemy masks pre-assigned at round start.
 - [x] Mask selection integrated into player flow.
 - [x] Scene transition from LobbyScene → BattleArenaScene working.
-- [ ] Mech stats and mask effects balanced.
+- [x] Mech stats and mask effects balanced.
