@@ -11,5 +11,5 @@ This document outlines the specific visual effects (VFX) related tasks for the '
 
 ## CURRENT_STATUS.md
 
-- [ ] Visual effects for mask procs created.
+- [ ] Visual effects for mask procs created (shield icons, mark icons, grapple animation, taunt indicator).
 - [ ] AI-generated placeholder textures/materials for VFX integrated.

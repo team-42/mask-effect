@@ -24,5 +24,5 @@ This document outlines the specific scene-related tasks for the 'Mask Effect' pr
 - [x] LobbyScene created with UIToolkit UI (host/join buttons, status text).
 - [x] Scene transition from LobbyScene → BattleArenaScene working.
 - [x] Camera repositioned for optimal battlefield view.
-- [ ] Main Menu Scene created.
-- [ ] Game Over Scene created.
+- [ ] Main Menu Scene created (UIToolkit).
+- [ ] Game Over Scene created (UIToolkit).

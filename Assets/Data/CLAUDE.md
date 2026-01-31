@@ -12,6 +12,6 @@ This document outlines the specific data-related tasks for the 'Mask Effect' pro
 
 ## CURRENT_STATUS.md
 
-- [x] Mech stats and combat rules defined as Scriptable Objects.
-- [x] Mask data structure defined as Scriptable Object.
-- [x] Mask tint colors configured in all 3 mask assets.
+- [x] Mech stats and combat rules defined as Scriptable Objects (`ChassisData`).
+- [x] Mask data structure defined as Scriptable Object (`MaskData`, `MaskAbilityData`).
+- [x] Mask tint colors configured in all 3 mask assets (Warrior=red, Rogue=green, Angel=gold).

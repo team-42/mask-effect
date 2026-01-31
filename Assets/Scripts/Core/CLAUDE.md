@@ -18,7 +18,7 @@ This document outlines the specific core script-related tasks for the 'Mask Effe
 ## CURRENT_STATUS.md
 
 - [x] Project setup verified.
-- [ ] Essential Unity packages integrated.
+- [x] Essential Unity packages integrated (e.g., TextMeshPro).
 - [x] AI tool access configured.
 - [x] Directory structure finalized.
 - [x] Small utility scripts implemented.

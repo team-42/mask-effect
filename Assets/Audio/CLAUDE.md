@@ -11,5 +11,5 @@ This document outlines the specific audio-related tasks for the 'Mask Effect' pr
 
 ## CURRENT_STATUS.md
 
-- [ ] Basic sound effects implemented.
+- [ ] Basic sound effects implemented (Attacks, UI, Win/Loss).
 - [ ] Background music integrated.

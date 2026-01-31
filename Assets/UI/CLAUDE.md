@@ -19,7 +19,7 @@ This document outlines the specific UI asset and prefab-related tasks for the 'M
 - [x] MaskPanelUI implemented (IMGUI, left-side panel, colored mask buttons).
 - [x] LobbyUIController implemented (UIToolkit, host/join flow).
 - [x] MaskPanelUI robust across scene transitions (Update polling + event subscription).
-- [ ] Basic HUD prefabs created.
-- [ ] Mask effect visual proc prefabs created.
+- [ ] Basic HUD prefabs created (Health bars, timer).
+- [ ] Mask effect visual proc prefabs created (shield icons, mark icons, grapple animation, taunt indicator).
 - [ ] Main Menu UI prefabs created.
 - [ ] Game Over UI prefabs created.
