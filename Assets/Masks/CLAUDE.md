@@ -7,7 +7,7 @@ This document outlines the specific mask-related tasks for the 'Mask Effect' pro
 ## Sub-tasks
 
 - [ ] Create Placeholder Mask Icons (3 icons: Warrior, Rogue, Angel).
-- [ ] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
+- [x] Implement Basic Mask Application Logic (drag & drop via IMGUI panel, 2-3 masks per side, one per mech).
 - [x] Create 3 Placeholder Masks & Effects (Warrior, Rogue, Angel - simplified L1 abilities).
 - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
 - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
@@ -18,7 +18,7 @@ This document outlines the specific mask-related tasks for the 'Mask Effect' pro
 ## CURRENT_STATUS.md
 
 - [ ] Placeholder mask icons created.
-- [ ] Basic mask application logic (drag & drop UI) implemented.
+- [x] Basic mask application logic (drag & drop via IMGUI panel) implemented.
 - [x] Placeholder masks and effects created.
 - [x] Status effects implemented for masks.
 - [x] Basic targeting overrides implemented for masks.

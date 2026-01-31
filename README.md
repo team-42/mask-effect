@@ -169,6 +169,28 @@ Role: shields / mitigation / stabilization
 
 ---
 
+## Current Implementation Status (GGJ 2026)
+
+### Implemented
+- **Core auto-battler**: Mech spawning (5-10 mirrored), movement AI with A* pathfinding, basic attack & damage system (evasion, armor, shield), health & death, win/loss condition.
+- **3 Mech chassis** (Scout, Jet, Tank) with 3D models replacing primitives. Jet mechs use ranged projectile combat.
+- **3 Masks** (Warrior, Rogue, Angel) with all L1 abilities, status effects (Shield, Mark, Slow, Root, Taunt), targeting overrides, and damage types/resistances.
+- **Battle Arena**: 20x10 visual grid with 3 colored zones, camera controls (WASD, right-click rotate, scroll zoom).
+- **Mask Assignment UI**: IMGUI left-side panel with colored mask buttons; click mask then click mech to assign. Two-tone mech visuals (bottom=team color, top=mask tint).
+- **Game loop**: Round Setup → Mask Assignment → Auto Combat → Next Round. Enemy masks pre-assigned randomly; combat auto-starts when all player masks placed.
+- **Networking skeleton**: Mirror integration with LobbyScene (UIToolkit), host/join flow, NetworkIdentity on all prefabs. Scene transition from LobbyScene → BattleArenaScene.
+- **Prefab system**: All mechs and projectiles use prefab-based instantiation.
+
+### Not Yet Implemented
+- Main Menu & Game Over scenes
+- Basic HUD (health bars, timer)
+- Visual procs for mask effects (shield/mark/taunt indicators)
+- Sound effects & background music
+- Stat balancing
+- Full network synchronization (game state sync is skeleton-only)
+
+---
+
 ## Credits
 
 Built for Global Game Jam 2026 by the team behind **Mask Effect**.

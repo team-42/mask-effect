@@ -29,9 +29,12 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 
 ## CURRENT_STATUS.md
 
-- [x] Mech spawning implemented.
+- [x] Mech spawning implemented (prefab-based).
 - [x] Basic movement AI implemented.
+- [x] Advanced A* pathfinding implemented.
 - [x] Basic attack and damage system implemented.
+- [x] Damage types and resistances implemented.
+- [x] Ranged combat for Jet mechs (projectile prefabs).
 - [x] Health and death system implemented.
 - [x] Win/loss condition implemented.
 - [x] Random mask assignment for both teams in test mode implemented.
@@ -40,7 +43,8 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Basic targeting overrides implemented.
 - [x] Remaining L1 Mask Abilities implemented.
 - [x] MaskAssignmentManager: mech dragging + mask carry-and-drop interaction.
-- [x] MaskPanelUI: IMGUI left-side panel with colored mask buttons.
+- [x] MaskPanelUI: IMGUI left-side panel with colored mask buttons (robust across scene transitions).
 - [x] BattleManager: autoStartCombat toggle, PlayerAssignMask(), enemy masks pre-assigned at round start.
 - [x] Mask selection integrated into player flow.
+- [x] Scene transition from LobbyScene → BattleArenaScene working.
 - [ ] Mech stats and mask effects balanced.
