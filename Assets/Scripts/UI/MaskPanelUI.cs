@@ -11,6 +11,7 @@ namespace MaskEffect
         private int masksUsed;
         private int totalMasks;
         private bool visible;
+        private bool subscribed;
         private Rect panelRect;
 
         private struct MaskSlotEntry
@@ -21,20 +22,38 @@ namespace MaskEffect
 
         private void Start()
         {
-            if (BattleManager.Instance != null)
-                BattleManager.Instance.OnStateChanged += OnBattleStateChanged;
-
             if (assignmentManager == null)
                 assignmentManager = FindFirstObjectByType<MaskAssignmentManager>();
 
-            if (BattleManager.Instance != null && BattleManager.Instance.currentState == BattleState.MaskAssignment)
-                ShowPanel();
+            TrySubscribe();
+        }
+
+        private void TrySubscribe()
+        {
+            if (subscribed || BattleManager.Instance == null) return;
+            BattleManager.Instance.OnStateChanged += OnBattleStateChanged;
+            subscribed = true;
         }
 
         private void OnDestroy()
         {
             if (BattleManager.Instance != null)
                 BattleManager.Instance.OnStateChanged -= OnBattleStateChanged;
+        }
+
+        private void Update()
+        {
+            if (!subscribed)
+                TrySubscribe();
+
+            if (BattleManager.Instance == null) return;
+
+            bool shouldShow = BattleManager.Instance.currentState == BattleState.MaskAssignment;
+
+            if (shouldShow && !visible)
+                ShowPanel();
+            else if (!shouldShow && visible)
+                HidePanel();
         }
 
         private void OnBattleStateChanged(BattleState state)

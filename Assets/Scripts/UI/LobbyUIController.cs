@@ -34,8 +34,9 @@ public class LobbyUIController : MonoBehaviour
         if (uiDocument == null) return;
 
         var root = uiDocument.rootVisualElement;
-        var startGameButton = root.Q<Button>("startGameButton");
+        if (root == null) return;
 
+        var startGameButton = root.Q<Button>("startGameButton");
         if (startGameButton != null)
         {
             startGameButton.clicked -= LoadBattleArenaScene;
