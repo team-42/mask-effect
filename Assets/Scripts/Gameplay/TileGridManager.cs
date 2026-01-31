@@ -32,11 +32,22 @@ public class TileGridManager : MonoBehaviour
                 {
                     tile.AddComponent<BoxCollider>();
                 }
+                // Check if the "Ground" layer exists before assigning
+                int groundLayer = LayerMask.NameToLayer("Ground");
+                if (groundLayer == -1)
+                {
+                    Debug.LogError("Layer 'Ground' is not defined. Please add it in Edit -> Project Settings -> Tags and Layers.");
+                }
+                else
+                {
+                    // Set the layer for each individual tile
+                    tile.layer = groundLayer;
+                }
                 tiles[x, z] = tile;
             }
         }
-        // Set the layer for the parent GameObject after all children are parented
-        tilesParent.layer = LayerMask.NameToLayer("Ground");
+        // The parent GameObject itself doesn't need to be on the "Ground" layer,
+        // as raycasting targets individual tiles.
     }
 
     public Vector3 GetNearestTilePosition(Vector3 worldPosition)
