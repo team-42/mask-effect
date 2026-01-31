@@ -112,6 +112,13 @@ namespace MaskEffect
                 return x >= gridWidth - gridWidth / 6; // rear portion of enemy side
         }
 
+        public int GetMirroredTile(int tileIndex)
+        {
+            var (x, z) = FromIndex(tileIndex);
+            int mirrorX = gridWidth - 1 - x;
+            return ToIndex(mirrorX, z);
+        }
+
         public int GetTileCount()
         {
             return gridWidth * gridHeight;

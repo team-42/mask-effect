@@ -36,6 +36,8 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Create 3 Placeholder Masks & Effects (Warrior, Rogue, Angel - simplified L1 abilities).
   - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
   - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
+  - [x] Configure distinct mask tint colors (Warrior=red, Rogue=green, Angel=gold) for visual identification.
+  - [x] Implement random mask assignment for both teams in test/auto-play mode.
 - [ ] **Essential UI & Feedback:**
   - [ ] Design & Implement Basic HUD (Health bars, timer, mask assignment UI).
   - [ ] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
@@ -72,6 +74,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Initial project setup and directory structure.
 - [x] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
 - [x] Basic mask system with 3 masks and simplified L1 abilities.
+- [x] Mask tint colors configured and visible on mech top halves for both teams.
 - [ ] Essential UI and visual feedback for gameplay.
 - [x] Game loop (round setup, mask assignment, combat, next round) functional.
 - [ ] Basic art and audio placeholders integrated.

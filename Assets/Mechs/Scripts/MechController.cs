@@ -90,11 +90,13 @@ namespace MaskEffect
                 }
             }
 
-            // Apply mask tint
-            var renderer = GetComponent<Renderer>();
-            if (renderer != null)
+            // Apply mask color to top half child
+            Transform topHalf = transform.Find(MechSpawner.TOP_HALF_NAME);
+            if (topHalf != null)
             {
-                renderer.material.color = mask.maskTint;
+                var renderer = topHalf.GetComponent<Renderer>();
+                if (renderer != null)
+                    renderer.material.color = mask.maskTint;
             }
         }
 

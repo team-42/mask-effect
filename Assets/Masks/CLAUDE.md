@@ -13,13 +13,15 @@ This document outlines the specific mask-related tasks for the 'Mask Effect' pro
 - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
 - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
 - [x] Integrate Mask Data Structure (defined in Data) into mask prefabs/scripts.
+- [x] Configure distinct mask tint colors for visual identification (Warrior=red, Rogue=green, Angel=gold).
 
 ## CURRENT_STATUS.md
 
 - [ ] Placeholder mask icons created.
-- [ ] Basic mask application logic implemented.
+- [ ] Basic mask application logic (drag & drop UI) implemented.
 - [x] Placeholder masks and effects created.
 - [x] Status effects implemented for masks.
 - [x] Basic targeting overrides implemented for masks.
 - [x] Remaining L1 Mask Abilities implemented.
 - [x] Mask data structure integrated.
+- [x] Mask tint colors configured (Warrior=red, Rogue=green, Angel=gold).

@@ -23,4 +23,4 @@ MonoBehaviour:
   scoutAbility: {fileID: 11400000, guid: 730ff3d9a56c0ac428619523ac0e2293, type: 2}
   jetAbility: {fileID: 11400000, guid: 072b46ba99f94b74d80f72ec065481a0, type: 2}
   tankAbility: {fileID: 11400000, guid: 2ecd17d2a8453984ba8177966a89ae25, type: 2}
-  maskTint: {r: 1, g: 0.3, b: 0.3, a: 1}
+  maskTint: {r: 0.9, g: 0.15, b: 0.15, a: 1}

@@ -19,6 +19,7 @@ namespace MaskEffect
         public bool MoveToward(MechController target, float dt)
         {
             if (target == null || !target.isAlive) return false;
+            if (grid == null || mech == null) return false;
             if (mech.statusHandler.IsRooted()) return IsInRange(target);
 
             float dist = Vector3.Distance(transform.position, target.transform.position);
@@ -70,6 +71,7 @@ namespace MaskEffect
 
         public void TeleportTo(Vector3 worldPos)
         {
+            if (grid == null) return;
             int currentTile = grid.GetNearestTile(transform.position);
             int newTile = grid.GetNearestTile(worldPos);
             grid.ClearTile(currentTile);
@@ -79,6 +81,7 @@ namespace MaskEffect
 
         public void StepBack()
         {
+            if (grid == null || mech == null) return;
             if (mech.currentTarget == null) return;
 
             Vector3 awayDir = (transform.position - mech.currentTarget.transform.position).normalized;

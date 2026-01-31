@@ -6,10 +6,13 @@ namespace MaskEffect
     public class MechSpawner : MonoBehaviour
     {
         [SerializeField] private ChassisData[] chassisOptions;
-        [SerializeField] private Color playerTeamTint = new Color(0.3f, 0.5f, 1f);
-        [SerializeField] private Color enemyTeamTint = new Color(1f, 0.3f, 0.3f);
+        [SerializeField] private Color playerTeamColor = new Color(0.2f, 0.4f, 1f);
+        [SerializeField] private Color enemyTeamColor = new Color(1f, 0.5f, 0.1f);
 
         private IBattleGrid grid;
+
+        // Tag for finding top-half child renderers
+        public const string TOP_HALF_NAME = "TopHalf";
 
         public void Initialize(IBattleGrid grid)
         {
@@ -24,65 +27,73 @@ namespace MaskEffect
 
             int mechCount = Random.Range(5, 11);
 
-            // Generate random chassis lineup
+            // Generate random chassis lineup (shared by both sides)
             ChassisData[] lineup = new ChassisData[mechCount];
             for (int i = 0; i < mechCount; i++)
             {
                 lineup[i] = chassisOptions[Random.Range(0, chassisOptions.Length)];
             }
 
-            // Spawn player side
+            // Pick random positions on the player side
             int[] playerTiles = grid.GetSpawnTiles(Team.Player);
-            List<MechController> playerMechs = SpawnTeam(lineup, Team.Player, playerTiles);
+            ShuffleTiles(playerTiles);
+            int count = Mathf.Min(lineup.Length, playerTiles.Length);
 
-            // Mirror: spawn enemy side with same lineup
-            int[] enemyTiles = grid.GetSpawnTiles(Team.Enemy);
-            List<MechController> enemyMechs = SpawnTeam(lineup, Team.Enemy, enemyTiles);
+            List<MechController> playerMechs = new List<MechController>();
+            List<MechController> enemyMechs = new List<MechController>();
+
+            for (int i = 0; i < count; i++)
+            {
+                int playerTile = playerTiles[i];
+                int enemyTile = grid.GetMirroredTile(playerTile);
+
+                // Spawn player mech
+                Vector3 playerPos = grid.GetWorldPosition(playerTile);
+                MechController playerMech = CreateMech(lineup[i], Team.Player, playerPos, MechIdProvider.GetNextId());
+                playerMech.transform.rotation = Quaternion.LookRotation(Vector3.right);
+                grid.SetTileOccupant(playerTile, playerMech);
+                playerMechs.Add(playerMech);
+
+                // Spawn mirrored enemy mech (same chassis, mirrored tile)
+                Vector3 enemyPos = grid.GetWorldPosition(enemyTile);
+                MechController enemyMech = CreateMech(lineup[i], Team.Enemy, enemyPos, MechIdProvider.GetNextId());
+                enemyMech.transform.rotation = Quaternion.LookRotation(Vector3.left);
+                grid.SetTileOccupant(enemyTile, enemyMech);
+                enemyMechs.Add(enemyMech);
+            }
 
             return (playerMechs, enemyMechs);
         }
 
-        private List<MechController> SpawnTeam(ChassisData[] lineup, Team team, int[] availableTiles)
-        {
-            List<MechController> mechs = new List<MechController>();
-
-            // Shuffle available tiles
-            ShuffleTiles(availableTiles);
-
-            int count = Mathf.Min(lineup.Length, availableTiles.Length);
-            for (int i = 0; i < count; i++)
-            {
-                int tileIndex = availableTiles[i];
-                Vector3 pos = grid.GetWorldPosition(tileIndex);
-                MechController mech = CreateMech(lineup[i], team, pos, MechIdProvider.GetNextId());
-                grid.SetTileOccupant(tileIndex, mech);
-                mechs.Add(mech);
-            }
-
-            return mechs;
-        }
-
         private MechController CreateMech(ChassisData chassis, Team team, Vector3 position, int id)
         {
-            GameObject go = GameObject.CreatePrimitive(chassis.primitiveShape);
-            go.name = $"{team}_{chassis.chassisName}_{id}";
+            // Root object (empty parent)
+            GameObject go = new GameObject($"{team}_{chassis.chassisName}_{id}");
             go.transform.position = position;
-            go.transform.localScale = chassis.chassisScale;
 
-            // Apply team tint to chassis color
-            var renderer = go.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                Color tint = team == Team.Player ? playerTeamTint : enemyTeamTint;
-                renderer.material.color = Color.Lerp(chassis.chassisColor, tint, 0.5f);
-            }
+            Color teamColor = team == Team.Player ? playerTeamColor : enemyTeamColor;
+            Vector3 scale = chassis.chassisScale;
+            float halfY = scale.y * 0.5f;
 
-            // Remove default collider (we handle collision via grid)
-            var collider = go.GetComponent<Collider>();
-            if (collider != null)
-                Destroy(collider);
+            // Bottom half — team color
+            GameObject bottom = GameObject.CreatePrimitive(chassis.primitiveShape);
+            bottom.name = "BottomHalf";
+            bottom.transform.SetParent(go.transform, false);
+            bottom.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+            bottom.transform.localPosition = new Vector3(0f, halfY * 0.5f, 0f);
+            SetRendererColor(bottom, teamColor);
+            RemoveCollider(bottom);
 
-            // Add components
+            // Top half — team color (unmasked), changed by EquipMask
+            GameObject top = GameObject.CreatePrimitive(chassis.primitiveShape);
+            top.name = TOP_HALF_NAME;
+            top.transform.SetParent(go.transform, false);
+            top.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+            top.transform.localPosition = new Vector3(0f, halfY * 1.5f, 0f);
+            SetRendererColor(top, teamColor);
+            RemoveCollider(top);
+
+            // Add components to root
             var statusHandler = go.AddComponent<StatusEffectHandler>();
             var movement = go.AddComponent<MechMovement>();
             var controller = go.AddComponent<MechController>();
@@ -90,6 +101,20 @@ namespace MaskEffect
             controller.Initialize(chassis, team, id, grid);
 
             return controller;
+        }
+
+        private void SetRendererColor(GameObject obj, Color color)
+        {
+            var renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.material.color = color;
+        }
+
+        private void RemoveCollider(GameObject obj)
+        {
+            var collider = obj.GetComponent<Collider>();
+            if (collider != null)
+                Destroy(collider);
         }
 
         private void ShuffleTiles(int[] array)

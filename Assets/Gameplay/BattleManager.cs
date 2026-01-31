@@ -194,14 +194,18 @@ namespace MaskEffect
 
         private void AIAssignMasks()
         {
+            RandomAssignMasks(enemyMechs);
+        }
+
+        private void RandomAssignMasks(List<MechController> mechs)
+        {
             if (availableMasks == null || availableMasks.Length == 0) return;
 
-            // Simple random AI: assign masks to random enemy mechs
             List<MechController> unmasked = new List<MechController>();
-            for (int i = 0; i < enemyMechs.Count; i++)
+            for (int i = 0; i < mechs.Count; i++)
             {
-                if (enemyMechs[i].isAlive && enemyMechs[i].equippedMask == null)
-                    unmasked.Add(enemyMechs[i]);
+                if (mechs[i].isAlive && mechs[i].equippedMask == null)
+                    unmasked.Add(mechs[i]);
             }
 
             // Shuffle
@@ -233,6 +237,8 @@ namespace MaskEffect
 
         public void ForceStartCombat()
         {
+            // Auto-assign random masks to player side for testing
+            RandomAssignMasks(playerMechs);
             OnMaskAssignmentComplete();
         }
     }

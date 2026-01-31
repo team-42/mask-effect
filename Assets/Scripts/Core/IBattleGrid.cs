@@ -13,6 +13,7 @@ namespace MaskEffect
         int[] GetSpawnTiles(Team team);
         int[] GetAdjacentTiles(int tileIndex);
         bool IsBackline(int tileIndex, Team relativeTo);
+        int GetMirroredTile(int tileIndex);
         int GetTileCount();
     }
 }

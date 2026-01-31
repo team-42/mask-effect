@@ -11,6 +11,7 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Implement Basic Movement AI for mechs (move towards target, handle blocked tiles).
 - [x] Implement Health & Death System for mechs.
 - [x] Integrate Mech Stats (defined in Data) into mech prefabs/scripts.
+- [x] Implement two-tone mech visuals (bottom half=team color, top half=mask color via EquipMask).
 
 ## CURRENT_STATUS.md
 
@@ -19,3 +20,4 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Basic mech movement AI implemented.
 - [x] Mech health and death system implemented.
 - [x] Mech stats integrated.
+- [x] Two-tone mech visuals working (bottom=team color, top=mask tint color).
