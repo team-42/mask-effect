@@ -214,7 +214,7 @@ MonoBehaviour:
   editorAutoStart: 0
   sendRate: 60
   offlineScene: Assets/Scenes/PlanningScene.unity
-  onlineScene: Assets/Scenes/ResolutionScene.unity
+  onlineScene: Assets/Scenes/BattleArenaScene.unity/BattleArenaScene.unity
   offlineSceneLoadDelay: 0
   transport: {fileID: 0}
   networkAddress: localhost
@@ -227,6 +227,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 3337123431289076066, guid: fc3cffd5a552f5149aeef06e9eef09a1, type: 3}
+  - {fileID: 558068415103395217, guid: 3a04e8692fae84946b5f4fc36d2fd141, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

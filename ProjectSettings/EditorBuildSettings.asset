@@ -11,9 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ResolutionScene.unity
     guid: 2d35af8879351504cb4c6d1867c3dc98
-  - enabled: 0
-    path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
-    guid: 0636669a99fa9b948ad06e1b91a2c307
+  - enabled: 1
+    path: Assets/Scenes/BattleArenaScene.unity/BattleArenaScene.unity
+    guid: 236254840d8b0f7428e0a1f83f8aa60f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

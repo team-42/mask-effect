@@ -42,13 +42,14 @@ namespace MaskEffect
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
             {
                 Destroy(gameObject);
-                return;
             }
-            Instance = this;
-            AutoWireReferences();
         }
 
         private void Start()

@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 1731591}
   - component: {fileID: 1731590}
   - component: {fileID: 1731589}
+  - component: {fileID: 1731595}
   m_Layer: 0
   m_Name: BattleSystem
   m_TagString: Untagged
@@ -179,10 +180,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d547ca7db2210409c893c0a9f55eee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.BattleManager
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   roundTimeLimit: 45
   masksPerSide: 2
   autoStartCombat: 0
-  spawner: {fileID: 0}
+  spawner: {fileID: 1731592}
   grid: {fileID: 0}
   availableMasks: []
   currentState: 0
@@ -206,6 +210,7 @@ MonoBehaviour:
   chassisOptions: []
   playerTeamColor: {r: 0.2, g: 0.4, b: 1, a: 1}
   enemyTeamColor: {r: 1, g: 0.5, b: 0.1, a: 1}
+  mechPrefab: {fileID: 558068415103395217, guid: 3a04e8692fae84946b5f4fc36d2fd141, type: 3}
 --- !u!114 &1731593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,6 +246,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1731595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 1038213893
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1399920348
 GameObject:
   m_ObjectHideFlags: 0
