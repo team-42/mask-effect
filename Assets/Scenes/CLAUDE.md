@@ -6,14 +6,14 @@ This document outlines the specific scene-related tasks for the 'Mask Effect' pr
 
 ## Sub-tasks
 
-- [ ] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
-- [ ] Add Basic Lighting & Camera Setup to the Battle Arena Scene.
+- [x] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle). (Note: Implemented by modifying the active scene due to `manage_scene` tool limitations.)
+- [x] Add Basic Lighting & Camera Setup to the Battle Arena Scene.
 - [ ] Create Main Menu Scene.
 - [ ] Create Game Over Scene.
 
 ## CURRENT_STATUS.md
 
-- [ ] Battle Arena Scene created.
-- [ ] Basic lighting and camera setup added to Battle Arena.
+- [x] Battle Arena Scene created.
+- [x] Basic lighting and camera setup added to Battle Arena.
 - [ ] Main Menu Scene created.
 - [ ] Game Over Scene created.
