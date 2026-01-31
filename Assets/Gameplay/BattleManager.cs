@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror; // Add Mirror namespace
 
 namespace MaskEffect
 {
-    public class BattleManager : MonoBehaviour
+    public class BattleManager : NetworkBehaviour // Change base class to NetworkBehaviour
     {
         public static BattleManager Instance { get; private set; }
 
@@ -51,13 +52,21 @@ namespace MaskEffect
             AutoWireReferences();
         }
 
-        private void Start()
+        public override void OnStartServer() // Use OnStartServer for server-side initialization
         {
+            base.OnStartServer();
             spawner.Initialize(grid);
             StartNewRound();
 
             if (autoStartCombat)
                 ForceStartCombat();
+        }
+
+        private void Start()
+        {
+            // Start() is called on both client and server, but network-specific initialization
+            // should be in OnStartServer/OnStartClient.
+            // The spawner initialization and round start should only happen on the server.
         }
 
         private void AutoWireReferences()
@@ -68,8 +77,11 @@ namespace MaskEffect
                 availableMasks = Resources.LoadAll<MaskData>("Data/Masks");
         }
 
+        [Server] // Only allow server to start new rounds
         public void StartNewRound()
         {
+            if (!isServer) return; // Ensure only server executes this
+
             roundNumber++;
             roundTimer = roundTimeLimit;
             playerMasksAssigned = 0;

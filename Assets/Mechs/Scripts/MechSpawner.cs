@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror; // Add Mirror namespace
 
 namespace MaskEffect
 {
@@ -72,11 +73,11 @@ namespace MaskEffect
         private MechController CreateMech(ChassisData chassis, Team team, Vector3 position, int id)
         {
             // Instantiate from prefab (has MechController, MechMovement, StatusEffectHandler, BoxCollider)
-            GameObject go = mechPrefab != null
-                ? Instantiate(mechPrefab)
-                : new GameObject($"{team}_{chassis.chassisName}_{id}");
+            GameObject go = Instantiate(mechPrefab, position, Quaternion.identity);
             go.name = $"{team}_{chassis.chassisName}_{id}";
-            go.transform.position = position;
+            
+            // NetworkServer.Spawn handles setting position and rotation on clients
+            NetworkServer.Spawn(go);
 
             Color teamColor = team == Team.Player ? playerTeamColor : enemyTeamColor;
             Vector3 scale = chassis.chassisScale;
@@ -195,7 +196,13 @@ namespace MaskEffect
             for (int i = 0; i < allMechs.Count; i++)
             {
                 if (allMechs[i] != null)
-                    Destroy(allMechs[i].gameObject);
+                {
+                    // Only destroy on server, clients will receive NetworkDestroy message
+                    if (allMechs[i].isServer)
+                    {
+                        NetworkServer.Destroy(allMechs[i].gameObject);
+                    }
+                }
             }
         }
     }
