@@ -1,37 +1,41 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror; // Add Mirror namespace
 
 namespace MaskEffect
 {
-    public class MechController : MonoBehaviour
+    public class MechController : NetworkBehaviour // Change base class to NetworkBehaviour
     {
         [Header("Identity")]
-        public int mechId;
-        public Team team;
+        [SyncVar] public int mechId;
+        [SyncVar] public Team team;
+        // ChassisData and MaskData are complex ScriptableObjects,
+        // they should be synchronized by reference (e.g., asset path or ID)
+        // and loaded on clients, or their relevant properties can be SyncVar'd.
+        // For now, assuming they are loaded independently on clients.
         public ChassisData chassisData;
-
-        [Header("Mask")]
         public MaskData equippedMask;
 
         [Header("Runtime Stats")]
-        public int maxHP;
-        public int currentHP;
-        public int armor;
-        public int attackDamage;
-        public float attackInterval;
-        public float range;
-        public float moveSpeed;
-        public float evasion;
-        public DamageType currentDamageType;
-        public ResistanceType currentResistanceType;
-        public float currentResistanceValue;
+        [SyncVar] public int maxHP;
+        [SyncVar] public int currentHP;
+        [SyncVar] public int armor;
+        [SyncVar] public int attackDamage;
+        [SyncVar] public float attackInterval;
+        [SyncVar] public float range;
+        [SyncVar] public float moveSpeed;
+        [SyncVar] public float evasion;
+        [SyncVar] public DamageType currentDamageType;
+        [SyncVar] public ResistanceType currentResistanceType;
+        [SyncVar] public float currentResistanceValue;
 
         [Header("Combat State")]
-        public bool isAlive = true;
-        public MechController currentTarget;
-        public TargetingMode targetingMode = TargetingMode.Nearest;
-        public float attackCooldown;
-        public float retargetTimer;
+        [SyncVar] public bool isAlive = true;
+        [SyncVar] public uint currentTargetNetId; // Synchronize target by netId
+        public MechController currentTarget; // Resolved reference on client
+        [SyncVar] public TargetingMode targetingMode = TargetingMode.Nearest;
+        [SyncVar] public float attackCooldown;
+        [SyncVar] public float retargetTimer;
 
         [Header("References")]
         public StatusEffectHandler statusHandler;
@@ -49,14 +53,45 @@ namespace MaskEffect
 
         private const float RETARGET_INTERVAL = 0.5f;
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            // Initialize SyncVars on the server
+            // currentHP and isAlive are already SyncVar'd and initialized
+            // Other SyncVars like mechId, team, etc., should be set before NetworkServer.Spawn
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            // Hook up SyncVar callbacks if needed, or resolve references
+        }
+
+        // Callback for currentTargetNetId SyncVar
+        public void OnTargetNetIdChanged(uint oldNetId, uint newNetId)
+        {
+            if (isClient)
+            {
+                if (NetworkClient.spawned.TryGetValue(newNetId, out NetworkIdentity targetIdentity))
+                {
+                    currentTarget = targetIdentity.GetComponent<MechController>();
+                }
+                else
+                {
+                    currentTarget = null;
+                }
+            }
+        }
+
         public void Initialize(ChassisData chassis, Team team, int id, IBattleGrid grid)
         {
-            this.chassisData = chassis;
+            // These are SyncVars, set them directly
+            this.chassisData = chassis; // This will need to be handled differently for networked objects
             this.team = team;
             this.mechId = id;
-            this.grid = grid;
+            this.grid = grid; // This is a local reference, not networked
             this.isAlive = true;
-            this.equippedMask = null;
+            this.equippedMask = null; // This will need to be handled differently for networked objects
             this.activeAbility = null;
 
             statusHandler = GetComponent<StatusEffectHandler>();
@@ -157,6 +192,8 @@ namespace MaskEffect
             evasion = Mathf.Clamp01(evasion);
         }
 
+        // Only allow server to take damage
+        [Server]
         public void TakeDamage(int rawDamage, MechController attacker)
         {
             if (!isAlive) return;
@@ -178,6 +215,7 @@ namespace MaskEffect
             }
         }
 
+        [Server] // Only allow server to trigger Die
         public void Die()
         {
             if (!isAlive) return;
@@ -196,9 +234,23 @@ namespace MaskEffect
                 grid.ClearTile(tile);
             }
 
-            gameObject.SetActive(false);
+            // For networked objects, use NetworkServer.Destroy
+            NetworkServer.Destroy(gameObject);
         }
 
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            // Enable input or other local player specific logic here
+        }
+
+        public override void OnStopLocalPlayer()
+        {
+            base.OnStopLocalPlayer();
+            // Disable input or other local player specific logic here
+        }
+
+        [ServerCallback] // Only run on server
         public void UpdateCombat(float dt)
         {
             if (!isAlive) return;
@@ -210,6 +262,14 @@ namespace MaskEffect
             if (retargetTimer <= 0f || currentTarget == null || !currentTarget.isAlive)
             {
                 currentTarget = TargetingSystem.GetTarget(this, allMechs, grid);
+                if (currentTarget != null)
+                {
+                    currentTargetNetId = currentTarget.netId; // Update SyncVar
+                }
+                else
+                {
+                    currentTargetNetId = 0; // No target
+                }
                 retargetTimer = RETARGET_INTERVAL;
             }
 
@@ -239,17 +299,34 @@ namespace MaskEffect
             attackCooldown = attackInterval;
 
             // Face target
-            Vector3 dir = (currentTarget.transform.position - transform.position).normalized;
-            if (dir != Vector3.zero)
-                transform.forward = dir;
+            // Only update rotation on server, NetworkTransform will synchronize
+            if (isServer)
+            {
+                Vector3 dir = (currentTarget.transform.position - transform.position).normalized;
+                if (dir != Vector3.zero)
+                    transform.forward = dir;
+            }
 
             if (chassisData.isRanged && chassisData.projectilePrefab != null)
             {
+                // Ensure the MechController itself has a NetworkIdentity to get its netId
+                if (!TryGetComponent<NetworkIdentity>(out var attackerNetworkIdentity))
+                {
+                    Debug.LogError($"MechController {name} does not have a NetworkIdentity. Cannot spawn networked projectile.");
+                    return;
+                }
+                if (!currentTarget.TryGetComponent<NetworkIdentity>(out var targetNetworkIdentity))
+                {
+                    Debug.LogError($"Target MechController {currentTarget.name} does not have a NetworkIdentity. Cannot spawn networked projectile.");
+                    return;
+                }
+
                 GameObject projectileGO = Instantiate(chassisData.projectilePrefab, transform.position, Quaternion.identity);
                 Projectile projectile = projectileGO.GetComponent<Projectile>();
                 if (projectile != null)
                 {
-                    projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
+                    projectile.Initialize(attackerNetworkIdentity.netId, targetNetworkIdentity.netId, attackDamage, currentDamageType);
+                    NetworkServer.Spawn(projectileGO);
                 }
             }
             else

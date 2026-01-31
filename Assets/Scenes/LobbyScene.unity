@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 130451267}
   - component: {fileID: 130451266}
   - component: {fileID: 130451264}
+  - component: {fileID: 130451268}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -186,13 +187,13 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/LobbyScene.unity
   onlineScene: Assets/Scenes/BattleArenaScene.unity
   offlineSceneLoadDelay: 0
-  transport: {fileID: 0}
+  transport: {fileID: 130451264}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 0}
+  playerPrefab: {fileID: 1936508523424332775, guid: 184b9e4b2f3f4c64992c64889cd7a3f2, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
@@ -227,6 +228,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &130451268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130451263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkManagerHUD
+  offsetX: 0
+  offsetY: 0
 --- !u!1 &228761875
 GameObject:
   m_ObjectHideFlags: 0
