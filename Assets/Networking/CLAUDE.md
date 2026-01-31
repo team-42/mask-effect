@@ -18,9 +18,9 @@ This document outlines networking-related tasks for the 'Mask Effect' project. A
 ## CURRENT_STATUS.md
 
 - [x] Networking solution integrated (Mirror).
-- [x] Basic lobby and room creation implemented (LobbyScene with UIToolkit).
-- [x] NetworkIdentity added to all prefabs.
-- [x] Scene transition from LobbyScene → BattleArenaScene working.
+- [x] Basic lobby and room creation implemented (LobbyScene with UIToolkit, host/join buttons).
+- [x] NetworkIdentity added to all mech and projectile prefabs.
+- [x] Scene transition from LobbyScene → BattleArenaScene working via Mirror.
 - [ ] Mech spawning synchronized across network.
 - [ ] Mech movement and actions synchronized.
 - [ ] Health and combat events synchronized.

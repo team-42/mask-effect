@@ -11,5 +11,5 @@ This document outlines the specific input-related tasks for the 'Mask Effect' pr
 
 ## CURRENT_STATUS.md
 
-- [ ] Input system verified and integrated.
-- [ ] Input actions mapped to UI interactions.
+- [x] Input system verified and integrated for mask drag & drop, mech repositioning, and camera controls.
+- [x] Input actions mapped to UI interactions for mask assignment and mech movement.

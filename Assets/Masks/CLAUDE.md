@@ -17,9 +17,9 @@ This document outlines the specific mask-related tasks for the 'Mask Effect' pro
 
 ## CURRENT_STATUS.md
 
-- [ ] Placeholder mask icons created.
+- [ ] Placeholder mask icons created (Warrior, Rogue, Angel).
 - [x] Basic mask application logic (drag & drop via IMGUI panel) implemented.
-- [x] Placeholder masks and effects created.
+- [x] Placeholder masks and effects created (Warrior, Rogue, Angel - simplified L1 abilities).
 - [x] Status effects implemented for masks.
 - [x] Basic targeting overrides implemented for masks.
 - [x] Remaining L1 Mask Abilities implemented.
