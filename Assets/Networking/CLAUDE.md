@@ -10,10 +10,15 @@ This document outlines networking-related tasks for the 'Mask Effect' project. A
 - [x] Implement Basic Lobby & Room Creation (LobbyScene with UIToolkit, host/join buttons).
 - [x] Add NetworkIdentity to all mech and projectile prefabs.
 - [x] Implement LobbyScene → BattleArenaScene scene transition via Mirror.
-- [ ] Synchronize Mech Spawning Across Network.
-- [ ] Synchronize Mech Movement & Actions.
-- [ ] Synchronize Health & Combat Events.
+- [x] Synchronize Mech Spawning Across Network. (Initial steps for projectile spawning implemented)
+- [x] Synchronize Mech Movement & Actions. (Initial steps for projectile movement and mech stats implemented)
+- [ ] Synchronize Health & Combat Events. (Damage and destruction are server-authoritative for projectiles)
 - [x] Remove legacy NGO references (DefaultNetworkPrefabs.asset deleted).
+- [x] Make `Projectile.cs` a `NetworkBehaviour`.
+- [x] Implement `[SyncVar]` for `Projectile` properties and resolve `MechController` references on clients.
+- [x] Update `MechController.TryAttack` to spawn networked projectiles.
+- [x] Make `MechController.cs` a `NetworkBehaviour` and add `[SyncVar]` to relevant properties.
+- [x] Add `NetworkTransform` to `ProjectilePrefab` (manual step required in Unity Editor).
 
 ## CURRENT_STATUS.md
 
@@ -21,7 +26,12 @@ This document outlines networking-related tasks for the 'Mask Effect' project. A
 - [x] Basic lobby and room creation implemented (LobbyScene with UIToolkit, host/join buttons).
 - [x] NetworkIdentity added to all mech and projectile prefabs.
 - [x] Scene transition from LobbyScene → BattleArenaScene working via Mirror.
-- [ ] Mech spawning synchronized across network.
-- [ ] Mech movement and actions synchronized.
-- [ ] Health and combat events synchronized.
+- [x] Mech spawning synchronized across network. (Initial steps for projectile spawning implemented)
+- [x] Mech movement and actions synchronized. (Initial steps for projectile movement and mech stats implemented)
+- [ ] Health and combat events synchronized. (Damage and destruction are server-authoritative for projectiles)
 - [x] Legacy NGO setup removed.
+- [x] `Projectile.cs` now inherits from `NetworkBehaviour`.
+- [x] `Projectile.cs` uses `[SyncVar]` for `damage`, `damageType`, `attackerNetId`, and `targetNetId`.
+- [x] `MechController.TryAttack` now uses `NetworkServer.Spawn` for projectiles and passes `netId`s.
+- [x] `MechController.cs` now inherits from `NetworkBehaviour` and uses `[SyncVar]` for `mechId`, `team`, `maxHP`, `currentHP`, `armor`, `attackDamage`, `attackInterval`, `range`, `moveSpeed`, `evasion`, `currentDamageType`, `currentResistanceType`, `currentResistanceValue`, `isAlive`, `currentTargetNetId`, `targetingMode`, `attackCooldown`, and `retargetTimer`.
+- [x] `NetworkTransform` component needs to be manually added to `Assets/Prefabs/ProjectilePrefab.prefab` in the Unity Editor.

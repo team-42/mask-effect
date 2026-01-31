@@ -1,59 +1,112 @@
 using UnityEngine;
+using Mirror;
 
 namespace MaskEffect
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : NetworkBehaviour
     {
         [SerializeField] private float speed = 10f;
         [SerializeField] private float lifetime = 3f;
         [SerializeField] private GameObject hitEffectPrefab; // Optional visual effect on hit
 
-        private MechController attacker;
-        private MechController target;
-        private int damage;
-        private DamageType damageType;
+        [SyncVar] private uint attackerNetId;
+        [SyncVar] private uint targetNetId;
+        [SyncVar] private int damage;
+        [SyncVar] private DamageType damageType;
+
+        private MechController _attacker; // Resolved attacker reference
+        private MechController _target;   // Resolved target reference
 
         private float currentLifetime;
 
-        public void Initialize(MechController attacker, MechController target, int damage, DamageType damageType)
+        public override void OnStartServer()
         {
-            this.attacker = attacker;
-            this.target = target;
-            this.damage = damage;
-            this.damageType = damageType;
-            this.currentLifetime = lifetime;
+            base.OnStartServer();
+            currentLifetime = lifetime;
+        }
+
+        public void Initialize(uint attackerId, uint targetId, int dmg, DamageType dmgType)
+        {
+            attackerNetId = attackerId;
+            targetNetId = targetId;
+            damage = dmg;
+            damageType = dmgType;
+            // currentLifetime is set in OnStartServer
+        }
+
+        /// <summary>
+        /// Singleplayer initialization: direct MechController references
+        /// instead of netIds that require NetworkManager.
+        /// </summary>
+        public void InitializeOffline(MechController attacker, MechController target, int dmg, DamageType dmgType)
+        {
+            _attacker = attacker;
+            _target = target;
+            damage = dmg;
+            damageType = dmgType;
+            currentLifetime = lifetime;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            // Resolve attacker and target on clients
+            if (NetworkClient.spawned.TryGetValue(attackerNetId, out NetworkIdentity attackerIdentity))
+            {
+                _attacker = attackerIdentity.GetComponent<MechController>();
+            }
+            if (NetworkClient.spawned.TryGetValue(targetNetId, out NetworkIdentity targetIdentity))
+            {
+                _target = targetIdentity.GetComponent<MechController>();
+            }
         }
 
         private void Update()
         {
-            if (target == null || !target.isAlive)
+            if (!NetworkHelper.IsServerOrOffline) return;
+
+            if (_target == null || !_target.isAlive)
             {
-                Destroy(gameObject);
+                NetworkHelper.SmartDestroy(gameObject);
                 return;
             }
 
-            Vector3 direction = (target.transform.position - transform.position).normalized;
+            Vector3 direction = (_target.transform.position - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
 
             currentLifetime -= Time.deltaTime;
             if (currentLifetime <= 0f)
             {
-                Destroy(gameObject);
+                NetworkHelper.SmartDestroy(gameObject);
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!NetworkHelper.IsServerOrOffline) return;
+
             MechController hitMech = other.GetComponent<MechController>();
-            if (hitMech != null && hitMech == target)
+            if (hitMech != null && hitMech == _target)
             {
-                target.TakeDamage(damage, attacker);
+                _target.TakeDamage(damage, _attacker);
 
                 if (hitEffectPrefab != null)
                 {
-                    Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
+                    if (NetworkHelper.IsOffline)
+                        Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
+                    else
+                        RpcInstantiateHitEffect(transform.position);
                 }
-                Destroy(gameObject);
+                NetworkHelper.SmartDestroy(gameObject);
+            }
+        }
+
+        [ClientRpc]
+        private void RpcInstantiateHitEffect(Vector3 position)
+        {
+            if (hitEffectPrefab != null)
+            {
+                Instantiate(hitEffectPrefab, position, Quaternion.identity);
             }
         }
     }
