@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Mirror;
 
 public class LobbyUIController : MonoBehaviour
 {
@@ -46,11 +47,31 @@ public class LobbyUIController : MonoBehaviour
 
     void LoadBattleArenaScene()
     {
-        SceneManager.LoadScene(battleArenaSceneName);
+        var nm = NetworkManager.singleton;
+        if (nm != null)
+        {
+            nm.onlineScene = battleArenaSceneName;
+            nm.autoCreatePlayer = false; // No player prefab needed in singleplayer
+            nm.StartHost(); // Local host - Mirror handles scene transition
+        }
+        else
+        {
+            SceneManager.LoadScene(battleArenaSceneName);
+        }
     }
 
     void LoadMultiplayerScene()
     {
-        SceneManager.LoadScene(multiplayerSceneName);
+        var nm = NetworkManager.singleton;
+        if (nm != null)
+        {
+            nm.onlineScene = multiplayerSceneName;
+            nm.autoCreatePlayer = true; // Multiplayer needs player prefabs
+            nm.StartHost(); // Host starts, clients join separately
+        }
+        else
+        {
+            SceneManager.LoadScene(multiplayerSceneName);
+        }
     }
 }
