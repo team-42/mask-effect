@@ -40,7 +40,14 @@ public class DragAndDropSnapper : MonoBehaviour
                 if (hit.transform == transform) // Check if we clicked on this object
                 {
                     isDragging = true;
-                    dragOffset = transform.position - hit.point;
+                    // Calculate dragOffset based on the object's center and the mouse's world position on the tile plane
+                    Plane tilePlane = new Plane(Vector3.up, Vector3.zero); // Plane at y=0
+                    float distance;
+                    if (tilePlane.Raycast(ray, out distance))
+                    {
+                        Vector3 mouseWorldPositionOnPlane = ray.GetPoint(distance);
+                        dragOffset = transform.position - mouseWorldPositionOnPlane;
+                    }
                     transform.localScale = originalScale * 0.95f; // Apply a slight shrink effect (reduced from 0.9f)
                 }
             }
@@ -49,19 +56,20 @@ public class DragAndDropSnapper : MonoBehaviour
         if (isDragging && Input.GetMouseButton(0))
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f, LayerMask.GetMask("Ground"))) // Assuming tiles are on a "Ground" layer
+            // Project mouse position onto the tile plane
+            Plane tilePlane = new Plane(Vector3.up, Vector3.zero); // Plane at y=0
+            float distance;
+            if (tilePlane.Raycast(ray, out distance))
             {
-                // Calculate the target position based on mouse hit point and drag offset
-                Vector3 targetWorldPosition = hit.point + dragOffset;
+                Vector3 mouseWorldPositionOnPlane = ray.GetPoint(distance);
+                Vector3 targetWorldPosition = mouseWorldPositionOnPlane + dragOffset;
+
                 // Snap to tile position during drag
                 Vector3 currentSnappedPosition = gridManager.GetNearestTilePosition(targetWorldPosition);
                 float tileTopY = 0.05f; // Half of the tile's scale.y (0.1f / 2)
                 float draggableHalfHeight = transform.localScale.y / 2;
                 transform.position = new Vector3(currentSnappedPosition.x, tileTopY + draggableHalfHeight, currentSnappedPosition.z);
             }
-            // If not hitting ground, the object should stay at its last valid snapped position
-            // No 'else' block needed here, as movement is restricted to the grid.
         }
 
         if (isDragging && Input.GetMouseButtonUp(0))
