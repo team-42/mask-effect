@@ -26,6 +26,8 @@ MonoBehaviour:
   baseDamageType: 0
   resistanceType: 0
   resistanceValue: 0
+  canFly: 1
+  hoverHeight: 1.5
   indicatorHeight: 1
   indicatorRadius: 0.3
   modelRotationOffset: {x: 0, y: 0, z: 0}

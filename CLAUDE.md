@@ -38,12 +38,13 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
   - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
   - [x] Configure distinct mask tint colors (Warrior=red, Rogue=green, Angel=gold) for visual identification.
+  - [x] Replace mask indicator disc with glowing ground ring (custom shader with pulse animation).
   - [x] Implement random mask assignment for both teams in test/auto-play mode.
 - [x] **Essential UI & Feedback:**
   - [x] Design & Implement mask assignment UI (IMGUI side panel with colored mask buttons).
   - [x] Implement LobbyScene with UIToolkit start menu and scene transition to BattleArenaScene.
   - [ ] Design & Implement Basic HUD (Health bars, timer).
-  - [ ] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
+  - [x] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator, **mech death particle effect using EnergyExplosion VFX**).
   - [ ] Implement Game Over UI.
 
 ### Phase 2: Refinement & Polish (Next 12-18 Hours)
@@ -57,6 +58,10 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [ ] Create Placeholder Mask Icons (3 icons).
   - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
   - [ ] Integrate Background Music.
+- [x] **Render Pipeline & Material Compatibility:**
+  - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
+  - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
+  - [x] Ensured all new materials use the `Universal Render Pipeline/Lit` shader.
 - [ ] **AI Tool Integration (Ongoing):**
   - [ ] Utilize AI for small utility scripts.
   - [ ] Utilize AI for placeholder textures/materials.
@@ -77,16 +82,20 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Initial project setup and directory structure.
 - [x] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
 - [x] Basic mask system with 3 masks and simplified L1 abilities.
-- [x] Mask tint colors configured and visible on mech top halves for both teams.
+- [x] Mask tint colors configured; glowing ground ring indicator replaces old head disc (custom MaskRing shader with pulse animation).
 - [x] Essential UI and visual feedback for gameplay.
 - [x] Game loop (round setup, mask assignment, combat, next round) functional.
 - [x] BattleArenaScene: visual grid (20x10, 3 colored zones), drag-and-drop mask assignment via IMGUI side panel, mech repositioning, enemy masks pre-assigned randomly, combat auto-starts when all player masks placed.
-- [x] Player interaction: click mask in left-side panel then click player mech to assign (mech top half updates to mask tint color); drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
+- [x] Player interaction: click mask in left-side panel then click player mech to assign (ground ring appears in mask color); drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
 - [x] 3D mech models replace primitives (Scout, Jet, Tank loaded from Resources/Models/).
 - [x] Prefab system: MechPrefab, TilePrefab, MaskDragProxy, MaskIndicator, ProjectilePrefab with NetworkIdentity for Mirror readiness.
 - [x] LobbyScene with UIToolkit start menu; scene transition to BattleArenaScene works.
 - [x] Mirror networking skeleton integrated (NetworkIdentity on spawnable prefabs, Player + GameController prefabs).
 - [x] Camera adjusted for full battlefield view (position 0/25/-12, 60deg pitch).
+- [x] Jet chassis flies: elevated hover with bobbing animation, direct movement ignoring ground obstacles, projectiles spawn/target at visual height.
+- [x] Death particle effects (EnergyExplosion VFX) on mech death via deathEffectPrefab.
+- [x] URP-compatible materials for tiles, projectiles, and masks (TileMaterial, ProjectileMaterial_URP, MaskMaterial_URP).
+- [x] UnityTechnologies ParticlePack integrated for VFX assets.
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.
 

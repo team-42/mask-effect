@@ -23,7 +23,11 @@
       "mcp__UnityMCP__manage_material",
       "Bash(ls -la \"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Scripts\\\\UI\"\" 2>&1 || echo \"Directory empty or not found \")",
       "Bash(git push:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__UnityMCP__execute_menu_item",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nRemove obsolete BattleScene \\(BattleArenaScene handles full game flow\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "mcp__UnityMCP__manage_script",
+      "Bash(git log:*)"
     ]
   }
 }

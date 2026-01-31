@@ -20,11 +20,14 @@ namespace MaskEffect
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
         [SerializeField] private GameObject maskIndicatorPrefab;
+        [SerializeField] private Material maskRingMaterial;
 
         private IBattleGrid grid;
 
-        // Tag for finding top-half child renderers
+        // Tag for finding top-half child renderers (legacy)
         public const string TOP_HALF_NAME = "TopHalf";
+        // Tag for finding mask ground ring
+        public const string MASK_RING_NAME = "MaskRing";
 
         public void Initialize(IBattleGrid grid)
         {
@@ -105,9 +108,21 @@ namespace MaskEffect
                 // --- 3D Model path ---
                 GameObject body = Instantiate(modelPrefab, go.transform);
                 body.name = "Body";
-                body.transform.localPosition = Vector3.zero;
                 body.transform.localScale = scale;
                 body.transform.localEulerAngles = chassis.modelRotationOffset;
+
+                // Elevate body for flying mechs
+                if (chassis.canFly && chassis.hoverHeight > 0f)
+                {
+                    body.transform.localPosition = new Vector3(0f, chassis.hoverHeight, 0f);
+                    var bob = body.AddComponent<HoverBob>();
+                    bob.amplitude = 0.15f;
+                    bob.frequency = 1.2f;
+                }
+                else
+                {
+                    body.transform.localPosition = Vector3.zero;
+                }
 
                 Renderer[] bodyRenderers = body.GetComponentsInChildren<Renderer>();
                 foreach (var rend in bodyRenderers)
@@ -173,6 +188,7 @@ namespace MaskEffect
 
             // Pass indicator prefab reference so MechController can instantiate it
             controller.maskIndicatorPrefab = maskIndicatorPrefab;
+            controller.maskRingMaterial = maskRingMaterial;
             controller.Initialize(chassis, team, id, grid);
 
             // Set the chassisDataPath SyncVar on the server (or locally in singleplayer)
