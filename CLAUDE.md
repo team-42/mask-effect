@@ -79,7 +79,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Essential UI and visual feedback for gameplay.
 - [x] Game loop (round setup, mask assignment, combat, next round) functional.
 - [x] BattleArenaScene and BattleScene combined: visual grid (20x10, 3 colored zones), drag-and-drop mask assignment via IMGUI side panel, mech repositioning, enemy masks pre-assigned randomly, combat auto-starts when all player masks placed.
-- [x] Player interaction: click mask in panel then click player mech to assign; drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
+- [x] Player interaction: click mask in left-side panel then click player mech to assign (mech top half updates to mask tint color); drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.
 

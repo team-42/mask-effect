@@ -17,6 +17,6 @@ This document outlines the specific scene-related tasks for the 'Mask Effect' pr
 
 - [x] Battle Arena Scene created.
 - [x] Basic lighting and camera setup added to Battle Arena.
-- [x] BattleArenaScene upgraded: BattleSystem GO with SimpleFlatGrid (visual tiles), MechSpawner, BattleManager, MaskAssignmentManager, MaskPanelUI. Camera with PlayerCameraControl.
+- [x] BattleArenaScene upgraded: BattleSystem GO with SimpleFlatGrid (visual tiles), MechSpawner, BattleManager, MaskAssignmentManager, MaskPanelUI (left-side). Camera with PlayerCameraControl. Mask assignment updates mech top-half tint color.
 - [ ] Main Menu Scene created.
 - [ ] Game Over Scene created.

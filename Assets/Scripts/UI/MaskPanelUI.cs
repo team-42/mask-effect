@@ -90,7 +90,7 @@ namespace MaskEffect
             float panelWidth = 210f;
             float slotHeight = 70f;
             float panelHeight = 70f + slots.Count * (slotHeight + 5f);
-            float panelX = Screen.width - panelWidth - 10f;
+            float panelX = 10f;
             float panelY = (Screen.height - panelHeight) * 0.5f;
 
             panelRect = new Rect(panelX, panelY, panelWidth, panelHeight);

@@ -251,7 +251,8 @@ namespace MaskEffect
 
         private void FinishMaskCarry()
         {
-            ClearMechHighlight();
+            // Don't restore old highlight color — EquipMask already set the mask tint
+            highlightedMech = null;
             if (maskDragProxy != null)
                 Destroy(maskDragProxy);
             carriedMask = null;
