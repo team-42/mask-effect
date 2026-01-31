@@ -11,6 +11,7 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [ ] Implement Basic Attack & Damage System (Evasion, Armor reduction, Shield first, Min damage 1).
 - [ ] Implement Health & Death System for Mechs.
 - [ ] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
+- [ ] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
 - [ ] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
 - [ ] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
 - [ ] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).

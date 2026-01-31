@@ -24,6 +24,9 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [ ] Implement Basic Attack & Damage System (Evasion, Armor reduction, Shield first, Min damage 1).
   - [ ] Implement Health & Death System for Mechs.
   - [ ] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
+- [ ] **Network Mode & Randomized AI Opponent:**
+  - [ ] Implement a network mode where players can play against each other (can be independent of core game logic).
+  - [ ] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
 - [ ] **Battle Arena Environment:**
   - [ ] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
   - [ ] Add Basic Lighting & Camera Setup.
