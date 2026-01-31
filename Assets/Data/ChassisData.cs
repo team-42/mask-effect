@@ -18,7 +18,12 @@ namespace MaskEffect
         [Range(0f, 1f)]
         public float evasion = 0.1f;
 
-        [Header("Visuals (Placeholder)")]
+        [Header("Visuals - 3D Model")]
+        public float indicatorHeight = 1.5f;
+        public float indicatorRadius = 0.3f;
+        public Vector3 modelRotationOffset = Vector3.zero;
+
+        [Header("Visuals - Primitive Fallback")]
         public PrimitiveType primitiveShape = PrimitiveType.Cube;
         public Color chassisColor = Color.gray;
         public Vector3 chassisScale = Vector3.one;

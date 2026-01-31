@@ -73,30 +73,73 @@ namespace MaskEffect
 
             Color teamColor = team == Team.Player ? playerTeamColor : enemyTeamColor;
             Vector3 scale = chassis.chassisScale;
-            float halfY = scale.y * 0.5f;
 
-            // Bottom half — team color
-            GameObject bottom = GameObject.CreatePrimitive(chassis.primitiveShape);
-            bottom.name = "BottomHalf";
-            bottom.transform.SetParent(go.transform, false);
-            bottom.transform.localScale = new Vector3(scale.x, halfY, scale.z);
-            bottom.transform.localPosition = new Vector3(0f, halfY * 0.5f, 0f);
-            SetRendererColor(bottom, teamColor);
-            RemoveCollider(bottom);
+            // Try to load 3D model from Resources/Models/ by chassis name
+            GameObject modelPrefab = Resources.Load<GameObject>("Models/" + chassis.chassisName);
 
-            // Top half — team color (unmasked), changed by EquipMask
-            GameObject top = GameObject.CreatePrimitive(chassis.primitiveShape);
-            top.name = TOP_HALF_NAME;
-            top.transform.SetParent(go.transform, false);
-            top.transform.localScale = new Vector3(scale.x, halfY, scale.z);
-            top.transform.localPosition = new Vector3(0f, halfY * 1.5f, 0f);
-            SetRendererColor(top, teamColor);
-            RemoveCollider(top);
+            if (modelPrefab != null)
+            {
+                // --- 3D Model path ---
 
-            // Add interaction collider to root for raycasting
-            BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
-            interactionCollider.center = new Vector3(0f, scale.y * 0.5f, 0f);
-            interactionCollider.size = scale;
+                // Body: instantiate model as child
+                GameObject body = Instantiate(modelPrefab, go.transform);
+                body.name = "Body";
+                body.transform.localPosition = Vector3.zero;
+                body.transform.localScale = scale;
+                body.transform.localEulerAngles = chassis.modelRotationOffset;
+
+                // Color all renderers with team color
+                Renderer[] bodyRenderers = body.GetComponentsInChildren<Renderer>();
+                foreach (var rend in bodyRenderers)
+                    rend.material.color = teamColor;
+
+                // Remove any colliders from the imported model
+                Collider[] modelColliders = body.GetComponentsInChildren<Collider>();
+                foreach (var col in modelColliders)
+                    Destroy(col);
+
+                // Auto-compute collider from rendered model bounds
+                BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
+                if (bodyRenderers.Length > 0)
+                {
+                    Bounds bounds = bodyRenderers[0].bounds;
+                    for (int r = 1; r < bodyRenderers.Length; r++)
+                        bounds.Encapsulate(bodyRenderers[r].bounds);
+                    interactionCollider.center = go.transform.InverseTransformPoint(bounds.center);
+                    interactionCollider.size = bounds.size;
+                }
+                else
+                {
+                    interactionCollider.center = new Vector3(0f, 0.4f, 0f);
+                    interactionCollider.size = new Vector3(0.6f, 0.8f, 0.6f);
+                }
+            }
+            else
+            {
+                // --- Primitive fallback path ---
+                float halfY = scale.y * 0.5f;
+
+                GameObject bottom = GameObject.CreatePrimitive(chassis.primitiveShape);
+                bottom.name = "BottomHalf";
+                bottom.transform.SetParent(go.transform, false);
+                bottom.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+                bottom.transform.localPosition = new Vector3(0f, halfY * 0.5f, 0f);
+                SetRendererColor(bottom, teamColor);
+                RemoveCollider(bottom);
+
+                GameObject top = GameObject.CreatePrimitive(chassis.primitiveShape);
+                top.name = TOP_HALF_NAME;
+                top.transform.SetParent(go.transform, false);
+                top.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+                top.transform.localPosition = new Vector3(0f, halfY * 1.5f, 0f);
+                SetRendererColor(top, teamColor);
+                RemoveCollider(top);
+
+                // Collider sized to primitive scale
+                BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
+                interactionCollider.center = new Vector3(0f, scale.y * 0.5f, 0f);
+                interactionCollider.size = scale;
+            }
 
             // Set mech layer for raycast filtering
             int mechLayer = LayerMask.NameToLayer("Mech");

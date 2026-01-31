@@ -90,14 +90,26 @@ namespace MaskEffect
                 }
             }
 
-            // Apply mask color to top half child
+            // Create or update mask indicator disc
             Transform topHalf = transform.Find(MechSpawner.TOP_HALF_NAME);
-            if (topHalf != null)
+            if (topHalf == null)
             {
-                var renderer = topHalf.GetComponent<Renderer>();
-                if (renderer != null)
-                    renderer.material.color = mask.maskTint;
+                GameObject indicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                indicator.name = MechSpawner.TOP_HALF_NAME;
+                indicator.transform.SetParent(transform, false);
+                indicator.transform.localScale = new Vector3(
+                    chassisData.indicatorRadius * 2f,
+                    0.05f,
+                    chassisData.indicatorRadius * 2f
+                );
+                indicator.transform.localPosition = new Vector3(0f, chassisData.indicatorHeight, 0f);
+                var col = indicator.GetComponent<Collider>();
+                if (col != null) Destroy(col);
+                topHalf = indicator.transform;
             }
+            var topRenderer = topHalf.GetComponent<Renderer>();
+            if (topRenderer != null)
+                topRenderer.material.color = mask.maskTint;
         }
 
         public void RecalculateStats()

@@ -21,6 +21,9 @@ MonoBehaviour:
   range: 4
   moveSpeed: 2.5
   evasion: 0.2
+  indicatorHeight: 1
+  indicatorRadius: 0.3
+  modelRotationOffset: {x: 0, y: 0, z: 0}
   primitiveShape: 0
   chassisColor: {r: 0.9, g: 0.9, b: 0, a: 1}
-  chassisScale: {x: 0.7, y: 0.7, z: 0.7}
+  chassisScale: {x: 0.018, y: 0.018, z: 0.018}
