@@ -21,7 +21,6 @@
   - [x] Identify the minimum viable product (MVP) features that deliver the core experience within the 48-hour timeframe, prioritizing essential mask effects and mech interactions.
 
       > Local test mode with random AI opponent
-      > Auto matchmaking vs. online opponent
       > 1 Level
       > 3 Mechs
       > 3 Masks

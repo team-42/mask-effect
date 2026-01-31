@@ -53,4 +53,4 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Flying Jet movement (direct flight over obstacles, hoverHeight=1.5, HoverBob animation).
 - [x] Projectiles use VisualCenter for correct aim on elevated/flying mechs.
 - [x] Death particle effects integrated (EnergyExplosion VFX).
-- [x] Mech stats and mask effects balanced.
+- [ ] Mech stats and mask effects balanced.
