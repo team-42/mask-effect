@@ -12,11 +12,14 @@ namespace MaskEffect
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
         [SerializeField] private GameObject maskIndicatorPrefab;
+        [SerializeField] private Material maskRingMaterial;
 
         private IBattleGrid grid;
 
-        // Tag for finding top-half child renderers
+        // Tag for finding top-half child renderers (legacy)
         public const string TOP_HALF_NAME = "TopHalf";
+        // Tag for finding mask ground ring
+        public const string MASK_RING_NAME = "MaskRing";
 
         public void Initialize(IBattleGrid grid)
         {
@@ -162,6 +165,7 @@ namespace MaskEffect
 
             // Pass indicator prefab reference so MechController can instantiate it
             controller.maskIndicatorPrefab = maskIndicatorPrefab;
+            controller.maskRingMaterial = maskRingMaterial;
             controller.Initialize(chassis, team, id, grid);
 
             return controller;

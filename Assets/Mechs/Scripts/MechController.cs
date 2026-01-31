@@ -43,6 +43,9 @@ namespace MaskEffect
         // Prefab for mask indicator disc (set by MechSpawner)
         [HideInInspector] public GameObject maskIndicatorPrefab;
 
+        // Material for ground ring indicator (set by MechSpawner)
+        [HideInInspector] public Material maskRingMaterial;
+
         // References set by BattleManager
         private IBattleGrid grid;
         public List<MechController> allMechs; // Made public for TilePathfinder
@@ -96,34 +99,35 @@ namespace MaskEffect
                 }
             }
 
-            // Create or update mask indicator disc
-            Transform topHalf = transform.Find(MechSpawner.TOP_HALF_NAME);
-            if (topHalf == null)
+            // Create or update mask ground ring indicator
+            Transform ring = transform.Find(MechSpawner.MASK_RING_NAME);
+            if (ring == null)
             {
-                GameObject indicator;
-                if (maskIndicatorPrefab != null)
-                {
-                    indicator = Instantiate(maskIndicatorPrefab);
-                }
-                else
-                {
-                    indicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                    var col = indicator.GetComponent<Collider>();
-                    if (col != null) Destroy(col);
-                }
-                indicator.name = MechSpawner.TOP_HALF_NAME;
+                GameObject indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var col = indicator.GetComponent<Collider>();
+                if (col != null) Destroy(col);
+                indicator.name = MechSpawner.MASK_RING_NAME;
                 indicator.transform.SetParent(transform, false);
-                indicator.transform.localScale = new Vector3(
-                    chassisData.indicatorRadius * 2f,
-                    0.05f,
-                    chassisData.indicatorRadius * 2f
-                );
-                indicator.transform.localPosition = new Vector3(0f, chassisData.indicatorHeight, 0f);
-                topHalf = indicator.transform;
+                // Rotate quad to lie flat on the ground
+                indicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                float ringSize = chassisData.indicatorRadius * 7f;
+                indicator.transform.localScale = new Vector3(ringSize, ringSize, 1f);
+                // Position just above ground to avoid z-fighting
+                indicator.transform.localPosition = new Vector3(0f, 0.05f, 0f);
+                ring = indicator.transform;
+
+                // Apply ring material (load from Resources if not assigned)
+                if (maskRingMaterial == null)
+                    maskRingMaterial = Resources.Load<Material>("Materials/MaskRing");
+                var renderer = indicator.GetComponent<Renderer>();
+                if (renderer != null && maskRingMaterial != null)
+                {
+                    renderer.material = new Material(maskRingMaterial);
+                }
             }
-            var topRenderer = topHalf.GetComponent<Renderer>();
-            if (topRenderer != null)
-                topRenderer.material.color = mask.maskTint;
+            var ringRenderer = ring.GetComponent<Renderer>();
+            if (ringRenderer != null)
+                ringRenderer.material.SetColor("_Color", mask.maskTint);
         }
 
         public void RecalculateStats()

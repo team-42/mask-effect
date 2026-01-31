@@ -310,10 +310,12 @@ namespace MaskEffect
             ClearMechHighlight();
 
             highlightedMech = mech;
-            Transform topHalf = mech.transform.Find(MechSpawner.TOP_HALF_NAME);
-            if (topHalf != null)
+
+            // Highlight the body model renderers with a brighter color
+            Transform body = mech.transform.Find("Body");
+            if (body != null)
             {
-                var renderer = topHalf.GetComponent<Renderer>();
+                var renderer = body.GetComponentInChildren<Renderer>();
                 if (renderer != null)
                 {
                     highlightedMechOriginalColor = renderer.material.color;
@@ -326,10 +328,10 @@ namespace MaskEffect
         {
             if (highlightedMech == null) return;
 
-            Transform topHalf = highlightedMech.transform.Find(MechSpawner.TOP_HALF_NAME);
-            if (topHalf != null)
+            Transform body = highlightedMech.transform.Find("Body");
+            if (body != null)
             {
-                var renderer = topHalf.GetComponent<Renderer>();
+                var renderer = body.GetComponentInChildren<Renderer>();
                 if (renderer != null)
                     renderer.material.color = highlightedMechOriginalColor;
             }

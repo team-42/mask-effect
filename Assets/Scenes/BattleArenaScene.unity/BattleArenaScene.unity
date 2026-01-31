@@ -209,6 +209,7 @@ MonoBehaviour:
   enemyTeamColor: {r: 1, g: 0.5, b: 0.1, a: 1}
   mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
   maskIndicatorPrefab: {fileID: 760611183611869202, guid: 52199cf8b32415740bc7d8a446065768, type: 3}
+  maskRingMaterial: {fileID: 0}
 --- !u!114 &1731593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,8 +343,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraControl
   moveSpeed: 5
+  edgePanBorder: 20
+  enableEdgePanning: 1
+  arenaBoundsX: {x: -20, y: 20}
+  arenaBoundsZ: {x: -15, y: 15}
   rotationSpeed: 3
+  minPitch: 10
+  maxPitch: 80
   zoomSpeed: 5
+  minHeight: 5
+  maxHeight: 50
 --- !u!1 &1619255264
 GameObject:
   m_ObjectHideFlags: 0
