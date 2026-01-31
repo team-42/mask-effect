@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &464866881
+--- !u!1 &1731588
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,161 +127,112 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 464866886}
-  - component: {fileID: 464866885}
-  - component: {fileID: 464866884}
-  - component: {fileID: 464866883}
-  - component: {fileID: 464866882}
+  - component: {fileID: 1731594}
+  - component: {fileID: 1731593}
+  - component: {fileID: 1731592}
+  - component: {fileID: 1731591}
+  - component: {fileID: 1731590}
+  - component: {fileID: 1731589}
   m_Layer: 0
-  m_Name: DraggableObject
+  m_Name: BattleSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &464866882
+--- !u!114 &1731589
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464866881}
+  m_GameObject: {fileID: 1731588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e914b6ae50007141bd9f56a0cc056ca, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f9cc29b526e19541b89cfb11e90c0ff, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DragAndDropSnapper
---- !u!23 &464866883
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464866881}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: d8ebbf50485a32f48ad2f01845bc9838, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &464866884
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464866881}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!33 &464866885
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464866881}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &464866886
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464866881}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0.5, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &893337643
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 893337645}
-  - component: {fileID: 893337644}
-  m_Layer: 0
-  m_Name: BattleArenaGrid
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &893337644
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskPanelUI
+  assignmentManager: {fileID: 0}
+--- !u!114 &1731590
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 893337643}
+  m_GameObject: {fileID: 1731588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bdee48f428735a4687e4d64bda6a17e, type: 3}
+  m_Script: {fileID: 11500000, guid: a36f6d6e592dcae4591006cc48b5d177, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileGridManager
-  gridWidth: 5
-  gridHeight: 8
---- !u!4 &893337645
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAssignmentManager
+  grid: {fileID: 0}
+  maskPanel: {fileID: 0}
+--- !u!114 &1731591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83d547ca7db2210409c893c0a9f55eee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.BattleManager
+  roundTimeLimit: 45
+  masksPerSide: 2
+  autoStartCombat: 0
+  spawner: {fileID: 0}
+  grid: {fileID: 0}
+  availableMasks: []
+  currentState: 0
+  roundNumber: 0
+  roundTimer: 0
+  allMechs: []
+  playerMechs: []
+  enemyMechs: []
+--- !u!114 &1731592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05854c9e151562441bbe553415c6d0b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MechSpawner
+  chassisOptions: []
+  playerTeamColor: {r: 0.2, g: 0.4, b: 1, a: 1}
+  enemyTeamColor: {r: 1, g: 0.5, b: 0.1, a: 1}
+--- !u!114 &1731593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c859fb45d6f0b434b9aeba738604af45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.SimpleFlatGrid
+  gridWidth: 20
+  gridHeight: 10
+  tileSize: 1
+  gridOrigin: {x: -10, y: 0, z: -5}
+  generateVisualTiles: 1
+  playerTileColor: {r: 0.3, g: 0.4, b: 0.7, a: 1}
+  enemyTileColor: {r: 0.7, g: 0.35, b: 0.3, a: 1}
+  neutralTileColor: {r: 0.45, g: 0.45, b: 0.45, a: 1}
+--- !u!4 &1731594
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 893337643}
+  m_GameObject: {fileID: 1731588}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -367,8 +318,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399920348}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268346, y: 0, z: 0, w: 0.9238795}
-  m_LocalPosition: {x: 2, y: 10, z: -5}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: 0, y: 18, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -492,5 +443,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 1619255266}
   - {fileID: 1399920350}
-  - {fileID: 893337645}
-  - {fileID: 464866886}
+  - {fileID: 1731594}

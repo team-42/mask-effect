@@ -11,6 +11,7 @@ namespace MaskEffect
         [Header("Config")]
         [SerializeField] private float roundTimeLimit = 45f;
         [SerializeField] private int masksPerSide = 2;
+        [SerializeField] private bool autoStartCombat = true;
 
         [Header("References")]
         [SerializeField] private MechSpawner spawner;
@@ -25,6 +26,14 @@ namespace MaskEffect
         public List<MechController> allMechs = new List<MechController>();
         public List<MechController> playerMechs = new List<MechController>();
         public List<MechController> enemyMechs = new List<MechController>();
+
+        private int playerMasksAssigned;
+
+        // Public accessors
+        public int PlayerMasksAssigned => playerMasksAssigned;
+        public int MasksPerSide => masksPerSide;
+        public MaskData[] AvailableMasks => availableMasks;
+        public SimpleFlatGrid Grid => grid;
 
         // Events
         public event Action<BattleState> OnStateChanged;
@@ -46,8 +55,9 @@ namespace MaskEffect
         {
             spawner.Initialize(grid);
             StartNewRound();
-            // Auto-start combat for testing (skip mask assignment UI)
-            ForceStartCombat();
+
+            if (autoStartCombat)
+                ForceStartCombat();
         }
 
         private void AutoWireReferences()
@@ -62,6 +72,7 @@ namespace MaskEffect
         {
             roundNumber++;
             roundTimer = roundTimeLimit;
+            playerMasksAssigned = 0;
 
             // Clear previous round
             if (allMechs.Count > 0)
@@ -87,6 +98,9 @@ namespace MaskEffect
                 allMechs[i].SetAllMechsList(allMechs);
             }
 
+            // Pre-assign enemy masks randomly
+            AIAssignMasks();
+
             SetState(BattleState.MaskAssignment);
         }
 
@@ -98,11 +112,24 @@ namespace MaskEffect
             mech.EquipMask(mask);
         }
 
+        public void PlayerAssignMask(MechController mech, MaskData mask)
+        {
+            if (currentState != BattleState.MaskAssignment) return;
+            if (mech == null || mask == null) return;
+            if (mech.team != Team.Player) return;
+            if (mech.equippedMask != null) return;
+
+            AssignMaskToMech(mech, mask);
+            playerMasksAssigned++;
+
+            if (playerMasksAssigned >= masksPerSide)
+            {
+                StartCombat();
+            }
+        }
+
         public void OnMaskAssignmentComplete()
         {
-            // AI assigns masks to enemy team
-            AIAssignMasks();
-
             StartCombat();
         }
 

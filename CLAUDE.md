@@ -38,8 +38,9 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
   - [x] Configure distinct mask tint colors (Warrior=red, Rogue=green, Angel=gold) for visual identification.
   - [x] Implement random mask assignment for both teams in test/auto-play mode.
-- [ ] **Essential UI & Feedback:**
-  - [ ] Design & Implement Basic HUD (Health bars, timer, mask assignment UI).
+- [x] **Essential UI & Feedback:**
+  - [x] Design & Implement mask assignment UI (IMGUI side panel with colored mask buttons).
+  - [ ] Design & Implement Basic HUD (Health bars, timer).
   - [ ] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
   - [ ] Implement Simple Main Menu & Game Over UI.
 
@@ -48,7 +49,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [ ] **Gameplay Refinement:**
   - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
-  - [ ] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
+  - [x] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 - [ ] **Visual & Audio Polish (MVP Level):**
   - [ ] Create Placeholder Mech Models/Sprites (3 chassis variants).
   - [ ] Create Placeholder Mask Icons (3 icons).
@@ -77,6 +78,8 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Mask tint colors configured and visible on mech top halves for both teams.
 - [x] Essential UI and visual feedback for gameplay.
 - [x] Game loop (round setup, mask assignment, combat, next round) functional.
+- [x] BattleArenaScene and BattleScene combined: visual grid (20x10, 3 colored zones), drag-and-drop mask assignment via IMGUI side panel, mech repositioning, enemy masks pre-assigned randomly, combat auto-starts when all player masks placed.
+- [x] Player interaction: click mask in panel then click player mech to assign; drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.
 

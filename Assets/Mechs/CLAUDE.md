@@ -12,6 +12,8 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Implement Health & Death System for mechs.
 - [x] Integrate Mech Stats (defined in Data) into mech prefabs/scripts.
 - [x] Implement two-tone mech visuals (bottom half=team color, top half=mask color via EquipMask).
+- [x] Add BoxCollider to root mech GameObject for raycast-based interaction (drag & mask assignment).
+- [x] Set mech layer to "Mech" for layer-filtered raycasting.
 
 ## CURRENT_STATUS.md
 
@@ -21,3 +23,4 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Mech health and death system implemented.
 - [x] Mech stats integrated.
 - [x] Two-tone mech visuals working (bottom=team color, top=mask tint color).
+- [x] Mech root colliders and "Mech" layer added for click/drag interaction.

@@ -17,8 +17,11 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
 - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
 - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
+- [x] Implement MaskAssignmentManager (mech dragging on player-zone tiles + mask carry-and-drop onto mechs).
+- [x] Implement MaskPanelUI (IMGUI side panel with colored mask buttons, counter, instructions).
+- [x] BattleManager flow: enemy masks pre-assigned at round start, player assigns via UI, combat auto-starts when all masks placed.
+- [x] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 - [ ] Balance Mech Stats and Mask Effects for engaging combat.
-- [ ] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 
 ## CURRENT_STATUS.md
 
@@ -32,5 +35,8 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Status effects implemented.
 - [x] Basic targeting overrides implemented.
 - [x] Remaining L1 Mask Abilities implemented.
+- [x] MaskAssignmentManager: mech dragging + mask carry-and-drop interaction.
+- [x] MaskPanelUI: IMGUI side panel with colored mask buttons.
+- [x] BattleManager: autoStartCombat toggle, PlayerAssignMask(), enemy masks pre-assigned at round start.
+- [x] Mask selection integrated into player flow.
 - [ ] Mech stats and mask effects balanced.
-- [ ] Mask selection integrated into player flow.

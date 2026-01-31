@@ -47,4 +47,11 @@ namespace MaskEffect
         Combat,
         RoundEnd
     }
+
+    public enum TileZone
+    {
+        Player,
+        Enemy,
+        Neutral
+    }
 }

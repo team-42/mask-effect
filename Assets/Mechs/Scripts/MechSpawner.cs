@@ -93,6 +93,16 @@ namespace MaskEffect
             SetRendererColor(top, teamColor);
             RemoveCollider(top);
 
+            // Add interaction collider to root for raycasting
+            BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
+            interactionCollider.center = new Vector3(0f, scale.y * 0.5f, 0f);
+            interactionCollider.size = scale;
+
+            // Set mech layer for raycast filtering
+            int mechLayer = LayerMask.NameToLayer("Mech");
+            if (mechLayer >= 0)
+                go.layer = mechLayer;
+
             // Add components to root
             var statusHandler = go.AddComponent<StatusEffectHandler>();
             var movement = go.AddComponent<MechMovement>();

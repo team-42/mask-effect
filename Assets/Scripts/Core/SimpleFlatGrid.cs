@@ -10,10 +10,98 @@ namespace MaskEffect
         [SerializeField] private float tileSize = 1f;
         [SerializeField] private Vector3 gridOrigin = new Vector3(-10f, 0f, -5f);
 
+        [Header("Visual Tiles")]
+        [SerializeField] private bool generateVisualTiles = false;
+        [SerializeField] private Color playerTileColor = new Color(0.3f, 0.4f, 0.7f);
+        [SerializeField] private Color enemyTileColor = new Color(0.7f, 0.35f, 0.3f);
+        [SerializeField] private Color neutralTileColor = new Color(0.45f, 0.45f, 0.45f);
+
         private Dictionary<int, MechController> occupants = new Dictionary<int, MechController>();
+        private GameObject[] tileVisuals;
 
         public int GridWidth => gridWidth;
         public int GridHeight => gridHeight;
+        public float TileSize => tileSize;
+        public Vector3 GridOrigin => gridOrigin;
+
+        private void Awake()
+        {
+            if (generateVisualTiles)
+                GenerateVisualTiles();
+        }
+
+        private void GenerateVisualTiles()
+        {
+            tileVisuals = new GameObject[gridWidth * gridHeight];
+            GameObject tilesParent = new GameObject("Tiles");
+            tilesParent.transform.SetParent(transform);
+
+            int groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer == -1)
+                Debug.LogWarning("Layer 'Ground' not defined. Add it in Edit > Project Settings > Tags and Layers.");
+
+            int playerEndX = gridWidth / 4;
+            int enemyStartX = gridWidth - gridWidth / 4;
+
+            for (int z = 0; z < gridHeight; z++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    int idx = ToIndex(x, z);
+                    Vector3 worldPos = GetWorldPosition(idx);
+
+                    GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    tile.name = $"Tile_{x}_{z}";
+                    tile.transform.SetParent(tilesParent.transform);
+                    tile.transform.position = new Vector3(worldPos.x, -0.05f, worldPos.z);
+                    tile.transform.localScale = new Vector3(tileSize * 0.95f, 0.1f, tileSize * 0.95f);
+
+                    if (groundLayer >= 0)
+                        tile.layer = groundLayer;
+
+                    Color tileColor;
+                    if (x < playerEndX)
+                        tileColor = playerTileColor;
+                    else if (x >= enemyStartX)
+                        tileColor = enemyTileColor;
+                    else
+                        tileColor = neutralTileColor;
+
+                    var renderer = tile.GetComponent<Renderer>();
+                    if (renderer != null)
+                        renderer.material.color = tileColor;
+
+                    tileVisuals[idx] = tile;
+                }
+            }
+        }
+
+        public GameObject GetTileVisual(int tileIndex)
+        {
+            if (tileVisuals == null || tileIndex < 0 || tileIndex >= tileVisuals.Length)
+                return null;
+            return tileVisuals[tileIndex];
+        }
+
+        public TileZone GetTileZone(int tileIndex)
+        {
+            var (x, _) = FromIndex(tileIndex);
+            if (x < gridWidth / 4)
+                return TileZone.Player;
+            if (x >= gridWidth - gridWidth / 4)
+                return TileZone.Enemy;
+            return TileZone.Neutral;
+        }
+
+        public int GetTileX(int tileIndex)
+        {
+            return FromIndex(tileIndex).x;
+        }
+
+        public int GetTileZ(int tileIndex)
+        {
+            return FromIndex(tileIndex).z;
+        }
 
         private int ToIndex(int x, int z)
         {
