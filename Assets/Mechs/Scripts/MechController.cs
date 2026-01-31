@@ -203,19 +203,23 @@ namespace MaskEffect
 
         public void Initialize(ChassisData chassis, Team team, int id, IBattleGrid grid)
         {
-            // Set SyncVars on the server (or locally in singleplayer)
+            // Set team and identity BEFORE chassisDataPath, because the
+            // SyncVar hook for chassisDataPath calls SetupVisuals() which
+            // reads team to determine the color.
+            this.chassisData = chassis;
+            this.team = team;
+            this.mechId = id;
+            this.grid = grid;
+            this.isAlive = true;
+            this.equippedMask = null;
+            this.activeAbility = null;
+
+            // Set SyncVars after team is set so hooks see correct team
             if (NetworkHelper.IsServerOrOffline)
             {
                 this.chassisDataPath = $"Data/Chassis/{chassis.name}";
                 this.equippedMaskPath = "";
             }
-            this.chassisData = chassis; // Local reference for server
-            this.team = team;
-            this.mechId = id;
-            this.grid = grid; // This is a local reference, not networked
-            this.isAlive = true;
-            this.equippedMask = null; // Local reference for server
-            this.activeAbility = null;
 
             statusHandler = GetComponent<StatusEffectHandler>();
             if (statusHandler == null)
