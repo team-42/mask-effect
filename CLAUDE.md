@@ -27,12 +27,12 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [ ] **Network Mode & Randomized AI Opponent:**
   - [ ] Implement a network mode where players can play against each other (can be independent of core game logic).
   - [x] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
-- [ ] **Battle Arena Environment:**
-  - [ ] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
+- [x] **Battle Arena Environment:**
+  - [x] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
   - [x] Add Basic Lighting & Camera Setup.
 - [x] **Core Mask System (Initial Implementation):**
   - [x] Define Mask Data Structure (Scriptable Object: Name, Effect Type, Ability details).
-  - [ ] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
+  - [x] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
   - [x] Create 3 Placeholder Masks & Effects (Warrior, Rogue, Angel - simplified L1 abilities).
   - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
   - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
@@ -75,7 +75,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
 - [x] Basic mask system with 3 masks and simplified L1 abilities.
 - [x] Mask tint colors configured and visible on mech top halves for both teams.
-- [ ] Essential UI and visual feedback for gameplay.
+- [x] Essential UI and visual feedback for gameplay.
 - [x] Game loop (round setup, mask assignment, combat, next round) functional.
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.

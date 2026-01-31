@@ -13,7 +13,7 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
 - [x] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
 - [x] Implement random mask assignment for player team in test/auto-play mode (ForceStartCombat).
-- [ ] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
+- [x] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
 - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
 - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
 - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
@@ -28,7 +28,7 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Health and death system implemented.
 - [x] Win/loss condition implemented.
 - [x] Random mask assignment for both teams in test mode implemented.
-- [ ] Basic mask application logic (drag & drop UI) implemented.
+- [x] Basic mask application logic (drag & drop) implemented.
 - [x] Status effects implemented.
 - [x] Basic targeting overrides implemented.
 - [x] Remaining L1 Mask Abilities implemented.

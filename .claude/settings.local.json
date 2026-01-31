@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell.exe -Command 'claude mcp add --transport http UnityMCP http://localhost:8080/mcp')",
+      "Bash(powershell.exe -Command 'Get-Command claude -ErrorAction SilentlyContinue | Select-Object Source; where.exe claude 2>&1; npm list -g @anthropic-ai/claude-code 2>&1')",
+      "mcp__UnityMCP__create_script",
+      "mcp__UnityMCP__refresh_unity",
+      "mcp__UnityMCP__read_console",
+      "mcp__UnityMCP__batch_execute",
+      "mcp__UnityMCP__manage_asset",
+      "mcp__UnityMCP__manage_scriptable_object",
+      "mcp__UnityMCP__manage_scene",
+      "mcp__UnityMCP__manage_gameobject",
+      "mcp__UnityMCP__manage_components",
+      "mcp__UnityMCP__find_gameobjects",
+      "Bash(xcopy \"Assets\\\\Data\\\\Chassis\\\\*\" \"Assets\\\\Resources\\\\Data\\\\Chassis\"\" /Y && xcopy \"AssetsDataMasks*\" \"AssetsResourcesDataMasks\"\" /Y)",
+      "Bash(xcopy \"Assets\\\\Data\\\\Abilities\\\\*\" \"Assets\\\\Resources\\\\Data\\\\Abilities\"\" /Y)",
+      "mcp__UnityMCP__manage_editor",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate CLAUDE.md files with completed Phase 1 task status\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)",
+      "mcp__UnityMCP__manage_shader",
+      "mcp__UnityMCP__manage_material",
+      "Bash(ls -la \"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Scripts\\\\UI\"\" 2>&1 || echo \"Directory empty or not found \")",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}
