@@ -9,6 +9,10 @@ namespace MaskEffect
         [SerializeField] private Color playerTeamColor = new Color(0.2f, 0.4f, 1f);
         [SerializeField] private Color enemyTeamColor = new Color(1f, 0.5f, 0.1f);
 
+        [Header("Spawn Config")]
+        [SerializeField] private int minMechCount = 5;
+        [SerializeField] private int maxMechCount = 10;
+
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
         [SerializeField] private GameObject maskIndicatorPrefab;
@@ -29,7 +33,7 @@ namespace MaskEffect
         {
             MechIdProvider.Reset();
 
-            int mechCount = Random.Range(5, 11);
+            int mechCount = Random.Range(minMechCount, maxMechCount + 1);
 
             // Generate random chassis lineup (shared by both sides)
             ChassisData[] lineup = new ChassisData[mechCount];

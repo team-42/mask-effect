@@ -437,6 +437,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUIController
   battleArenaSceneName: BattleArenaScene
+  multiplayerSceneName: BattleArenaMultiplayer
 --- !u!114 &1003995663
 MonoBehaviour:
   m_ObjectHideFlags: 0

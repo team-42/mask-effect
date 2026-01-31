@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 public class LobbyUIController : MonoBehaviour
 {
     public string battleArenaSceneName = "BattleArenaScene";
+    public string multiplayerSceneName = "BattleArenaMultiplayer";
 
     void OnEnable()
     {
@@ -16,16 +17,14 @@ public class LobbyUIController : MonoBehaviour
         }
 
         var root = uiDocument.rootVisualElement;
-        var startGameButton = root.Q<Button>("startGameButton");
 
+        var startGameButton = root.Q<Button>("startGameButton");
         if (startGameButton != null)
-        {
             startGameButton.clicked += LoadBattleArenaScene;
-        }
-        else
-        {
-            Debug.LogError("Start Game Button not found in UXML.");
-        }
+
+        var multiplayerButton = root.Q<Button>("multiplayerButton");
+        if (multiplayerButton != null)
+            multiplayerButton.clicked += LoadMultiplayerScene;
     }
 
     void OnDisable()
@@ -38,13 +37,20 @@ public class LobbyUIController : MonoBehaviour
 
         var startGameButton = root.Q<Button>("startGameButton");
         if (startGameButton != null)
-        {
             startGameButton.clicked -= LoadBattleArenaScene;
-        }
+
+        var multiplayerButton = root.Q<Button>("multiplayerButton");
+        if (multiplayerButton != null)
+            multiplayerButton.clicked -= LoadMultiplayerScene;
     }
 
     void LoadBattleArenaScene()
     {
         SceneManager.LoadScene(battleArenaSceneName);
+    }
+
+    void LoadMultiplayerScene()
+    {
+        SceneManager.LoadScene(multiplayerSceneName);
     }
 }

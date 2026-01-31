@@ -131,8 +131,6 @@ GameObject:
   - component: {fileID: 1731593}
   - component: {fileID: 1731592}
   - component: {fileID: 1731591}
-  - component: {fileID: 1731590}
-  - component: {fileID: 1731589}
   m_Layer: 0
   m_Name: BattleSystem
   m_TagString: Untagged
@@ -140,34 +138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1731589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1731588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f9cc29b526e19541b89cfb11e90c0ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskPanelUI
-  assignmentManager: {fileID: 0}
---- !u!114 &1731590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1731588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a36f6d6e592dcae4591006cc48b5d177, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAssignmentManager
-  grid: {fileID: 0}
-  maskPanel: {fileID: 0}
-  maskDragProxyPrefab: {fileID: 5956512867539563218, guid: 64ab51cda4a5e8c4bab071e1abe1c127, type: 3}
 --- !u!114 &1731591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,8 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.BattleManager
   roundTimeLimit: 45
-  masksPerSide: 2
-  autoStartCombat: 0
+  masksPerSide: 0
+  autoStartCombat: 1
   spawner: {fileID: 0}
   grid: {fileID: 0}
   availableMasks: []
@@ -204,11 +174,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05854c9e151562441bbe553415c6d0b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MechSpawner
-  chassisOptions: []
+  chassisOptions:
+  - {fileID: 11400000, guid: 2ca6490dc0f370345a4dc33b2532cc13, type: 2}
   playerTeamColor: {r: 0.2, g: 0.4, b: 1, a: 1}
   enemyTeamColor: {r: 1, g: 0.5, b: 0.1, a: 1}
-  minMechCount: 5
-  maxMechCount: 10
+  minMechCount: 1
+  maxMechCount: 1
   mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
   maskIndicatorPrefab: {fileID: 760611183611869202, guid: 52199cf8b32415740bc7d8a446065768, type: 3}
 --- !u!114 &1731593
