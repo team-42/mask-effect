@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror; // Add Mirror namespace
 
 namespace MaskEffect
 {
     public class MechSpawner : MonoBehaviour
     {
         [SerializeField] private ChassisData[] chassisOptions;
-        [SerializeField] private Color playerTeamColor = new Color(0.2f, 0.4f, 1f);
-        [SerializeField] private Color enemyTeamColor = new Color(1f, 0.5f, 0.1f);
+        public static Color PlayerTeamColor { get; private set; } = new Color(0.2f, 0.4f, 1f);
+        public static Color EnemyTeamColor { get; private set; } = new Color(1f, 0.5f, 0.1f);
+
+        [SerializeField] private Color _playerTeamColor = new Color(0.2f, 0.4f, 1f); // For Inspector assignment
+        [SerializeField] private Color _enemyTeamColor = new Color(1f, 0.5f, 0.1f); // For Inspector assignment
 
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
@@ -23,6 +27,10 @@ namespace MaskEffect
             this.grid = grid;
             if (chassisOptions == null || chassisOptions.Length == 0)
                 chassisOptions = Resources.LoadAll<ChassisData>("Data/Chassis");
+
+            // Set static colors from inspector fields
+            PlayerTeamColor = _playerTeamColor;
+            EnemyTeamColor = _enemyTeamColor;
         }
 
         public (List<MechController> playerMechs, List<MechController> enemyMechs) SpawnRound()
@@ -72,13 +80,13 @@ namespace MaskEffect
         private MechController CreateMech(ChassisData chassis, Team team, Vector3 position, int id)
         {
             // Instantiate from prefab (has MechController, MechMovement, StatusEffectHandler, BoxCollider)
-            GameObject go = mechPrefab != null
-                ? Instantiate(mechPrefab)
-                : new GameObject($"{team}_{chassis.chassisName}_{id}");
+            GameObject go = Instantiate(mechPrefab, position, Quaternion.identity);
             go.name = $"{team}_{chassis.chassisName}_{id}";
-            go.transform.position = position;
+            
+            // NetworkServer.Spawn handles setting position and rotation on clients
+            NetworkServer.Spawn(go);
 
-            Color teamColor = team == Team.Player ? playerTeamColor : enemyTeamColor;
+            Color teamColor = team == Team.Player ? MechSpawner.PlayerTeamColor : MechSpawner.EnemyTeamColor;
             Vector3 scale = chassis.chassisScale;
 
             // Get or add BoxCollider (pre-attached on prefab)
@@ -164,6 +172,12 @@ namespace MaskEffect
             controller.maskIndicatorPrefab = maskIndicatorPrefab;
             controller.Initialize(chassis, team, id, grid);
 
+            // Set the chassisDataPath SyncVar on the server, which will trigger SetupVisuals on clients
+            if (controller.isServer)
+            {
+                controller.chassisDataPath = $"Data/Chassis/{chassis.name}";
+            }
+
             return controller;
         }
 
@@ -195,7 +209,13 @@ namespace MaskEffect
             for (int i = 0; i < allMechs.Count; i++)
             {
                 if (allMechs[i] != null)
-                    Destroy(allMechs[i].gameObject);
+                {
+                    // Only destroy on server, clients will receive NetworkDestroy message
+                    if (allMechs[i].isServer)
+                    {
+                        NetworkServer.Destroy(allMechs[i].gameObject);
+                    }
+                }
             }
         }
     }
