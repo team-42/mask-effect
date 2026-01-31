@@ -18,6 +18,10 @@ namespace MaskEffect
         [Range(0f, 1f)]
         public float evasion = 0.1f;
 
+        [Header("Combat Type")]
+        public bool isRanged = false;
+        public GameObject projectilePrefab;
+
         [Header("Damage & Resistance")]
         public DamageType baseDamageType = DamageType.Physical;
         public ResistanceType resistanceType = ResistanceType.Physical;

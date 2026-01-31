@@ -218,7 +218,19 @@ namespace MaskEffect
             if (dir != Vector3.zero)
                 transform.forward = dir;
 
-            currentTarget.TakeDamage(attackDamage, this);
+            if (chassisData.isRanged && chassisData.projectilePrefab != null)
+            {
+                GameObject projectileGO = Instantiate(chassisData.projectilePrefab, transform.position, Quaternion.identity);
+                Projectile projectile = projectileGO.GetComponent<Projectile>();
+                if (projectile != null)
+                {
+                    projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
+                }
+            }
+            else
+            {
+                currentTarget.TakeDamage(attackDamage, this);
+            }
 
             if (activeAbility != null)
                 activeAbility.OnAttackLanded(currentTarget, attackDamage);

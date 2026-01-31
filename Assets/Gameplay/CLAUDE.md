@@ -22,9 +22,10 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] BattleManager flow: enemy masks pre-assigned at round start, player assigns via UI, combat auto-starts when all masks placed.
 - [x] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 - [ ] Balance Mech Stats and Mask Effects for engaging combat.
-- [ ] Implement advanced pathfinding for Mechs using A* algorithm.
-- [ ] Integrate collision boxes and pathing logic for Mechs.
-- [ ] Implement damage types and resistances for Mechs and Masks.
+- [x] Implement advanced pathfinding for Mechs using A* algorithm.
+- [x] Integrate collision boxes and pathing logic for Mechs.
+- [x] Implement damage types and resistances for Mechs and Masks.
+- [x] Implement ranged combat for Jet mechs using projectiles.
 
 ## CURRENT_STATUS.md
 
