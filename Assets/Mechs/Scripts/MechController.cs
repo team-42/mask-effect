@@ -9,12 +9,10 @@ namespace MaskEffect
         [Header("Identity")]
         [SyncVar] public int mechId;
         [SyncVar] public Team team;
-        // ChassisData and MaskData are complex ScriptableObjects,
-        // they should be synchronized by reference (e.g., asset path or ID)
-        // and loaded on clients, or their relevant properties can be SyncVar'd.
-        // For now, assuming they are loaded independently on clients.
-        public ChassisData chassisData;
-        public MaskData equippedMask;
+        [SyncVar(hook = nameof(OnChassisDataPathChanged))] public string chassisDataPath;
+        [SyncVar(hook = nameof(OnEquippedMaskPathChanged))] public string equippedMaskPath;
+        public ChassisData chassisData; // Loaded on client via hook
+        public MaskData equippedMask; // Loaded on client via hook
 
         [Header("Runtime Stats")]
         [SyncVar] public int maxHP;
@@ -64,7 +62,28 @@ namespace MaskEffect
         public override void OnStartClient()
         {
             base.OnStartClient();
-            // Hook up SyncVar callbacks if needed, or resolve references
+            // Ensure visuals are set up when the client spawns the mech
+            SetupVisuals();
+        }
+
+        // Callback for chassisDataPath SyncVar
+        public void OnChassisDataPathChanged(string oldPath, string newPath)
+        {
+            if (isClient && !string.IsNullOrEmpty(newPath))
+            {
+                chassisData = Resources.Load<ChassisData>(newPath);
+                SetupVisuals(); // Update visuals when chassis data changes
+            }
+        }
+
+        // Callback for equippedMaskPath SyncVar
+        public void OnEquippedMaskPathChanged(string oldPath, string newPath)
+        {
+            if (isClient && !string.IsNullOrEmpty(newPath))
+            {
+                equippedMask = Resources.Load<MaskData>(newPath);
+                SetupVisuals(); // Update visuals when mask data changes
+            }
         }
 
         // Callback for currentTargetNetId SyncVar
@@ -83,15 +102,109 @@ namespace MaskEffect
             }
         }
 
+        // Method to set up or update mech visuals based on chassisData and equippedMask
+        private void SetupVisuals()
+        {
+            if (chassisData == null) return;
+
+            // Clear existing visual children to prevent duplicates
+            foreach (Transform child in transform)
+            {
+                if (child.name == "Body" || child.name == "BottomHalf" || child.name == MechSpawner.TOP_HALF_NAME)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+
+            Color teamColor = team == Team.Player ? MechSpawner.PlayerTeamColor : MechSpawner.EnemyTeamColor;
+            Vector3 scale = chassisData.chassisScale;
+
+            // Try to load 3D model from Resources/Models/ by chassis name
+            GameObject modelPrefab = Resources.Load<GameObject>("Models/" + chassisData.chassisName);
+
+            if (modelPrefab != null)
+            {
+                // --- 3D Model path ---
+                GameObject body = Instantiate(modelPrefab, transform);
+                body.name = "Body";
+                body.transform.localPosition = Vector3.zero;
+                body.transform.localScale = scale;
+                body.transform.localEulerAngles = chassisData.modelRotationOffset;
+
+                Renderer[] bodyRenderers = body.GetComponentsInChildren<Renderer>();
+                foreach (var rend in bodyRenderers)
+                    rend.material.color = teamColor;
+
+                // If a mask is equipped, apply its tint to the top half
+                if (equippedMask != null)
+                {
+                    Transform topHalf = body.transform.Find(MechSpawner.TOP_HALF_NAME);
+                    if (topHalf != null)
+                    {
+                        Renderer topRenderer = topHalf.GetComponent<Renderer>();
+                        if (topRenderer != null)
+                            topRenderer.material.color = equippedMask.maskTint;
+                    }
+                }
+            }
+            else
+            {
+                // --- Primitive fallback path ---
+                float halfY = scale.y * 0.5f;
+
+                GameObject bottom = GameObject.CreatePrimitive(chassisData.primitiveShape);
+                bottom.name = "BottomHalf";
+                bottom.transform.SetParent(transform, false);
+                bottom.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+                bottom.transform.localPosition = new Vector3(0f, halfY * 0.5f, 0f);
+                SetRendererColor(bottom, teamColor);
+                RemoveCollider(bottom);
+
+                GameObject top = GameObject.CreatePrimitive(chassisData.primitiveShape);
+                top.name = MechSpawner.TOP_HALF_NAME;
+                top.transform.SetParent(transform, false);
+                top.transform.localScale = new Vector3(scale.x, halfY, scale.z);
+                top.transform.localPosition = new Vector3(0f, halfY * 1.5f, 0f);
+                SetRendererColor(top, teamColor);
+                RemoveCollider(top);
+
+                // Apply mask tint if equipped
+                if (equippedMask != null)
+                {
+                    SetRendererColor(top, equippedMask.maskTint);
+                }
+            }
+        }
+
+        // Helper methods for SetupVisuals (copied from MechSpawner)
+        private void SetRendererColor(GameObject obj, Color color)
+        {
+            var renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.material.color = color;
+        }
+
+        private void RemoveCollider(GameObject obj)
+        {
+            var collider = obj.GetComponent<Collider>();
+            if (collider != null)
+                Destroy(collider);
+        }
+
         public void Initialize(ChassisData chassis, Team team, int id, IBattleGrid grid)
         {
-            // These are SyncVars, set them directly
-            this.chassisData = chassis; // This will need to be handled differently for networked objects
+            // Set SyncVars on the server
+            if (isServer)
+            {
+                this.chassisDataPath = $"Data/Chassis/{chassis.name}"; // Assuming path format
+                this.equippedMaskPath = ""; // No mask equipped initially
+            }
+            this.chassisData = chassis; // Local reference for server
             this.team = team;
             this.mechId = id;
             this.grid = grid; // This is a local reference, not networked
             this.isAlive = true;
-            this.equippedMask = null; // This will need to be handled differently for networked objects
+            this.equippedMask = null; // Local reference for server
             this.activeAbility = null;
 
             statusHandler = GetComponent<StatusEffectHandler>();
@@ -116,7 +229,11 @@ namespace MaskEffect
 
         public void EquipMask(MaskData mask)
         {
-            equippedMask = mask;
+            if (isServer)
+            {
+                this.equippedMaskPath = $"Data/Masks/{mask.name}"; // Assuming path format
+            }
+            equippedMask = mask; // Local reference for server
             targetingMode = mask.defaultTargetingMode;
             RecalculateStats();
             currentHP = maxHP; // reset HP with new max
@@ -159,6 +276,12 @@ namespace MaskEffect
             var topRenderer = topHalf.GetComponent<Renderer>();
             if (topRenderer != null)
                 topRenderer.material.color = mask.maskTint;
+            
+            // Update visuals on clients via SyncVar hook
+            if (isServer)
+            {
+                equippedMaskPath = $"Data/Masks/{mask.name}";
+            }
         }
 
         public void RecalculateStats()
