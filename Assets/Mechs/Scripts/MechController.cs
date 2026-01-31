@@ -233,6 +233,8 @@ namespace MaskEffect
         private void TryAttack()
         {
             if (currentTarget == null || !currentTarget.isAlive) return;
+            // Prevent friendly fire – never deal damage to same-team targets
+            if (currentTarget.team == team) return;
 
             attackCooldown = attackInterval;
 

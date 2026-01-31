@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskData
   maskName: Angel
   maskType: 3
-  defaultTargetingMode: 5
+  defaultTargetingMode: 0
   bonusHP: 30
   bonusArmor: 10
   bonusAttackDamage: -2
