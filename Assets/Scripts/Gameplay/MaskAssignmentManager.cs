@@ -6,6 +6,7 @@ namespace MaskEffect
     {
         [SerializeField] private SimpleFlatGrid grid;
         [SerializeField] private MaskPanelUI maskPanel;
+        [SerializeField] private GameObject maskDragProxyPrefab;
 
         private Camera mainCamera;
         private LayerMask mechLayerMask;
@@ -76,17 +77,22 @@ namespace MaskEffect
             carriedSlotIndex = slotIndex;
             currentMode = DragMode.CarryingMask;
 
-            // Create a small colored cube as drag proxy
-            maskDragProxy = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            // Create drag proxy from prefab
+            if (maskDragProxyPrefab != null)
+            {
+                maskDragProxy = Instantiate(maskDragProxyPrefab);
+            }
+            else
+            {
+                maskDragProxy = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                maskDragProxy.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                var col = maskDragProxy.GetComponent<Collider>();
+                if (col != null) col.enabled = false;
+            }
             maskDragProxy.name = "MaskDragProxy";
-            maskDragProxy.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             var proxyRenderer = maskDragProxy.GetComponent<Renderer>();
             if (proxyRenderer != null)
                 proxyRenderer.material.color = mask.maskTint;
-
-            // Disable collider so it doesn't interfere with raycasts
-            var col = maskDragProxy.GetComponent<Collider>();
-            if (col != null) col.enabled = false;
         }
 
         private void HandleIdleInput()

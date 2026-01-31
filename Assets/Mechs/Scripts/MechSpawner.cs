@@ -9,6 +9,10 @@ namespace MaskEffect
         [SerializeField] private Color playerTeamColor = new Color(0.2f, 0.4f, 1f);
         [SerializeField] private Color enemyTeamColor = new Color(1f, 0.5f, 0.1f);
 
+        [Header("Prefabs")]
+        [SerializeField] private GameObject mechPrefab;
+        [SerializeField] private GameObject maskIndicatorPrefab;
+
         private IBattleGrid grid;
 
         // Tag for finding top-half child renderers
@@ -67,12 +71,20 @@ namespace MaskEffect
 
         private MechController CreateMech(ChassisData chassis, Team team, Vector3 position, int id)
         {
-            // Root object (empty parent)
-            GameObject go = new GameObject($"{team}_{chassis.chassisName}_{id}");
+            // Instantiate from prefab (has MechController, MechMovement, StatusEffectHandler, BoxCollider)
+            GameObject go = mechPrefab != null
+                ? Instantiate(mechPrefab)
+                : new GameObject($"{team}_{chassis.chassisName}_{id}");
+            go.name = $"{team}_{chassis.chassisName}_{id}";
             go.transform.position = position;
 
             Color teamColor = team == Team.Player ? playerTeamColor : enemyTeamColor;
             Vector3 scale = chassis.chassisScale;
+
+            // Get or add BoxCollider (pre-attached on prefab)
+            BoxCollider interactionCollider = go.GetComponent<BoxCollider>();
+            if (interactionCollider == null)
+                interactionCollider = go.AddComponent<BoxCollider>();
 
             // Try to load 3D model from Resources/Models/ by chassis name
             GameObject modelPrefab = Resources.Load<GameObject>("Models/" + chassis.chassisName);
@@ -80,26 +92,21 @@ namespace MaskEffect
             if (modelPrefab != null)
             {
                 // --- 3D Model path ---
-
-                // Body: instantiate model as child
                 GameObject body = Instantiate(modelPrefab, go.transform);
                 body.name = "Body";
                 body.transform.localPosition = Vector3.zero;
                 body.transform.localScale = scale;
                 body.transform.localEulerAngles = chassis.modelRotationOffset;
 
-                // Color all renderers with team color
                 Renderer[] bodyRenderers = body.GetComponentsInChildren<Renderer>();
                 foreach (var rend in bodyRenderers)
                     rend.material.color = teamColor;
 
-                // Remove any colliders from the imported model
                 Collider[] modelColliders = body.GetComponentsInChildren<Collider>();
                 foreach (var col in modelColliders)
                     Destroy(col);
 
                 // Auto-compute collider from rendered model bounds
-                BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
                 if (bodyRenderers.Length > 0)
                 {
                     Bounds bounds = bodyRenderers[0].bounds;
@@ -135,22 +142,26 @@ namespace MaskEffect
                 SetRendererColor(top, teamColor);
                 RemoveCollider(top);
 
-                // Collider sized to primitive scale
-                BoxCollider interactionCollider = go.AddComponent<BoxCollider>();
                 interactionCollider.center = new Vector3(0f, scale.y * 0.5f, 0f);
                 interactionCollider.size = scale;
             }
 
-            // Set mech layer for raycast filtering
+            // Enforce mech layer
             int mechLayer = LayerMask.NameToLayer("Mech");
             if (mechLayer >= 0)
                 go.layer = mechLayer;
 
-            // Add components to root
-            var statusHandler = go.AddComponent<StatusEffectHandler>();
-            var movement = go.AddComponent<MechMovement>();
-            var controller = go.AddComponent<MechController>();
+            // Get pre-attached components from prefab (or add if not using prefab)
+            var controller = go.GetComponent<MechController>();
+            if (controller == null)
+            {
+                go.AddComponent<StatusEffectHandler>();
+                go.AddComponent<MechMovement>();
+                controller = go.AddComponent<MechController>();
+            }
 
+            // Pass indicator prefab reference so MechController can instantiate it
+            controller.maskIndicatorPrefab = maskIndicatorPrefab;
             controller.Initialize(chassis, team, id, grid);
 
             return controller;

@@ -12,6 +12,7 @@ namespace MaskEffect
 
         [Header("Visual Tiles")]
         [SerializeField] private bool generateVisualTiles = false;
+        [SerializeField] private GameObject tilePrefab;
         [SerializeField] private Color playerTileColor = new Color(0.3f, 0.4f, 0.7f);
         [SerializeField] private Color enemyTileColor = new Color(0.7f, 0.35f, 0.3f);
         [SerializeField] private Color neutralTileColor = new Color(0.45f, 0.45f, 0.45f);
@@ -50,7 +51,9 @@ namespace MaskEffect
                     int idx = ToIndex(x, z);
                     Vector3 worldPos = GetTileWorldPosition(idx);
 
-                    GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject tile = tilePrefab != null
+                        ? Instantiate(tilePrefab)
+                        : GameObject.CreatePrimitive(PrimitiveType.Cube);
                     tile.name = $"Tile_{x}_{z}";
                     tile.transform.SetParent(tilesParent.transform);
                     tile.transform.position = new Vector3(worldPos.x, -0.05f, worldPos.z);

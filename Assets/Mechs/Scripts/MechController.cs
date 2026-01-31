@@ -40,6 +40,9 @@ namespace MaskEffect
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
+        // Prefab for mask indicator disc (set by MechSpawner)
+        [HideInInspector] public GameObject maskIndicatorPrefab;
+
         // References set by BattleManager
         private IBattleGrid grid;
         public List<MechController> allMechs; // Made public for TilePathfinder
@@ -97,7 +100,17 @@ namespace MaskEffect
             Transform topHalf = transform.Find(MechSpawner.TOP_HALF_NAME);
             if (topHalf == null)
             {
-                GameObject indicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                GameObject indicator;
+                if (maskIndicatorPrefab != null)
+                {
+                    indicator = Instantiate(maskIndicatorPrefab);
+                }
+                else
+                {
+                    indicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    var col = indicator.GetComponent<Collider>();
+                    if (col != null) Destroy(col);
+                }
                 indicator.name = MechSpawner.TOP_HALF_NAME;
                 indicator.transform.SetParent(transform, false);
                 indicator.transform.localScale = new Vector3(
@@ -106,8 +119,6 @@ namespace MaskEffect
                     chassisData.indicatorRadius * 2f
                 );
                 indicator.transform.localPosition = new Vector3(0f, chassisData.indicatorHeight, 0f);
-                var col = indicator.GetComponent<Collider>();
-                if (col != null) Destroy(col);
                 topHalf = indicator.transform;
             }
             var topRenderer = topHalf.GetComponent<Renderer>();

@@ -167,6 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAssignmentManager
   grid: {fileID: 0}
   maskPanel: {fileID: 0}
+  maskDragProxyPrefab: {fileID: 5956512867539563218, guid: 64ab51cda4a5e8c4bab071e1abe1c127, type: 3}
 --- !u!114 &1731591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +207,8 @@ MonoBehaviour:
   chassisOptions: []
   playerTeamColor: {r: 0.2, g: 0.4, b: 1, a: 1}
   enemyTeamColor: {r: 1, g: 0.5, b: 0.1, a: 1}
+  mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
+  maskIndicatorPrefab: {fileID: 760611183611869202, guid: 52199cf8b32415740bc7d8a446065768, type: 3}
 --- !u!114 &1731593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +226,7 @@ MonoBehaviour:
   tileSize: 1
   gridOrigin: {x: -10, y: 0, z: -5}
   generateVisualTiles: 1
+  tilePrefab: {fileID: 6643514479058934664, guid: b11a9d28c5423bb4bb432faa9e5352b8, type: 3}
   playerTileColor: {r: 0.3, g: 0.4, b: 0.7, a: 1}
   enemyTileColor: {r: 0.7, g: 0.35, b: 0.3, a: 1}
   neutralTileColor: {r: 0.45, g: 0.45, b: 0.45, a: 1}
@@ -437,63 +441,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2408658298285786770
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 100589467397473233, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_Name
-      value: ProjectilePrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4311883019014883516, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -501,4 +448,3 @@ SceneRoots:
   - {fileID: 1619255266}
   - {fileID: 1399920350}
   - {fileID: 1731594}
-  - {fileID: 2408658298285786770}
