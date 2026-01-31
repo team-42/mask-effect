@@ -27,6 +27,10 @@ namespace MaskEffect
         public ResistanceType resistanceType = ResistanceType.Physical;
         public float resistanceValue = 0f; // e.g., 0.1 for 10% resistance
 
+        [Header("Movement")]
+        public bool canFly = false;
+        public float hoverHeight = 0f;
+
         [Header("Visuals - 3D Model")]
         public float indicatorHeight = 1.5f;
         public float indicatorRadius = 0.3f;

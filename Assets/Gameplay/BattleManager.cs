@@ -11,7 +11,7 @@ namespace MaskEffect
         [Header("Config")]
         [SerializeField] private float roundTimeLimit = 45f;
         [SerializeField] private int masksPerSide = 2;
-        [SerializeField] private bool autoStartCombat = true;
+        [SerializeField] private bool autoStartCombat = false;
 
         [Header("References")]
         [SerializeField] private MechSpawner spawner;
@@ -54,6 +54,13 @@ namespace MaskEffect
         private void Start()
         {
             spawner.Initialize(grid);
+
+            // Ensure GameOverUI exists in scene
+            if (FindFirstObjectByType<GameOverUI>() == null)
+            {
+                gameObject.AddComponent<GameOverUI>();
+            }
+
             StartNewRound();
 
             if (autoStartCombat)

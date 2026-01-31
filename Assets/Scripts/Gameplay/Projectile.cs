@@ -32,7 +32,8 @@ namespace MaskEffect
                 return;
             }
 
-            Vector3 direction = (target.transform.position - transform.position).normalized;
+            Vector3 targetPos = target.VisualCenter;
+            Vector3 direction = (targetPos - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
 
             currentLifetime -= Time.deltaTime;

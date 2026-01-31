@@ -20,6 +20,7 @@ namespace MaskEffect
 
         /// <summary>
         /// Move towards the target using pathfinding. Returns true if within attack range.
+        /// Flying mechs use direct movement and ignore obstacles.
         /// </summary>
         public bool MoveToward(MechController target, float dt)
         {
@@ -34,6 +35,14 @@ namespace MaskEffect
                 return true;
             }
 
+            bool canFly = mech.chassisData != null && mech.chassisData.canFly;
+
+            if (canFly)
+            {
+                return FlyToward(target, dt);
+            }
+
+            // --- Ground pathfinding ---
             // If no path or current path is invalid, find a new one
             int startTile = grid.GetNearestTile(transform.position);
             int targetTile = grid.GetNearestTile(target.transform.position);
@@ -101,6 +110,31 @@ namespace MaskEffect
                 }
             }
 
+            return IsInRange(target);
+        }
+
+        /// <summary>
+        /// Direct flight movement – flies straight toward target, ignoring occupied tiles.
+        /// Still updates tile occupancy for the mech's own position.
+        /// </summary>
+        private bool FlyToward(MechController target, float dt)
+        {
+            Vector3 direction = (target.transform.position - transform.position).normalized;
+            float step = GetEffectiveMoveSpeed() * dt;
+            Vector3 newPos = Vector3.MoveTowards(transform.position, target.transform.position, step);
+
+            int oldTile = grid.GetNearestTile(transform.position);
+            int newTile = grid.GetNearestTile(newPos);
+
+            if (oldTile != newTile)
+            {
+                grid.ClearTile(oldTile);
+                // Only register on new tile if it's not occupied by a ground unit
+                if (!grid.IsTileOccupied(newTile))
+                    grid.SetTileOccupant(newTile, mech);
+            }
+
+            transform.position = newPos;
             return IsInRange(target);
         }
 

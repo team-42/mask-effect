@@ -18,6 +18,8 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Integrate collision boxes and pathing logic for Mechs.
 - [x] Implement damage types and resistances for Mechs and Masks.
 - [x] Implement ranged combat for Jet mechs using projectiles.
+- [x] Implement flying movement for Jet chassis (hover height, bobbing animation, direct movement over obstacles).
+- [x] Projectiles spawn/target at visual body height (VisualCenter) for flying mechs.
 
 ## CURRENT_STATUS.md
 
@@ -33,3 +35,5 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Mech root colliders and "Mech" layer added for click/drag interaction.
 - [x] Damage types and resistances implemented.
 - [x] Ranged combat for Jet mechs using projectile prefabs.
+- [x] Jet chassis flies with hover height (1.5), HoverBob animation, and direct flight movement ignoring ground obstacles.
+- [x] Projectiles use VisualCenter for spawn and target positions (correct aim at flying mechs).

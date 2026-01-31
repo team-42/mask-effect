@@ -97,9 +97,21 @@ namespace MaskEffect
                 // --- 3D Model path ---
                 GameObject body = Instantiate(modelPrefab, go.transform);
                 body.name = "Body";
-                body.transform.localPosition = Vector3.zero;
                 body.transform.localScale = scale;
                 body.transform.localEulerAngles = chassis.modelRotationOffset;
+
+                // Elevate body for flying mechs
+                if (chassis.canFly && chassis.hoverHeight > 0f)
+                {
+                    body.transform.localPosition = new Vector3(0f, chassis.hoverHeight, 0f);
+                    var bob = body.AddComponent<HoverBob>();
+                    bob.amplitude = 0.15f;
+                    bob.frequency = 1.2f;
+                }
+                else
+                {
+                    body.transform.localPosition = Vector3.zero;
+                }
 
                 Renderer[] bodyRenderers = body.GetComponentsInChildren<Renderer>();
                 foreach (var rend in bodyRenderers)

@@ -92,6 +92,10 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] LobbyScene with UIToolkit start menu; scene transition to BattleArenaScene works.
 - [x] Mirror networking skeleton integrated (NetworkIdentity on spawnable prefabs, Player + GameController prefabs).
 - [x] Camera adjusted for full battlefield view (position 0/25/-12, 60deg pitch).
+- [x] Jet chassis flies: elevated hover with bobbing animation, direct movement ignoring ground obstacles, projectiles spawn/target at visual height.
+- [x] Death particle effects (EnergyExplosion VFX) on mech death via deathEffectPrefab.
+- [x] URP-compatible materials for tiles, projectiles, and masks (TileMaterial, ProjectileMaterial_URP, MaskMaterial_URP).
+- [x] UnityTechnologies ParticlePack integrated for VFX assets.
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.
 

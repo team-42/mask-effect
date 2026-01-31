@@ -26,6 +26,9 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] Integrate collision boxes and pathing logic for Mechs.
 - [x] Implement damage types and resistances for Mechs and Masks.
 - [x] Implement ranged combat for Jet mechs using projectiles.
+- [x] Implement flying Jet movement (direct flight, ignores ground obstacles, hover height + bobbing).
+- [x] Projectiles spawn/target at VisualCenter for correct aim on flying mechs.
+- [x] Mech death particle effects (EnergyExplosion VFX via deathEffectPrefab).
 
 ## CURRENT_STATUS.md
 
@@ -47,4 +50,7 @@ This document outlines the specific gameplay-related tasks for the 'Mask Effect'
 - [x] BattleManager: autoStartCombat toggle, PlayerAssignMask(), enemy masks pre-assigned at round start.
 - [x] Mask selection integrated into player flow.
 - [x] Scene transition from LobbyScene → BattleArenaScene working.
+- [x] Flying Jet movement (direct flight over obstacles, hoverHeight=1.5, HoverBob animation).
+- [x] Projectiles use VisualCenter for correct aim on elevated/flying mechs.
+- [x] Death particle effects integrated (EnergyExplosion VFX).
 - [x] Mech stats and mask effects balanced.

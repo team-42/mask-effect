@@ -55,6 +55,12 @@ namespace MaskEffect
 
         private const float RETARGET_INTERVAL = 0.5f;
 
+        /// <summary>
+        /// World-space center of the mech's visual body (accounts for hover height on flying mechs).
+        /// </summary>
+        public Vector3 VisualCenter =>
+            transform.position + Vector3.up * (chassisData != null && chassisData.canFly ? chassisData.hoverHeight : 0f);
+
         public void Initialize(ChassisData chassis, Team team, int id, IBattleGrid grid)
         {
             this.chassisData = chassis;
@@ -267,7 +273,7 @@ namespace MaskEffect
 
             if (chassisData.isRanged && chassisData.projectilePrefab != null)
             {
-                GameObject projectileGO = Instantiate(chassisData.projectilePrefab, transform.position, Quaternion.identity);
+                GameObject projectileGO = Instantiate(chassisData.projectilePrefab, VisualCenter, Quaternion.identity);
                 Projectile projectile = projectileGO.GetComponent<Projectile>();
                 if (projectile != null)
                 {
