@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9baa77cbce61e745a78995e268d0bda, type: 3}
+  m_Name: ScoutWarrior_HitAndRun
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
+  abilityName: Hit & Run
+  description: Every 3rd attack grants +40% Attack Speed for 2s; step back 1 tile
+    after each attack
+  requiredChassis: 0
+  requiredMask: 1
+  cooldown: 0
+  duration: 2
+  value1: 0.4
+  value2: 1
+  abilityClassId: HitAndRun

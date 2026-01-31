@@ -20,8 +20,3 @@ When performing a new task within the 'Mask Effect' project, Sixth AI should aut
 - `Assets/VFX/`
 
 Sixth AI should use the information in these `CLAUDE.md` files to understand the current state of each component's development, prioritize sub-tasks, and ensure consistency with the overall project plan outlined in the root `CLAUDE.md`.
-
-## Versions
-Make sure that all code fits the following versions strictly:
-- Unity 6000.3.6f1
-- Mirror 96.0.1

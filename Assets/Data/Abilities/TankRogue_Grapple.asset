@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9baa77cbce61e745a78995e268d0bda, type: 3}
+  m_Name: TankRogue_Grapple
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
+  abilityName: Grapple
+  description: Every 7s, pull the farthest enemy into frontline and Root for 1s
+  requiredChassis: 2
+  requiredMask: 2
+  cooldown: 7
+  duration: 1
+  value1: 0
+  value2: 0
+  abilityClassId: Grapple

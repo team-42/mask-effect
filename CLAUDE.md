@@ -12,41 +12,44 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 
 ### Phase 1: Core Auto-Battler Mechanics (First 12-18 Hours)
 
-- [ ] **Technical Setup & Project Structure:**
-  - [ ] Verify Unity Project & Version Control (Git) setup.
+- [x] **Technical Setup & Project Structure:**
+  - [x] Verify Unity Project & Version Control (Git) setup.
   - [ ] Integrate essential Unity Packages (e.g., TextMeshPro).
-  - [ ] Ensure AI Tool Access (Claude Code/Sixth AI) is configured.
+  - [x] Ensure AI Tool Access (Claude Code/Sixth AI) is configured.
   - [x] Finalize `Assets/` directory structure as planned.
-- [ ] **Basic Auto-Battler Core:**
-  - [ ] Define Mech Stats & Basic Combat Rules (Max HP, Armor, Attack Damage, Attack Interval, Range, Move Speed, Evasion, Shield).
-  - [ ] Implement Mech Spawning (5-10 unmasked mechs, mirrored for both sides).
-  - [ ] Implement Basic Movement AI (move towards target, handle blocked tiles).
-  - [ ] Implement Basic Attack & Damage System (Evasion, Armor reduction, Shield first, Min damage 1).
-  - [ ] Implement Health & Death System for Mechs.
-  - [ ] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
+- [x] **Basic Auto-Battler Core:**
+  - [x] Define Mech Stats & Basic Combat Rules (Max HP, Armor, Attack Damage, Attack Interval, Range, Move Speed, Evasion, Shield).
+  - [x] Implement Mech Spawning (5-10 unmasked mechs, mirrored for both sides).
+  - [x] Implement Basic Movement AI (move towards target, handle blocked tiles).
+  - [x] Implement Basic Attack & Damage System (Evasion, Armor reduction, Shield first, Min damage 1).
+  - [x] Implement Health & Death System for Mechs.
+  - [x] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
 - [ ] **Network Mode & Randomized AI Opponent:**
   - [ ] Implement a network mode where players can play against each other (can be independent of core game logic).
-  - [ ] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
-- [ ] **Battle Arena Environment:**
-  - [ ] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
-  - [ ] Add Basic Lighting & Camera Setup.
-- [ ] **Core Mask System (Initial Implementation):**
-  - [ ] Define Mask Data Structure (Scriptable Object: Name, Effect Type, Ability details).
-  - [ ] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
-  - [ ] Create 3 Placeholder Masks & Effects (Warrior, Rogue, Angel - simplified L1 abilities).
-  - [ ] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
-  - [ ] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
-- [ ] **Essential UI & Feedback:**
-  - [ ] Design & Implement Basic HUD (Health bars, timer, mask assignment UI).
+  - [x] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
+- [x] **Battle Arena Environment:**
+  - [x] Create Simple Battle Arena Scene (40 tiles: 15 per player, 10 neutral middle).
+  - [x] Add Basic Lighting & Camera Setup.
+- [x] **Core Mask System (Initial Implementation):**
+  - [x] Define Mask Data Structure (Scriptable Object: Name, Effect Type, Ability details).
+  - [x] Implement Basic Mask Application Logic (drag & drop, 2-3 masks per side, one per mech).
+  - [x] Create 3 Placeholder Masks & Effects (Warrior, Rogue, Angel - simplified L1 abilities).
+  - [x] Implement Status Effects (Shield, Mark, Slow, Root, Taunt) as needed for masks.
+  - [x] Implement basic targeting overrides for masks (e.g., lowest HP, highest threat).
+  - [x] Configure distinct mask tint colors (Warrior=red, Rogue=green, Angel=gold) for visual identification.
+  - [x] Implement random mask assignment for both teams in test/auto-play mode.
+- [x] **Essential UI & Feedback:**
+  - [x] Design & Implement mask assignment UI (IMGUI side panel with colored mask buttons).
+  - [ ] Design & Implement Basic HUD (Health bars, timer).
   - [ ] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator).
   - [ ] Implement Simple Main Menu & Game Over UI.
 
 ### Phase 2: Refinement & Polish (Next 12-18 Hours)
 
 - [ ] **Gameplay Refinement:**
-  - [ ] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
+  - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
-  - [ ] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
+  - [x] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 - [ ] **Visual & Audio Polish (MVP Level):**
   - [ ] Create Placeholder Mech Models/Sprites (3 chassis variants).
   - [ ] Create Placeholder Mask Icons (3 icons).
@@ -70,10 +73,13 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 ## CURRENT_STATUS.md
 
 - [x] Initial project setup and directory structure.
-- [ ] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
-- [ ] Basic mask system with 3 masks and simplified L1 abilities.
-- [ ] Essential UI and visual feedback for gameplay.
-- [ ] Game loop (round setup, mask assignment, combat, next round) functional.
+- [x] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
+- [x] Basic mask system with 3 masks and simplified L1 abilities.
+- [x] Mask tint colors configured and visible on mech top halves for both teams.
+- [x] Essential UI and visual feedback for gameplay.
+- [x] Game loop (round setup, mask assignment, combat, next round) functional.
+- [x] BattleArenaScene and BattleScene combined: visual grid (20x10, 3 colored zones), drag-and-drop mask assignment via IMGUI side panel, mech repositioning, enemy masks pre-assigned randomly, combat auto-starts when all player masks placed.
+- [x] Player interaction: click mask in panel then click player mech to assign; drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
 - [ ] Basic art and audio placeholders integrated.
 - [ ] Demo build and presentation prepared.
 

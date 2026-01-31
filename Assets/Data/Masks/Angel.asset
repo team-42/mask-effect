@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99a23a6f2cc0b14a9afa66f70b105fc, type: 3}
+  m_Name: Angel
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskData
+  maskName: Angel
+  maskType: 3
+  defaultTargetingMode: 5
+  bonusHP: 30
+  bonusArmor: 10
+  bonusAttackDamage: -2
+  bonusAttackInterval: 0.2
+  bonusEvasion: 0
+  scoutAbility: {fileID: 11400000, guid: 02b61b8cf44f1d64a8f3c3302ca7d4b0, type: 2}
+  jetAbility: {fileID: 11400000, guid: 4ad45a4f997b66a4e9abc5e53b1ffe82, type: 2}
+  tankAbility: {fileID: 11400000, guid: 8b3ff0892fe8f33469119e80fc406451, type: 2}
+  maskTint: {r: 1, g: 0.85, b: 0.2, a: 1}

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9baa77cbce61e745a78995e268d0bda, type: 3}
+  m_Name: JetRogue_Mark
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
+  abilityName: Mark
+  description: First hit marks target for 6s; marked targets take +15% damage from
+    team
+  requiredChassis: 1
+  requiredMask: 2
+  cooldown: 0
+  duration: 6
+  value1: 0.15
+  value2: 0
+  abilityClassId: Mark
