@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf93753612fe401468d2e2c8a08c0cc7, type: 3}
+  m_Name: Jet
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.ChassisData
+  chassisName: Jet
+  chassisType: 1
+  maxHP: 60
+  armor: 5
+  attackDamage: 15
+  attackInterval: 1.2
+  range: 4
+  moveSpeed: 2.5
+  evasion: 0.2
+  primitiveShape: 0
+  chassisColor: {r: 0.9, g: 0.9, b: 0, a: 1}
+  chassisScale: {x: 0.7, y: 0.7, z: 0.7}

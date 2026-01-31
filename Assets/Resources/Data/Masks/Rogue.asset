@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99a23a6f2cc0b14a9afa66f70b105fc, type: 3}
+  m_Name: Rogue
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskData
+  maskName: Rogue
+  maskType: 2
+  defaultTargetingMode: 1
+  bonusHP: 0
+  bonusArmor: 0
+  bonusAttackDamage: 5
+  bonusAttackInterval: -0.2
+  bonusEvasion: 0.1
+  scoutAbility: {fileID: 11400000, guid: 9781d2d01f9404a44bf3aeae7fc966a8, type: 2}
+  jetAbility: {fileID: 11400000, guid: a0d4807328d1c9345b2d30ce184e920f, type: 2}
+  tankAbility: {fileID: 11400000, guid: 71a8d10477d0d974ba92e93dd8050f12, type: 2}
+  maskTint: {r: 0.5, g: 0, b: 0.8, a: 1}
