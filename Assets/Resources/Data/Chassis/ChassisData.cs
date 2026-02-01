@@ -20,7 +20,7 @@ namespace MaskEffect
 
         [Header("Combat Type")]
         public bool isRanged = false;
-        public GameObject projectilePrefab;
+        public ProjectileData projectileData;
 
         [Header("Damage & Resistance")]
         public DamageType baseDamageType = DamageType.Physical;

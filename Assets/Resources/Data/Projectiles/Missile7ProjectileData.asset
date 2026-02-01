@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9c451b8603f903429febd8e48a41491, type: 3}
+  m_Name: Missile7ProjectileData
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
+  ProjectilePrefab: {fileID: 8821059225116711751, guid: 226f8af0ac25f3e4395ee71d7ffdeae5, type: 3}
+  Speed: 20
+  Damage: 10
+  Lifetime: 3

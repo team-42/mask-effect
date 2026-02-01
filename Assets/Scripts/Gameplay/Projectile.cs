@@ -5,13 +5,11 @@ namespace MaskEffect
 {
     public class Projectile : NetworkBehaviour
     {
-        [SerializeField] private float speed = 10f;
-        [SerializeField] private float lifetime = 3f;
+        private ProjectileData projectileData; // Removed [SerializeField]
         [SerializeField] private GameObject hitEffectPrefab; // Optional visual effect on hit
 
         [SyncVar] private uint attackerNetId;
         [SyncVar] private uint targetNetId;
-        [SyncVar] private int damage;
         [SyncVar] private DamageType damageType;
 
         private MechController _attacker; // Resolved attacker reference
@@ -22,7 +20,7 @@ namespace MaskEffect
         public override void OnStartServer()
         {
             base.OnStartServer();
-            currentLifetime = lifetime;
+            // projectileData is expected to be set by Initialize() shortly after
         }
 
         /// <summary>
@@ -30,13 +28,13 @@ namespace MaskEffect
         /// host where Update() may run before OnStartClient resolves netIds) and
         /// also stores netIds for pure-client resolution via OnStartClient.
         /// </summary>
-        public void Initialize(MechController attacker, MechController target, int dmg, DamageType dmgType)
+        public void Initialize(MechController attacker, MechController target, ProjectileData data, DamageType dmgType)
         {
             _attacker = attacker;
             _target = target;
-            damage = dmg;
+            projectileData = data;
             damageType = dmgType;
-            currentLifetime = lifetime;
+            currentLifetime = projectileData.Lifetime;
 
             var attackerNI = attacker.GetComponent<NetworkIdentity>();
             var targetNI = target.GetComponent<NetworkIdentity>();
@@ -48,13 +46,13 @@ namespace MaskEffect
         /// Singleplayer initialization: direct MechController references
         /// instead of netIds that require NetworkManager.
         /// </summary>
-        public void InitializeOffline(MechController attacker, MechController target, int dmg, DamageType dmgType)
+        public void InitializeOffline(MechController attacker, MechController target, ProjectileData data, DamageType dmgType)
         {
             _attacker = attacker;
             _target = target;
-            damage = dmg;
+            projectileData = data;
             damageType = dmgType;
-            currentLifetime = lifetime;
+            currentLifetime = projectileData.Lifetime;
         }
 
         public override void OnStartClient()
@@ -83,7 +81,7 @@ namespace MaskEffect
 
             Vector3 targetPos = _target.VisualCenter;
             Vector3 direction = (targetPos - transform.position).normalized;
-            transform.position += direction * speed * Time.deltaTime;
+            transform.position += direction * projectileData.Speed * Time.deltaTime;
 
             currentLifetime -= Time.deltaTime;
             if (currentLifetime <= 0f)
@@ -99,7 +97,7 @@ namespace MaskEffect
             MechController hitMech = other.GetComponent<MechController>();
             if (hitMech != null && hitMech == _target)
             {
-                _target.TakeDamage(damage, _attacker);
+                _target.TakeDamage(Mathf.FloorToInt(projectileData.Damage), _attacker);
 
                 if (hitEffectPrefab != null)
                 {

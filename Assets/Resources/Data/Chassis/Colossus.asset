@@ -21,8 +21,8 @@ MonoBehaviour:
   range: 1
   moveSpeed: 0.5
   evasion: 0
-  isRanged: 0
-  projectilePrefab: {fileID: 0}
+  isRanged: 1
+  projectileData: {fileID: 11400000, guid: bfbd35629371b2843bb18f61e9f55cdd, type: 2}
   baseDamageType: 0
   resistanceType: 0
   resistanceValue: 0
