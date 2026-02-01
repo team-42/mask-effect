@@ -28,3 +28,4 @@ MonoBehaviour:
   sniperAbility: {fileID: 11400000, guid: 2879aa0456de7ce4bbd488bdf1802e3f, type: 2}
   colossusAbility: {fileID: 11400000, guid: a02caef9084895840a746e263dd4e4e4, type: 2}
   maskTint: {r: 1, g: 0.85, b: 0.2, a: 1}
+  maskIcon: {fileID: 21300000, guid: 5ce66bbef7909374ea64f30e24a9fccf, type: 3}

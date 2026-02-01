@@ -16,6 +16,7 @@ namespace MaskEffect
         [System.NonSerialized] public IMaskAbility activeAbility;
 
         private GameObject _ringVisual;
+        private GameObject _iconVisual; // New field for the icon visual
 
         /// <summary>
         /// Called on the server after instantiation but BEFORE NetworkServer.Spawn().
@@ -110,6 +111,8 @@ namespace MaskEffect
 
             // Create ring visual
             CreateRingVisual();
+            // Create hovering icon visual
+            CreateHoveringIconVisual();
 
             // Notify the mech about this mask (for stat recalc, tint, etc.)
             ownerMech.ApplyMaskFromNetwork(this);
@@ -141,6 +144,32 @@ namespace MaskEffect
             }
 
             _ringVisual = indicator;
+        }
+
+        private void CreateHoveringIconVisual()
+        {
+            if (_iconVisual != null) return;
+            if (ownerMech == null || maskData == null || maskData.maskIcon == null) return;
+
+            GameObject iconGO = new GameObject("MaskIcon");
+            iconGO.transform.SetParent(transform, false);
+            // Position slightly above the mech, higher than the ring
+            iconGO.transform.localPosition = new Vector3(0f, 0.75f, 0f);
+            iconGO.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Adjust size as needed
+
+            SpriteRenderer spriteRenderer = iconGO.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = maskData.maskIcon;
+            spriteRenderer.sortingOrder = 10; // Ensure it renders above other elements
+
+            // Add HoverBob for animation
+            HoverBob bob = iconGO.AddComponent<HoverBob>();
+            bob.amplitude = 0.1f;
+            bob.frequency = 1.5f;
+
+            // Add Billboard component to face the camera
+            iconGO.AddComponent<Billboard>();
+
+            _iconVisual = iconGO;
         }
 
         private void OnDestroy()

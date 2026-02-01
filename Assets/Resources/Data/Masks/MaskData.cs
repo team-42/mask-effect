@@ -31,6 +31,7 @@ namespace MaskEffect
 
         [Header("Visuals")]
         public Color maskTint = Color.white;
+        public Sprite maskIcon; // New field for the mask icon
 
         public MaskAbilityData GetAbilityForChassis(ChassisType chassis)
         {
