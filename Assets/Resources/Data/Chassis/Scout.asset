@@ -18,9 +18,14 @@ MonoBehaviour:
   armor: 10
   attackDamage: 12
   attackInterval: 0.8
-  range: 1.5
+  range: 3
   moveSpeed: 3
   evasion: 0.15
+  isRanged: 1
+  projectilePrefab: {fileID: 100589467397473233, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
+  baseDamageType: 0
+  resistanceType: 0
+  resistanceValue: 0
   indicatorHeight: 1.4
   indicatorRadius: 0.35
   modelRotationOffset: {x: 0, y: 0, z: 0}

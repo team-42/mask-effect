@@ -487,16 +487,8 @@ namespace MaskEffect
                     }
                     else
                     {
-                        // Multiplayer: use netIds and network spawn
-                        var attackerNI = GetComponent<NetworkIdentity>();
-                        var targetNI = currentTarget.GetComponent<NetworkIdentity>();
-                        if (attackerNI == null || targetNI == null)
-                        {
-                            Debug.LogError("Missing NetworkIdentity for projectile spawn.");
-                            Destroy(projectileGO);
-                            return;
-                        }
-                        projectile.Initialize(attackerNI.netId, targetNI.netId, attackDamage, currentDamageType);
+                        // Multiplayer: direct refs + netIds, then network spawn
+                        projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
                         NetworkServer.Spawn(projectileGO);
                     }
                 }

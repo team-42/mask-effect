@@ -25,13 +25,23 @@ namespace MaskEffect
             currentLifetime = lifetime;
         }
 
-        public void Initialize(uint attackerId, uint targetId, int dmg, DamageType dmgType)
+        /// <summary>
+        /// Networked initialization: sets direct references immediately (needed on
+        /// host where Update() may run before OnStartClient resolves netIds) and
+        /// also stores netIds for pure-client resolution via OnStartClient.
+        /// </summary>
+        public void Initialize(MechController attacker, MechController target, int dmg, DamageType dmgType)
         {
-            attackerNetId = attackerId;
-            targetNetId = targetId;
+            _attacker = attacker;
+            _target = target;
             damage = dmg;
             damageType = dmgType;
-            // currentLifetime is set in OnStartServer
+            currentLifetime = lifetime;
+
+            var attackerNI = attacker.GetComponent<NetworkIdentity>();
+            var targetNI = target.GetComponent<NetworkIdentity>();
+            if (attackerNI != null) attackerNetId = attackerNI.netId;
+            if (targetNI != null) targetNetId = targetNI.netId;
         }
 
         /// <summary>

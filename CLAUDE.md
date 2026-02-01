@@ -62,6 +62,8 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Fix jets not flying — added hover logic + HoverBob in SetupVisuals() (was lost on SyncVar rebuild).
   - [x] Fix projectiles as white cubes — yellow URP material, reduced scale.
   - [x] Fix MaskRing shader edgeFade bug — inverted smoothstep was zeroing out the entire ring.
+  - [x] Fix projectiles instantly disappearing — `_target` was null on first Update() because SP host took multiplayer path where OnStartClient netId resolution raced with Update; Initialize() now sets direct refs immediately.
+  - [x] All chassis (Scout, Tank, Jet) now fire projectiles — Scout/Tank were melee-only, added isRanged + projectilePrefab + increased range.
 - [ ] **Gameplay Refinement:**
   - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
@@ -95,6 +97,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] 3 masks (Warrior, Rogue, Angel) with L1 abilities, status effects, targeting overrides.
 - [x] Glowing ground ring under masked mechs (MaskRing shader, URP HLSL, additive glow + pulse).
 - [x] 3D mech models (Scout, Jet, Tank) with team colors and mask tint on top half.
+- [x] All chassis ranged with projectiles (Scout range 3, Tank range 2.5, Jet range 4).
 - [x] Jet chassis hovers with bobbing animation; projectiles target VisualCenter height.
 - [x] Game loop: round setup → mask assignment → auto combat → round end → next round.
 - [x] BattleArenaScene: 20x10 grid, 3 zones, IMGUI mask panel, drag-to-reposition, camera controls.
