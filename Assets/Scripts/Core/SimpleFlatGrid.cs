@@ -5,10 +5,10 @@ namespace MaskEffect
 {
     public class SimpleFlatGrid : MonoBehaviour, IBattleGrid
     {
-        [SerializeField] private int gridWidth = 20;
-        [SerializeField] private int gridHeight = 10;
+        [SerializeField] private int gridWidth = 28;
+        [SerializeField] private int gridHeight = 12;
         [SerializeField] private float tileSize = 1f;
-        [SerializeField] private Vector3 gridOrigin = new Vector3(-10f, 0f, -5f);
+        [SerializeField] private Vector3 gridOrigin = new Vector3(-14f, 0f, -6f);
 
         [Header("Visual Tiles")]
         [SerializeField] private bool generateVisualTiles = false;

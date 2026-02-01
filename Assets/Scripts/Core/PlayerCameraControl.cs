@@ -4,8 +4,8 @@ public class PlayerCameraControl : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 1200.0f; // Drastically increased move speed for interpolation responsiveness
-    public Vector2 arenaBoundsX = new Vector2(-3f, 3f);
-    public Vector2 arenaBoundsZ = new Vector2(-3f, 0f);
+    public Vector2 arenaBoundsX = new Vector2(-5f, 5f);
+    public Vector2 arenaBoundsZ = new Vector2(-4f, 1f);
 
     [Header("Rotation Settings")]
     public float rotationSpeed = 3.0f;

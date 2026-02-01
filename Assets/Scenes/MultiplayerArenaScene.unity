@@ -232,10 +232,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c859fb45d6f0b434b9aeba738604af45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.SimpleFlatGrid
-  gridWidth: 20
-  gridHeight: 10
+  gridWidth: 28
+  gridHeight: 12
   tileSize: 1
-  gridOrigin: {x: -10, y: 0, z: -5}
+  gridOrigin: {x: -14, y: 0, z: -6}
   generateVisualTiles: 1
   tilePrefab: {fileID: 6643514479058934664, guid: b11a9d28c5423bb4bb432faa9e5352b8, type: 3}
   playerTileColor: {r: 0.75, g: 0.82, b: 1, a: 1}
