@@ -72,7 +72,8 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Replace primitive mech shapes with 3D models (Scout, Jet, Tank loaded from Resources/Models/).
   - [x] MaskRing shader rewritten for URP (HLSLPROGRAM, SRP Batcher compatible, additive glow).
   - [ ] Create Placeholder Mask Icons (3 icons).
-  - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
+  - [x] Add chassis-specific laser SFX (Scout, Jet, Tank sounds in `Resources/MechSounds/`, played via `MechController.PlayLaserSound()` on each ranged attack).
+  - [ ] Add remaining Sound Effects (UI, Win/Loss).
   - [x] Integrate Background Music (persistent MusicManager singleton with DontDestroyOnLoad + own AudioListener).
 - [x] **Render Pipeline & Material Compatibility:**
   - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
@@ -116,7 +117,8 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Death particle effects (EnergyExplosion VFX).
 - [x] MusicManager singleton (DontDestroyOnLoad) with own AudioListener, 2-track playlist loop, clip-null recovery via Resources.Load fallback. Audio files in `Assets/Resources/Audio/`.
 - [x] Background music integrated (2 tracks, persistent MusicManager with own AudioListener, auto-advances playlist, survives all scene transitions).
-- [ ] Basic sound effects (Attacks, UI, Win/Loss).
+- [x] Chassis-specific laser attack SFX (`scout_laser.wav`, `jet_laser.wav`, `tank_laser.wav` in `Assets/Resources/MechSounds/`). Loaded per chassis type via `Resources.Load`, played with `AudioSource.PlayOneShot` in `MechController.TryAttack()`.
+- [ ] Remaining sound effects (UI, Win/Loss).
 - [ ] Demo build and presentation.
 
 ## Critical Risks & Mitigation

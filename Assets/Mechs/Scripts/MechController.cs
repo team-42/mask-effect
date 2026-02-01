@@ -42,6 +42,10 @@ namespace MaskEffect
         [Header("VFX")]
         public GameObject deathEffectPrefab;
 
+        // SFX
+        private AudioSource _sfxSource;
+        private AudioClip _laserClip;
+
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
@@ -211,6 +215,8 @@ namespace MaskEffect
                     SetRendererColor(top, equippedMask.maskTint);
                 }
             }
+
+            SetupAudio();
         }
 
         // Helper methods for SetupVisuals (copied from MechSpawner)
@@ -261,6 +267,8 @@ namespace MaskEffect
             currentHP = maxHP;
             attackCooldown = 0f;
             retargetTimer = 0f;
+
+            SetupAudio();
         }
 
         public void SetAllMechsList(List<MechController> mechs)
@@ -492,6 +500,8 @@ namespace MaskEffect
                         NetworkServer.Spawn(projectileGO);
                     }
                 }
+
+                PlayLaserSound();
             }
             else
             {
@@ -506,6 +516,30 @@ namespace MaskEffect
         {
             if (activeAbility != null)
                 activeAbility.OnBattleStart();
+        }
+
+        private void SetupAudio()
+        {
+            if (_sfxSource == null)
+            {
+                _sfxSource = GetComponent<AudioSource>();
+                if (_sfxSource == null)
+                    _sfxSource = gameObject.AddComponent<AudioSource>();
+                _sfxSource.playOnAwake = false;
+                _sfxSource.spatialBlend = 0f;
+                _sfxSource.volume = 0.5f;
+            }
+            if (_laserClip == null && chassisData != null)
+            {
+                string clipName = chassisData.chassisType.ToString().ToLower() + "_laser";
+                _laserClip = Resources.Load<AudioClip>("MechSounds/" + clipName);
+            }
+        }
+
+        private void PlayLaserSound()
+        {
+            if (_laserClip == null || _sfxSource == null) return;
+            _sfxSource.PlayOneShot(_laserClip);
         }
 
         public float GetDPS()
