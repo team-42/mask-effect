@@ -168,7 +168,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 | Jet      | 80  | 5     | 15  | 1.2s     | 4     | 3.0   | Yes    | Flies, hover bob      |
 | Tank     | 150 | 20    | 12  | 1.5s     | 2.5   | 1.0   | Yes    | —                     |
 | Sniper   | 60  | 5     | 45  | 3.0s     | 5     | 0.8   | Yes    | 1s charge-up, backline|
-| Colossus | 250 | 30    | 25  | 2.5s     | 1     | 0.25  | No     | Cleave 2 targets, front|
+| Colossus | 250 | 30    | 25  | 2.5s     | 1     | 0.5   | No     | Cleave 2 targets, front|
 
 ## Critical Risks & Mitigation
 
