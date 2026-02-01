@@ -152,7 +152,7 @@ MonoBehaviour:
   retargetTimer: 0
   statusHandler: {fileID: 0}
   movement: {fileID: 0}
-  deathEffectPrefab: {fileID: 0}
+  deathEffectPrefab: {fileID: 1329845292236604, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
   allMechs: []
 --- !u!65 &4523296577345017769
 BoxCollider:

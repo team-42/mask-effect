@@ -167,6 +167,14 @@ namespace MaskEffect
             go.AddComponent<MechController>();
             go.AddComponent<BoxCollider>();
 
+            // Assign death effect VFX
+            var deathVfx = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/UnityTechnologies/ParticlePack/EffectExamples/Fire & Explosion Effects/Prefabs/EnergyExplosion.prefab");
+            if (deathVfx != null)
+            {
+                go.GetComponent<MechController>().deathEffectPrefab = deathVfx;
+            }
+
             // Layer
             int mechLayer = LayerMask.NameToLayer("Mech");
             if (mechLayer >= 0) go.layer = mechLayer;

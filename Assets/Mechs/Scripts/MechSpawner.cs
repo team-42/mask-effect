@@ -184,6 +184,10 @@ namespace MaskEffect
 
             controller.Initialize(chassis, team, id, grid);
 
+            // Ensure death VFX is assigned (fallback if prefab reference was lost)
+            if (controller.deathEffectPrefab == null)
+                controller.deathEffectPrefab = Resources.Load<GameObject>("VFX/EnergyExplosion");
+
             // Set the chassisDataPath SyncVar on the server (or locally in singleplayer)
             if (NetworkHelper.IsServerOrOffline)
             {
