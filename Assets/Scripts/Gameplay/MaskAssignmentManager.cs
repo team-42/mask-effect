@@ -35,6 +35,9 @@ namespace MaskEffect
         private MechController highlightedMech;
         private Color highlightedMechOriginalColor;
 
+        // Tooltip
+        private MaskAssignmentTooltip tooltip;
+
         /// <summary>
         /// Returns the team this local player controls.
         /// Server/host = Player, Client = Enemy, Offline = Player.
@@ -239,15 +242,18 @@ namespace MaskEffect
                 if (mech != null && mech.team == MyTeam && mech.isAlive && mech.equippedMask == null)
                 {
                     SetMechHighlight(mech);
+                    GetTooltip().Show(carriedMask, mech);
                 }
                 else
                 {
                     ClearMechHighlight();
+                    GetTooltip().Hide();
                 }
             }
             else
             {
                 ClearMechHighlight();
+                GetTooltip().Hide();
             }
 
             // Cancel on right-click
@@ -291,6 +297,7 @@ namespace MaskEffect
         private void CancelMaskCarry()
         {
             ClearMechHighlight();
+            GetTooltip().Hide();
 
             // Return the slot to the panel since mask wasn't placed
             if (maskPanel == null)
@@ -306,6 +313,7 @@ namespace MaskEffect
 
         private void FinishMaskCarry()
         {
+            GetTooltip().Hide();
             // Don't restore old highlight color — EquipMask already set the mask tint
             highlightedMech = null;
             if (maskDragProxy != null)
@@ -386,6 +394,18 @@ namespace MaskEffect
             }
 
             highlightedMech = null;
+        }
+
+        private MaskAssignmentTooltip GetTooltip()
+        {
+            if (tooltip != null) return tooltip;
+            tooltip = FindFirstObjectByType<MaskAssignmentTooltip>();
+            if (tooltip == null)
+            {
+                var go = new GameObject("MaskAssignmentTooltip");
+                tooltip = go.AddComponent<MaskAssignmentTooltip>();
+            }
+            return tooltip;
         }
     }
 }
