@@ -73,7 +73,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] MaskRing shader rewritten for URP (HLSLPROGRAM, SRP Batcher compatible, additive glow).
   - [ ] Create Placeholder Mask Icons (3 icons).
   - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
-  - [ ] Integrate Background Music.
+  - [x] Integrate Background Music (persistent MusicManager singleton with DontDestroyOnLoad + own AudioListener).
 - [x] **Render Pipeline & Material Compatibility:**
   - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
   - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
@@ -114,7 +114,9 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] YughuesFreeMetalMaterials asset pack integrated (metal textures for mech visuals).
 - [x] Enemy team color updated to yellow (was orange) for clearer team distinction.
 - [x] Death particle effects (EnergyExplosion VFX).
-- [ ] Basic art and audio placeholders.
+- [x] MusicManager singleton (DontDestroyOnLoad) with own AudioListener, 2-track playlist loop, clip-null recovery via Resources.Load fallback. Audio files in `Assets/Resources/Audio/`.
+- [x] Background music integrated (2 tracks, persistent MusicManager with own AudioListener, auto-advances playlist, survives all scene transitions).
+- [ ] Basic sound effects (Attacks, UI, Win/Loss).
 - [ ] Demo build and presentation.
 
 ## Critical Risks & Mitigation

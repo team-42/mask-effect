@@ -7,9 +7,9 @@ This document outlines the specific audio-related tasks for the 'Mask Effect' pr
 ## Sub-tasks
 
 - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
-- [ ] Integrate Background Music.
+- [x] Integrate Background Music (MusicManager singleton, DontDestroyOnLoad, owns AudioListener, 2-track playlist loop).
 
 ## CURRENT_STATUS.md
 
 - [ ] Basic sound effects implemented (Attacks, UI, Win/Loss).
-- [ ] Background music integrated.
+- [x] Background music integrated. Audio files in `Assets/Resources/Audio/`. MusicManager in LobbyScene with persistent AudioListener.
