@@ -216,6 +216,7 @@ MonoBehaviour:
   mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
   maskIndicatorPrefab: {fileID: 760611183611869202, guid: 52199cf8b32415740bc7d8a446065768, type: 3}
   maskRingMaterial: {fileID: 0}
+  healthBarUIPrefab: {fileID: 3175739028107533979, guid: 8b9c4d4dd3dffc743aedafe00343c78e, type: 3}
 --- !u!114 &1731593
 MonoBehaviour:
   m_ObjectHideFlags: 0
