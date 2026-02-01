@@ -37,3 +37,5 @@ This document outlines the specific mech-related tasks for the 'Mask Effect' pro
 - [x] Ranged combat for Jet mechs using projectile prefabs.
 - [x] Jet chassis flies with hover height (1.5), HoverBob animation, and direct flight movement ignoring ground obstacles.
 - [x] Projectiles use VisualCenter for spawn and target positions (correct aim at flying mechs).
+- [x] Enemy team color changed from orange to yellow for better visual distinction.
+- [x] Model import settings (`.obj.meta`) updated for Scout, Jet, Tank.

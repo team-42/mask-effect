@@ -79,6 +79,10 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
   - [x] Ensured all new materials use the `Universal Render Pipeline/Lit` shader.
   - [x] MaskRing material uses custom `MaskEffect/MaskRing` shader (URP HLSL, additive blending).
+  - [x] Bulk-converted all Mirror example materials and project materials to URP.
+  - [x] Imported `YughuesFreeMetalMaterials` asset pack (3 metal materials with diffuse/normal/specular textures).
+  - [x] Updated model import settings (`.obj.meta`) for Scout, Jet, Tank models.
+  - [x] Changed enemy team color from orange to yellow for better visual distinction.
 
 ### Phase 3: Demo & Submission (Final 12 Hours)
 
@@ -106,7 +110,9 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Multiplayer: Host/Join flow via Mirror (StartHost / StartClient with IP).
 - [x] Game Over UI: IMGUI overlay with stats, next round, and lobby return (with proper network cleanup).
 - [x] NetworkHelper dual-mode system (IsOffline, IsServerOrOffline, SmartDestroy, SpawnOrIgnore).
-- [x] URP-compatible materials throughout (tiles, projectiles, masks, ring shader).
+- [x] URP-compatible materials throughout (tiles, projectiles, masks, ring shader, all Mirror examples).
+- [x] YughuesFreeMetalMaterials asset pack integrated (metal textures for mech visuals).
+- [x] Enemy team color updated to yellow (was orange) for clearer team distinction.
 - [x] Death particle effects (EnergyExplosion VFX).
 - [ ] Basic art and audio placeholders.
 - [ ] Demo build and presentation.

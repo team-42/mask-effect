@@ -16,6 +16,7 @@ The 'Mask Effect' project is structured to organize game assets and scripts logi
 *   **`Assets/Scripts/UI/`**: Contains scripts for user interface elements, including `LobbyUIController` and `MaskPanelUI`.
 *   **`Assets/UI/`**: Stores UI assets, such as UXML files for UIToolkit and IMGUI panel settings.
 *   **`Assets/VFX/`**: Manages visual effects for mask abilities and other in-game events.
+*   **`Assets/YughuesFreeMetalMaterials/`**: Third-party metal material pack (3 materials with diffuse/normal/specular textures) used for mech visuals.
 
 ## 2. Key Data Structures and Their Utilization
 
