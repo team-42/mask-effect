@@ -64,6 +64,11 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Fix MaskRing shader edgeFade bug — inverted smoothstep was zeroing out the entire ring.
   - [x] Fix projectiles instantly disappearing — `_target` was null on first Update() because SP host took multiplayer path where OnStartClient netId resolution raced with Update; Initialize() now sets direct refs immediately.
   - [x] All chassis (Scout, Tank, Jet) now fire projectiles — Scout/Tank were melee-only, added isRanged + projectilePrefab + increased range.
+  - [x] Fix client unlimited mask placement — added per-side mask count guard in `CmdAssignMask()` server validation.
+  - [x] Fix AI pre-assigning enemy masks in MP round 1 — replaced `IsMultiplayerMatch` (connection count) with `autoCreatePlayer` check that works before client connects.
+  - [x] Fix client missing Game Over UI — added `OnStartClient()` override in BattleManager to create `GameOverUI` on clients.
+  - [x] Fix win/loss perspective for client — `GameOverUI` now uses `MyTeam` property so client sees "SIEG!" when their team wins.
+  - [x] Fix missing mask assignment UI in MP — `BattleManager.EnsureUIComponents()` dynamically creates `MaskAssignmentManager`, `MaskPanelUI`, and `GameOverUI` if not present in scene (multiplayer scene was missing these).
 - [ ] **Gameplay Refinement:**
   - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
@@ -109,7 +114,9 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] LobbyScene: UIToolkit menu with Singleplayer, Host Game, Join (IP field + button).
 - [x] Singleplayer: localhost-only Mirror host, autoCreatePlayer=false, StopHost() on lobby return.
 - [x] Multiplayer: Host/Join flow via Mirror (StartHost / StartClient with IP).
-- [x] Game Over UI: IMGUI overlay with stats, next round, and lobby return (with proper network cleanup).
+- [x] Multiplayer: Server-side per-side mask limit enforced in `CmdAssignMask()`. Client mask panel with slot tracking and "(vergeben)" feedback. `EnsureUIComponents()` dynamically creates `MaskAssignmentManager`, `MaskPanelUI`, `GameOverUI` in MP scene.
+- [x] Multiplayer: AI enemy mask pre-assignment uses `autoCreatePlayer` flag (not connection count) to reliably detect MP mode before client connects.
+- [x] Game Over UI: IMGUI overlay with stats, next round, and lobby return (with proper network cleanup). Perspective-correct for client (`MyTeam` property: client sees "SIEG!" when Enemy team wins).
 - [x] NetworkHelper dual-mode system (IsOffline, IsServerOrOffline, SmartDestroy, SpawnOrIgnore).
 - [x] URP-compatible materials throughout (tiles, projectiles, masks, ring shader, all Mirror examples).
 - [x] YughuesFreeMetalMaterials asset pack integrated (metal textures for mech visuals).

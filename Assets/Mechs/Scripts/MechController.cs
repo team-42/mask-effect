@@ -10,9 +10,10 @@ namespace MaskEffect
         [SyncVar] public int mechId;
         [SyncVar] public Team team;
         [SyncVar(hook = nameof(OnChassisDataPathChanged))] public string chassisDataPath;
-        [SyncVar(hook = nameof(OnEquippedMaskPathChanged))] public string equippedMaskPath;
+        [SyncVar] public uint equippedMaskNetId;
         public ChassisData chassisData; // Loaded on client via hook
-        public MaskData equippedMask; // Loaded on client via hook
+        public MaskData equippedMask;
+        [System.NonSerialized] public NetworkMask networkMask;
 
         [Header("Runtime Stats")]
         [SyncVar] public int maxHP;
@@ -48,12 +49,6 @@ namespace MaskEffect
 
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
-
-        // Prefab for mask indicator disc (set by MechSpawner)
-        [HideInInspector] public GameObject maskIndicatorPrefab;
-
-        // Material for ground ring indicator (set by MechSpawner)
-        [HideInInspector] public Material maskRingMaterial;
 
         // References set by BattleManager
         private IBattleGrid grid;
@@ -99,16 +94,6 @@ namespace MaskEffect
             {
                 chassisData = Resources.Load<ChassisData>(newPath);
                 SetupVisuals(); // Update visuals when chassis data changes
-            }
-        }
-
-        // Callback for equippedMaskPath SyncVar
-        public void OnEquippedMaskPathChanged(string oldPath, string newPath)
-        {
-            if (isClient && !string.IsNullOrEmpty(newPath))
-            {
-                equippedMask = Resources.Load<MaskData>(newPath);
-                SetupVisuals(); // Update visuals when mask data changes
             }
         }
 
@@ -251,7 +236,7 @@ namespace MaskEffect
             if (NetworkHelper.IsServerOrOffline)
             {
                 this.chassisDataPath = $"Data/Chassis/{chassis.name}";
-                this.equippedMaskPath = "";
+                this.equippedMaskNetId = 0;
             }
 
             statusHandler = GetComponent<StatusEffectHandler>();
@@ -276,56 +261,35 @@ namespace MaskEffect
             this.allMechs = mechs;
         }
 
-        public void EquipMask(MaskData mask)
+        /// <summary>
+        /// Server-side: equip a mask via its NetworkMask object.
+        /// Called by BattleManager after spawning the NetworkMask.
+        /// </summary>
+        public void EquipMask(NetworkMask netMask)
         {
+            networkMask = netMask;
+            equippedMask = netMask.maskData;
+            activeAbility = netMask.activeAbility;
+
             if (NetworkHelper.IsServerOrOffline)
             {
-                this.equippedMaskPath = $"Data/Masks/{mask.name}";
+                equippedMaskNetId = NetworkHelper.IsOffline ? 0 : netMask.netId;
             }
-            equippedMask = mask;
-            targetingMode = mask.defaultTargetingMode;
+
+            targetingMode = equippedMask.defaultTargetingMode;
             RecalculateStats();
-            currentHP = maxHP; // reset HP with new max
+            currentHP = maxHP;
+        }
 
-            MaskAbilityData abilityData = mask.GetAbilityForChassis(chassisData.chassisType);
-            if (abilityData != null)
-            {
-                activeAbility = MaskAbilityFactory.Create(abilityData.abilityClassId);
-                if (activeAbility != null && allMechs != null)
-                {
-                    activeAbility.Initialize(this, abilityData, grid, allMechs);
-                }
-            }
-
-            // Create or update mask ground ring indicator
-            Transform ring = transform.Find(MechSpawner.MASK_RING_NAME);
-            if (ring == null)
-            {
-                GameObject indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                var col = indicator.GetComponent<Collider>();
-                if (col != null) Destroy(col);
-                indicator.name = MechSpawner.MASK_RING_NAME;
-                indicator.transform.SetParent(transform, false);
-                // Rotate quad to lie flat on the ground
-                indicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                float ringSize = chassisData.indicatorRadius * 3.5f;
-                indicator.transform.localScale = new Vector3(ringSize, ringSize, 1f);
-                // Position just above ground to avoid z-fighting
-                indicator.transform.localPosition = new Vector3(0f, 0.05f, 0f);
-                ring = indicator.transform;
-
-                // Apply ring material (load from Resources if not assigned)
-                if (maskRingMaterial == null)
-                    maskRingMaterial = Resources.Load<Material>("Materials/MaskRing");
-                var renderer = indicator.GetComponent<Renderer>();
-                if (renderer != null && maskRingMaterial != null)
-                {
-                    renderer.material = new Material(maskRingMaterial);
-                }
-            }
-            var ringRenderer = ring.GetComponent<Renderer>();
-            if (ringRenderer != null)
-                ringRenderer.material.SetColor("_Color", mask.maskTint);
+        /// <summary>
+        /// Client-side: called by NetworkMask.OnStartClient to apply mask data.
+        /// </summary>
+        public void ApplyMaskFromNetwork(NetworkMask netMask)
+        {
+            networkMask = netMask;
+            equippedMask = netMask.maskData;
+            RecalculateStats();
+            SetupVisuals();
         }
 
         public void RecalculateStats()
@@ -388,8 +352,16 @@ namespace MaskEffect
             isAlive = false;
             currentHP = 0;
 
-            if (activeAbility != null)
+            // Cleanup ability via NetworkMask (it owns the ability now)
+            if (networkMask != null)
+            {
+                NetworkHelper.SmartDestroy(networkMask.gameObject);
+                networkMask = null;
+            }
+            else if (activeAbility != null)
+            {
                 activeAbility.Cleanup();
+            }
 
             statusHandler.RemoveAllEffects();
 

@@ -14,6 +14,7 @@ namespace MaskEffect
             EnsureFolder(PrefabFolder);
 
             CreateMechPrefab();
+            CreateMaskPrefab();
             CreateTilePrefab();
             CreateMaskDragProxyPrefab();
             CreateMaskIndicatorPrefab();
@@ -28,9 +29,11 @@ namespace MaskEffect
         public static void WirePrefabReferencesInScene()
         {
             var mechPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/MechPrefab.prefab");
+            var maskPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/MaskPrefab.prefab");
             var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/TilePrefab.prefab");
             var maskDragProxy = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/MaskDragProxy.prefab");
             var maskIndicator = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/MaskIndicator.prefab");
+            var projectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/ProjectilePrefab.prefab");
 
             // Wire MechSpawner
             var spawner = Object.FindFirstObjectByType<MechSpawner>();
@@ -38,7 +41,6 @@ namespace MaskEffect
             {
                 var so = new SerializedObject(spawner);
                 so.FindProperty("mechPrefab").objectReferenceValue = mechPrefab;
-                so.FindProperty("maskIndicatorPrefab").objectReferenceValue = maskIndicator;
                 so.ApplyModifiedProperties();
                 EditorUtility.SetDirty(spawner);
                 Debug.Log("[PrefabGenerator] Wired MechSpawner prefab references.");
@@ -78,7 +80,65 @@ namespace MaskEffect
                 Debug.LogWarning("[PrefabGenerator] MaskAssignmentManager not found in scene.");
             }
 
+            // Wire BattleManager
+            var battleManager = Object.FindFirstObjectByType<BattleManager>();
+            if (battleManager != null)
+            {
+                var so = new SerializedObject(battleManager);
+                so.FindProperty("maskPrefab").objectReferenceValue = maskPrefab;
+                so.ApplyModifiedProperties();
+                EditorUtility.SetDirty(battleManager);
+                Debug.Log("[PrefabGenerator] Wired BattleManager maskPrefab reference.");
+            }
+            else
+            {
+                Debug.LogWarning("[PrefabGenerator] BattleManager not found in scene.");
+            }
+
+            // Wire NetworkManager spawnPrefabs (only found in LobbyScene)
+            var netManager = Object.FindFirstObjectByType<NetworkManager>();
+            if (netManager != null)
+            {
+                RegisterSpawnPrefabs(netManager, mechPrefab, maskPrefab, projectilePrefab);
+            }
+
             Debug.Log("[PrefabGenerator] All prefab references wired in current scene. Save the scene to persist.");
+        }
+
+        private static void RegisterSpawnPrefabs(NetworkManager netManager, params GameObject[] prefabs)
+        {
+            var so = new SerializedObject(netManager);
+            var spawnList = so.FindProperty("spawnPrefabs");
+
+            foreach (var prefab in prefabs)
+            {
+                if (prefab == null) continue;
+
+                // Check if already registered
+                bool found = false;
+                for (int i = 0; i < spawnList.arraySize; i++)
+                {
+                    if (spawnList.GetArrayElementAtIndex(i).objectReferenceValue == prefab)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    spawnList.InsertArrayElementAtIndex(spawnList.arraySize);
+                    spawnList.GetArrayElementAtIndex(spawnList.arraySize - 1).objectReferenceValue = prefab;
+                    Debug.Log($"[PrefabGenerator] Registered {prefab.name} in NetworkManager spawnPrefabs.");
+                }
+                else
+                {
+                    Debug.Log($"[PrefabGenerator] {prefab.name} already in NetworkManager spawnPrefabs.");
+                }
+            }
+
+            so.ApplyModifiedProperties();
+            EditorUtility.SetDirty(netManager);
         }
 
         private static void EnsureFolder(string path)
@@ -97,18 +157,30 @@ namespace MaskEffect
 
             GameObject go = new GameObject("MechPrefab");
 
-            // Core gameplay components (pre-attached so we don't need AddComponent at runtime)
+            // Network identity + transform sync (must be added before NetworkBehaviours)
+            go.AddComponent<NetworkIdentity>();
+            go.AddComponent<NetworkTransformReliable>();
+
+            // Core gameplay components
             go.AddComponent<StatusEffectHandler>();
             go.AddComponent<MechMovement>();
             go.AddComponent<MechController>();
             go.AddComponent<BoxCollider>();
 
-            // Network identity for Mirror spawning
-            go.AddComponent<NetworkIdentity>();
-
             // Layer
             int mechLayer = LayerMask.NameToLayer("Mech");
             if (mechLayer >= 0) go.layer = mechLayer;
+
+            SavePrefab(go, path);
+        }
+
+        private static void CreateMaskPrefab()
+        {
+            string path = $"{PrefabFolder}/MaskPrefab.prefab";
+
+            GameObject go = new GameObject("MaskPrefab");
+            go.AddComponent<NetworkIdentity>();
+            go.AddComponent<NetworkMask>();
 
             SavePrefab(go, path);
         }

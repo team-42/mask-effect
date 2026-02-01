@@ -10,6 +10,12 @@ namespace MaskEffect
         private Team winner;
         private bool subscribed;
 
+        /// <summary>
+        /// The team this local player controls. Host/offline = Player, Client = Enemy.
+        /// </summary>
+        private Team MyTeam =>
+            (NetworkHelper.IsOffline || NetworkServer.active) ? Team.Player : Team.Enemy;
+
         private Texture2D overlayTexture;
 
         private void Start()
@@ -72,8 +78,8 @@ namespace MaskEffect
 
             GUILayout.BeginArea(new Rect(boxX, boxY, boxW, boxH));
 
-            // Title
-            bool playerWon = winner == Team.Player;
+            // Title (perspective-correct: client controls Enemy team)
+            bool playerWon = winner == MyTeam;
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
             {
                 fontSize = 42,
@@ -100,15 +106,10 @@ namespace MaskEffect
 
             if (BattleManager.Instance != null)
             {
-                int playerAlive = 0, enemyAlive = 0;
-                var allMechs = BattleManager.Instance.allMechs;
-                for (int i = 0; i < allMechs.Count; i++)
-                {
-                    if (!allMechs[i].isAlive) continue;
-                    if (allMechs[i].team == Team.Player) playerAlive++;
-                    else enemyAlive++;
-                }
-                GUILayout.Label($"Eigene Mechs: {playerAlive}   Gegner: {enemyAlive}", statsStyle);
+                bool isHost = MyTeam == Team.Player;
+                int myAlive = isHost ? BattleManager.Instance.lastPlayerAlive : BattleManager.Instance.lastEnemyAlive;
+                int theirAlive = isHost ? BattleManager.Instance.lastEnemyAlive : BattleManager.Instance.lastPlayerAlive;
+                GUILayout.Label($"Eigene Mechs: {myAlive}   Gegner: {theirAlive}", statsStyle);
             }
 
             GUILayout.Space(30f);
@@ -123,22 +124,42 @@ namespace MaskEffect
             btnStyle.hover.textColor = Color.white;
             btnStyle.padding = new RectOffset(20, 20, 12, 12);
 
-            if (GUILayout.Button("Naechste Runde", btnStyle, GUILayout.Height(50f)))
+            // "Naechste Runde" only for server/host or offline
+            if (NetworkHelper.IsServerOrOffline)
             {
-                visible = false;
-                if (BattleManager.Instance != null)
-                    BattleManager.Instance.StartNewRound();
-            }
+                if (GUILayout.Button("Naechste Runde", btnStyle, GUILayout.Height(50f)))
+                {
+                    visible = false;
+                    if (BattleManager.Instance != null)
+                        BattleManager.Instance.StartNewRound();
+                }
 
-            GUILayout.Space(10f);
+                GUILayout.Space(10f);
+            }
+            else
+            {
+                // Client: show waiting text
+                GUIStyle waitStyle = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = 14,
+                    alignment = TextAnchor.MiddleCenter
+                };
+                waitStyle.normal.textColor = new Color(0.7f, 0.7f, 0.7f);
+                GUILayout.Label("Warte auf Host...", waitStyle);
+                GUILayout.Space(10f);
+            }
 
             if (GUILayout.Button("Zurueck zur Lobby", btnStyle, GUILayout.Height(50f)))
             {
                 visible = false;
-                // Stop Mirror host/server before returning to lobby
-                if (NetworkManager.singleton != null && NetworkServer.active)
+                if (NetworkManager.singleton != null)
                 {
-                    NetworkManager.singleton.StopHost();
+                    if (NetworkServer.active && NetworkClient.isConnected)
+                        NetworkManager.singleton.StopHost();
+                    else if (NetworkClient.isConnected)
+                        NetworkManager.singleton.StopClient();
+                    else
+                        SceneManager.LoadScene("LobbyScene");
                 }
                 else
                 {

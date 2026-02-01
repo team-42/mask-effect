@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 namespace MaskEffect
 {
@@ -11,8 +12,10 @@ namespace MaskEffect
         private int masksUsed;
         private int totalMasks;
         private bool visible;
-        private bool subscribed;
         private Rect panelRect;
+
+        // Singleton guard to prevent duplicate rendering
+        private static MaskPanelUI _activeInstance;
 
         private struct MaskSlotEntry
         {
@@ -22,30 +25,26 @@ namespace MaskEffect
 
         private void Start()
         {
+            if (_activeInstance != null && _activeInstance != this)
+            {
+                Debug.LogWarning("[MaskPanelUI] Duplicate instance found, disabling this one.");
+                enabled = false;
+                return;
+            }
+            _activeInstance = this;
+
             if (assignmentManager == null)
                 assignmentManager = FindFirstObjectByType<MaskAssignmentManager>();
-
-            TrySubscribe();
-        }
-
-        private void TrySubscribe()
-        {
-            if (subscribed || BattleManager.Instance == null) return;
-            BattleManager.Instance.OnStateChanged += OnBattleStateChanged;
-            subscribed = true;
         }
 
         private void OnDestroy()
         {
-            if (BattleManager.Instance != null)
-                BattleManager.Instance.OnStateChanged -= OnBattleStateChanged;
+            if (_activeInstance == this)
+                _activeInstance = null;
         }
 
         private void Update()
         {
-            if (!subscribed)
-                TrySubscribe();
-
             if (BattleManager.Instance == null) return;
 
             bool shouldShow = BattleManager.Instance.currentState == BattleState.MaskAssignment;
@@ -56,21 +55,16 @@ namespace MaskEffect
                 HidePanel();
         }
 
-        private void OnBattleStateChanged(BattleState state)
-        {
-            if (state == BattleState.MaskAssignment)
-                ShowPanel();
-            else
-                HidePanel();
-        }
-
         private void ShowPanel()
         {
             visible = true;
             slots.Clear();
             masksUsed = 0;
             totalMasks = BattleManager.Instance.MasksPerSide;
+
             MaskData[] available = BattleManager.Instance.AvailableMasks;
+            if (available == null || available.Length == 0)
+                available = Resources.LoadAll<MaskData>("Data/Masks");
 
             if (available == null || available.Length == 0) return;
 
@@ -109,7 +103,10 @@ namespace MaskEffect
             float panelWidth = 210f;
             float slotHeight = 70f;
             float panelHeight = 70f + slots.Count * (slotHeight + 5f);
-            float panelX = 10f;
+
+            // Host/offline: left side. Client: right side.
+            bool isClient = !NetworkHelper.IsOffline && !NetworkServer.active;
+            float panelX = isClient ? (Screen.width - panelWidth - 10f) : 10f;
             float panelY = (Screen.height - panelHeight) * 0.5f;
 
             panelRect = new Rect(panelX, panelY, panelWidth, panelHeight);

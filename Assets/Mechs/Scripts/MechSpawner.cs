@@ -19,8 +19,6 @@ namespace MaskEffect
 
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
-        [SerializeField] private GameObject maskIndicatorPrefab;
-        [SerializeField] private Material maskRingMaterial;
 
         private IBattleGrid grid;
 
@@ -89,8 +87,6 @@ namespace MaskEffect
             // Instantiate from prefab (has MechController, MechMovement, StatusEffectHandler, BoxCollider)
             GameObject go = Instantiate(mechPrefab, position, Quaternion.identity);
             go.name = $"{team}_{chassis.chassisName}_{id}";
-            
-            NetworkHelper.SpawnOrIgnore(go);
 
             Color teamColor = team == Team.Player ? MechSpawner.PlayerTeamColor : MechSpawner.EnemyTeamColor;
             Vector3 scale = chassis.chassisScale;
@@ -186,9 +182,6 @@ namespace MaskEffect
                 controller = go.AddComponent<MechController>();
             }
 
-            // Pass indicator prefab reference so MechController can instantiate it
-            controller.maskIndicatorPrefab = maskIndicatorPrefab;
-            controller.maskRingMaterial = maskRingMaterial;
             controller.Initialize(chassis, team, id, grid);
 
             // Set the chassisDataPath SyncVar on the server (or locally in singleplayer)
@@ -196,6 +189,9 @@ namespace MaskEffect
             {
                 controller.chassisDataPath = $"Data/Chassis/{chassis.name}";
             }
+
+            // Network spawn AFTER Initialize so clients receive correct initial SyncVars
+            NetworkHelper.SpawnOrIgnore(go);
 
             return controller;
         }

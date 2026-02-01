@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror; // Add Mirror namespace
+using Mirror;
 
 namespace MaskEffect
 {
-    public class BattleManager : NetworkBehaviour // Change base class to NetworkBehaviour
+    public class BattleManager : NetworkBehaviour
     {
         public static BattleManager Instance { get; private set; }
 
@@ -18,17 +18,29 @@ namespace MaskEffect
         [SerializeField] private MechSpawner spawner;
         [SerializeField] private SimpleFlatGrid grid;
         [SerializeField] private MaskData[] availableMasks;
+        [SerializeField] private GameObject maskPrefab;
 
         [Header("State")]
+        [SyncVar(hook = nameof(OnCurrentStateChanged))]
         public BattleState currentState;
-        public int roundNumber;
+        [SyncVar] public int roundNumber;
         public float roundTimer;
+
+        // Round-end stats synced to clients for GameOverUI
+        [SyncVar] public Team lastRoundWinner;
+        [SyncVar] public int lastPlayerAlive;
+        [SyncVar] public int lastEnemyAlive;
+
+        // Readiness tracking for multiplayer mask assignment
+        [SyncVar] public bool playerSideReady;
+        [SyncVar] public bool enemySideReady;
 
         public List<MechController> allMechs = new List<MechController>();
         public List<MechController> playerMechs = new List<MechController>();
         public List<MechController> enemyMechs = new List<MechController>();
 
         private int playerMasksAssigned;
+        private int enemyMasksAssigned;
 
         // Public accessors
         public int PlayerMasksAssigned => playerMasksAssigned;
@@ -36,7 +48,13 @@ namespace MaskEffect
         public MaskData[] AvailableMasks => availableMasks;
         public SimpleFlatGrid Grid => grid;
 
-        // Events
+        /// <summary>
+        /// True when there are 2+ network connections (real multiplayer, not SP via localhost).
+        /// </summary>
+        public bool IsMultiplayerMatch =>
+            NetworkServer.active && NetworkServer.connections.Count >= 2;
+
+        // Events (fire locally; clients receive via SyncVar hooks and RPCs)
         public event Action<BattleState> OnStateChanged;
         public event Action<MechController> OnMechDied;
         public event Action<Team> OnRoundEnded;
@@ -52,21 +70,38 @@ namespace MaskEffect
             AutoWireReferences();
         }
 
-        public override void OnStartServer() // Use OnStartServer for server-side initialization
+        public override void OnStartServer()
         {
             base.OnStartServer();
             spawner.Initialize(grid);
-
-            // Ensure GameOverUI exists in scene
-            if (FindFirstObjectByType<GameOverUI>() == null)
-            {
-                gameObject.AddComponent<GameOverUI>();
-            }
+            EnsureUIComponents();
 
             StartNewRound();
 
             if (autoStartCombat)
                 ForceStartCombat();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            // On pure clients (not host), ensure UI components exist
+            if (!isServer)
+                EnsureUIComponents();
+        }
+
+        /// <summary>
+        /// Ensures all required UI components exist in the scene.
+        /// Needed because the multiplayer scene may not have them pre-placed.
+        /// </summary>
+        private void EnsureUIComponents()
+        {
+            if (FindFirstObjectByType<MaskAssignmentManager>() == null)
+                gameObject.AddComponent<MaskAssignmentManager>();
+            if (FindFirstObjectByType<MaskPanelUI>() == null)
+                gameObject.AddComponent<MaskPanelUI>();
+            if (FindFirstObjectByType<GameOverUI>() == null)
+                gameObject.AddComponent<GameOverUI>();
         }
 
         private void Start()
@@ -91,6 +126,26 @@ namespace MaskEffect
                 availableMasks = Resources.LoadAll<MaskData>("Data/Masks");
         }
 
+        // --- SyncVar Hook ---
+
+        private void OnCurrentStateChanged(BattleState oldState, BattleState newState)
+        {
+            // Fires on clients when server changes currentState
+            OnStateChanged?.Invoke(newState);
+        }
+
+        // --- State Management ---
+
+        private void SetState(BattleState newState)
+        {
+            currentState = newState;
+            // SyncVar hook fires on clients automatically.
+            // On server, hook does NOT fire, so invoke event manually.
+            OnStateChanged?.Invoke(newState);
+        }
+
+        // --- Round Lifecycle ---
+
         public void StartNewRound()
         {
             if (!NetworkHelper.IsServerOrOffline) return;
@@ -98,10 +153,23 @@ namespace MaskEffect
             roundNumber++;
             roundTimer = roundTimeLimit;
             playerMasksAssigned = 0;
+            enemyMasksAssigned = 0;
+            playerSideReady = false;
+            enemySideReady = false;
 
             // Clear previous round
             if (allMechs.Count > 0)
             {
+                // Destroy mask objects before mechs (they have separate NetworkIdentity)
+                for (int i = 0; i < allMechs.Count; i++)
+                {
+                    if (allMechs[i].networkMask != null)
+                    {
+                        NetworkHelper.SmartDestroy(allMechs[i].networkMask.gameObject);
+                        allMechs[i].networkMask = null;
+                    }
+                }
+
                 spawner.ClearAllMechs(allMechs);
                 allMechs.Clear();
                 playerMechs.Clear();
@@ -123,31 +191,110 @@ namespace MaskEffect
                 allMechs[i].SetAllMechsList(allMechs);
             }
 
-            // Pre-assign enemy masks randomly
-            AIAssignMasks();
+            // Pre-assign enemy masks only in singleplayer (AI opponent).
+            // Use autoCreatePlayer to detect MP mode reliably even before the
+            // client connects (IsMultiplayerMatch would be false at that point).
+            bool expectsRemotePlayer = NetworkManager.singleton != null
+                && NetworkManager.singleton.autoCreatePlayer;
+            if (!expectsRemotePlayer)
+            {
+                AIAssignMasks();
+                enemySideReady = true;
+            }
 
             SetState(BattleState.MaskAssignment);
         }
 
+        // --- Mask Assignment ---
+
         public void AssignMaskToMech(MechController mech, MaskData mask)
         {
             if (mech == null || mask == null) return;
-            if (mech.equippedMask != null) return; // already has a mask
+            if (mech.equippedMask != null) return;
 
-            mech.EquipMask(mask);
+            GameObject maskGO = Instantiate(maskPrefab);
+            NetworkMask netMask = maskGO.GetComponent<NetworkMask>();
+            netMask.InitializeOnServer(mask, mech, grid, allMechs);
+
+            // Network spawn so all clients receive the mask object
+            NetworkHelper.SpawnOrIgnore(maskGO);
+
+            mech.EquipMask(netMask);
         }
 
+        /// <summary>
+        /// Local entry point for mask assignment. In offline mode, assigns directly.
+        /// In online mode, routes through CmdAssignMask.
+        /// </summary>
         public void PlayerAssignMask(MechController mech, MaskData mask)
         {
             if (currentState != BattleState.MaskAssignment) return;
             if (mech == null || mask == null) return;
-            if (mech.team != Team.Player) return;
             if (mech.equippedMask != null) return;
 
-            AssignMaskToMech(mech, mask);
-            playerMasksAssigned++;
+            if (NetworkHelper.IsOffline)
+            {
+                // Singleplayer: direct assignment
+                if (mech.team != Team.Player) return;
+                AssignMaskToMech(mech, mask);
+                playerMasksAssigned++;
 
-            if (playerMasksAssigned >= masksPerSide)
+                if (playerMasksAssigned >= masksPerSide)
+                {
+                    StartCombat();
+                }
+            }
+            else
+            {
+                // Multiplayer: route through Command
+                CmdAssignMask(mech.netId, $"Data/Masks/{mask.name}");
+            }
+        }
+
+        /// <summary>
+        /// Mirror Command: client (or host) requests mask assignment on the server.
+        /// requiresAuthority=false because BattleManager is a scene object with no owner.
+        /// </summary>
+        [Command(requiresAuthority = false)]
+        public void CmdAssignMask(uint mechNetId, string maskDataPath, NetworkConnectionToClient sender = null)
+        {
+            if (currentState != BattleState.MaskAssignment) return;
+
+            // Enforce per-side mask limit
+            bool isSenderHost = sender == null || sender.connectionId == 0;
+            if (isSenderHost && playerMasksAssigned >= masksPerSide) return;
+            if (!isSenderHost && enemyMasksAssigned >= masksPerSide) return;
+
+            // Resolve mech
+            if (!NetworkServer.spawned.TryGetValue(mechNetId, out NetworkIdentity mechIdentity)) return;
+            MechController mech = mechIdentity.GetComponent<MechController>();
+            if (mech == null || !mech.isAlive || mech.equippedMask != null) return;
+
+            // Resolve mask data
+            MaskData mask = Resources.Load<MaskData>(maskDataPath);
+            if (mask == null) return;
+
+            // Validate team: host (connectionId 0) = Team.Player, client = Team.Enemy
+            if (isSenderHost && mech.team != Team.Player) return;
+            if (!isSenderHost && mech.team != Team.Enemy) return;
+
+            AssignMaskToMech(mech, mask);
+
+            if (mech.team == Team.Player)
+            {
+                playerMasksAssigned++;
+                if (playerMasksAssigned >= masksPerSide)
+                    playerSideReady = true;
+            }
+            else
+            {
+                enemyMasksAssigned++;
+                if (enemyMasksAssigned >= masksPerSide)
+                    enemySideReady = true;
+            }
+
+            // Start combat when both sides have finished assigning
+            if (playerSideReady && enemySideReady)
             {
                 StartCombat();
             }
@@ -157,6 +304,8 @@ namespace MaskEffect
         {
             StartCombat();
         }
+
+        // --- Combat ---
 
         public void StartCombat()
         {
@@ -173,6 +322,7 @@ namespace MaskEffect
         private void Update()
         {
             if (currentState != BattleState.Combat) return;
+            if (!NetworkHelper.IsServerOrOffline) return;
 
             float dt = Time.deltaTime;
             roundTimer -= dt;
@@ -239,10 +389,37 @@ namespace MaskEffect
 
         private void EndRound(Team winner)
         {
+            // Compute stats while allMechs is available (server only)
+            int pAlive = 0, eAlive = 0;
+            for (int i = 0; i < allMechs.Count; i++)
+            {
+                if (!allMechs[i].isAlive) continue;
+                if (allMechs[i].team == Team.Player) pAlive++;
+                else eAlive++;
+            }
+
+            lastRoundWinner = winner;
+            lastPlayerAlive = pAlive;
+            lastEnemyAlive = eAlive;
+
             SetState(BattleState.RoundEnd);
             Debug.Log($"Round {roundNumber} ended. Winner: {winner}");
             OnRoundEnded?.Invoke(winner);
+
+            // Notify clients about round end
+            if (NetworkServer.active)
+                RpcRoundEnded(winner);
         }
+
+        [ClientRpc]
+        private void RpcRoundEnded(Team winner)
+        {
+            // Host already fired event locally in EndRound()
+            if (isServer) return;
+            OnRoundEnded?.Invoke(winner);
+        }
+
+        // --- AI ---
 
         private void AIAssignMasks()
         {
@@ -275,13 +452,8 @@ namespace MaskEffect
             }
         }
 
-        private void SetState(BattleState newState)
-        {
-            currentState = newState;
-            OnStateChanged?.Invoke(newState);
-        }
+        // --- Utility ---
 
-        // Public utility for UI/testing
         public void SkipToNextRound()
         {
             StartNewRound();

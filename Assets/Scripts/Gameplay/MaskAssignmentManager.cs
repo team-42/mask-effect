@@ -1,4 +1,5 @@
 using UnityEngine;
+using Mirror;
 
 namespace MaskEffect
 {
@@ -33,6 +34,26 @@ namespace MaskEffect
         // Mech highlight state
         private MechController highlightedMech;
         private Color highlightedMechOriginalColor;
+
+        /// <summary>
+        /// Returns the team this local player controls.
+        /// Server/host = Player, Client = Enemy, Offline = Player.
+        /// </summary>
+        private Team MyTeam
+        {
+            get
+            {
+                if (NetworkHelper.IsOffline) return Team.Player;
+                if (NetworkServer.active) return Team.Player;
+                return Team.Enemy;
+            }
+        }
+
+        /// <summary>
+        /// Returns the tile zone that belongs to this local player.
+        /// </summary>
+        private TileZone MyZone =>
+            MyTeam == Team.Player ? TileZone.Player : TileZone.Enemy;
 
         private void Start()
         {
@@ -103,13 +124,13 @@ namespace MaskEffect
                 if (maskPanel != null && maskPanel.IsMouseOverPanel())
                     return;
 
-                // Try to pick up a player mech
+                // Try to pick up a mech belonging to this player's team
                 Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, 100f, mechLayerMask))
                 {
                     MechController mech = hit.collider.GetComponent<MechController>();
-                    if (mech != null && mech.team == Team.Player && mech.isAlive)
+                    if (mech != null && mech.team == MyTeam && mech.isAlive)
                     {
                         StartMechDrag(mech);
                     }
@@ -159,7 +180,7 @@ namespace MaskEffect
         {
             int targetTile = grid.GetNearestTile(draggedMech.transform.position);
 
-            bool validDrop = grid.GetTileZone(targetTile) == TileZone.Player
+            bool validDrop = grid.GetTileZone(targetTile) == MyZone
                 && (!grid.IsTileOccupied(targetTile) || targetTile == mechOriginalTile);
 
             if (validDrop)
@@ -199,12 +220,12 @@ namespace MaskEffect
                     maskDragProxy.transform.position = new Vector3(worldPoint.x, 1f, worldPoint.z);
             }
 
-            // Highlight mech under cursor
+            // Highlight mech under cursor (only this player's team)
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f, mechLayerMask))
             {
                 MechController mech = hit.collider.GetComponent<MechController>();
-                if (mech != null && mech.team == Team.Player && mech.isAlive && mech.equippedMask == null)
+                if (mech != null && mech.team == MyTeam && mech.isAlive && mech.equippedMask == null)
                 {
                     SetMechHighlight(mech);
                 }
@@ -234,7 +255,18 @@ namespace MaskEffect
 
                 if (highlightedMech != null)
                 {
-                    BattleManager.Instance.PlayerAssignMask(highlightedMech, carriedMask);
+                    if (NetworkHelper.IsOffline)
+                    {
+                        // Singleplayer: direct assignment
+                        BattleManager.Instance.PlayerAssignMask(highlightedMech, carriedMask);
+                    }
+                    else
+                    {
+                        // Multiplayer: route through Command
+                        string maskPath = $"Data/Masks/{carriedMask.name}";
+                        BattleManager.Instance.CmdAssignMask(highlightedMech.netId, maskPath);
+                    }
+
                     if (maskPanel != null)
                         maskPanel.MarkSlotUsed(carriedSlotIndex);
                     FinishMaskCarry();
@@ -280,7 +312,7 @@ namespace MaskEffect
             highlightedTile = tileIndex;
             highlightedOriginalColor = renderer.material.color;
 
-            bool valid = grid.GetTileZone(tileIndex) == TileZone.Player
+            bool valid = grid.GetTileZone(tileIndex) == MyZone
                 && (!grid.IsTileOccupied(tileIndex) || tileIndex == mechOriginalTile);
 
             renderer.material.color = valid
