@@ -154,8 +154,8 @@ namespace MaskEffect
             GameObject iconGO = new GameObject("MaskIcon");
             iconGO.transform.SetParent(transform, false);
             // Position slightly above the mech, higher than the ring
-            iconGO.transform.localPosition = new Vector3(0f, 0.75f, 0f);
-            iconGO.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f); // Adjust size as needed
+            iconGO.transform.localPosition = new Vector3(0f, 1.25f, 0f); // Hovering higher above the models
+            iconGO.transform.localScale = new Vector3(0.175f, 0.175f, 0.175f); // Further decreased size by 50%
 
             SpriteRenderer spriteRenderer = iconGO.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = maskData.maskIcon;
