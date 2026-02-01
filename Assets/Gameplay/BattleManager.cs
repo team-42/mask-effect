@@ -20,6 +20,10 @@ namespace MaskEffect
         [SerializeField] private MaskData[] availableMasks;
         [SerializeField] private GameObject maskPrefab;
 
+        [Header("Lighting")]
+        [SerializeField] private Light roundLight;
+        [SerializeField] private float maxLightRotationAngle = 360f; // degrees around X axis
+
         [Header("State")]
         [SyncVar(hook = nameof(OnCurrentStateChanged))]
         public BattleState currentState;
@@ -66,6 +70,11 @@ namespace MaskEffect
         public event Action<BattleState> OnStateChanged;
         public event Action<MechController> OnMechDied;
         public event Action<Team> OnRoundEnded;
+
+        // Lighting bookkeeping
+        private Quaternion initialLightLocalRotation = Quaternion.identity;
+        private bool initialLightRotationCaptured = false;
+        private float combatStartTime = 0f;
 
         private void Awake()
         {
@@ -136,6 +145,48 @@ namespace MaskEffect
             if (grid == null) grid = GetComponent<SimpleFlatGrid>();
             if (availableMasks == null || availableMasks.Length == 0)
                 availableMasks = Resources.LoadAll<MaskData>("Data/Masks");
+
+            // Try to auto-find a round light if none assigned in inspector
+            EnsureRoundLightReference();
+        }
+
+        private void EnsureRoundLightReference()
+        {
+            if (roundLight != null)
+            {
+                CaptureInitialLightRotationIfNeeded();
+                return;
+            }
+
+            var go = GameObject.Find("Directional Light");
+            if (go != null)
+            {
+                roundLight = go.GetComponent<Light>();
+            }
+
+            if (roundLight == null)
+            {
+                var anyLight = FindObjectOfType<Light>();
+                if (anyLight != null)
+                    roundLight = anyLight;
+            }
+
+            CaptureInitialLightRotationIfNeeded();
+        }
+
+        private void CaptureInitialLightRotationIfNeeded()
+        {
+            if (roundLight == null || initialLightRotationCaptured) return;
+            initialLightLocalRotation = roundLight.transform.localRotation;
+            initialLightRotationCaptured = true;
+        }
+
+        private void ResetRoundLightToInitial()
+        {
+            if (roundLight == null) return;
+            if (!initialLightRotationCaptured)
+                CaptureInitialLightRotationIfNeeded();
+            roundLight.transform.localRotation = initialLightLocalRotation;
         }
 
         // --- SyncVar Hook ---
@@ -168,6 +219,11 @@ namespace MaskEffect
             enemyMasksAssigned = 0;
             playerSideReady = false;
             enemySideReady = false;
+
+            // Reset light at the start of the round
+            EnsureRoundLightReference();
+            ResetRoundLightToInitial();
+            combatStartTime = 0f;
 
             // Clear previous round
             if (allMechs.Count > 0)
@@ -361,6 +417,9 @@ namespace MaskEffect
         {
             SetState(BattleState.Combat);
 
+            // Record combat start time for light rotation
+            combatStartTime = Time.time;
+
             // Trigger OnBattleStart for all mechs with abilities
             for (int i = 0; i < allMechs.Count; i++)
             {
@@ -371,6 +430,9 @@ namespace MaskEffect
 
         private void Update()
         {
+            // Update visual rotation for clients and server regardless of authority
+            UpdateRoundLightVisual();
+
             if (currentState != BattleState.Combat) return;
             if (!NetworkHelper.IsServerOrOffline) return;
 
@@ -379,6 +441,34 @@ namespace MaskEffect
 
             TickCombat(dt);
             CheckRoundEnd();
+        }
+
+        private void UpdateRoundLightVisual()
+        {
+            if (roundLight == null) return;
+            // Make sure we have captured initial rotation
+            if (!initialLightRotationCaptured)
+                CaptureInitialLightRotationIfNeeded();
+
+            // Only rotate during combat state
+            if (currentState != BattleState.Combat)
+            {
+                // On non-combat states ensure light is reset to initial rotation
+                ResetRoundLightToInitial();
+                return;
+            }
+
+            // If combatStartTime wasn't set for some reason, treat elapsed as 0
+            float elapsed = combatStartTime > 0f ? Time.time - combatStartTime : 0f;
+
+            // Progress 0..1 over roundTimeLimit seconds
+            float progress = roundTimeLimit > 0f ? Mathf.Clamp01(elapsed / roundTimeLimit) : 0f;
+
+            // Linear angle from 0 to maxLightRotationAngle over the round
+            float angle = maxLightRotationAngle * progress;
+
+            Quaternion targetLocal = initialLightLocalRotation * Quaternion.Euler(angle, 0f, 0f);
+            roundLight.transform.localRotation = targetLocal;
         }
 
         private void TickCombat(float dt)
@@ -454,6 +544,12 @@ namespace MaskEffect
 
             SetState(BattleState.RoundEnd);
             Debug.Log($"Round {roundNumber} ended. Winner: {winner}");
+
+            // Reset light at end of round
+            ResetRoundLightToInitial();
+            EnsureRoundLightReference();
+            ResetRoundLightToInitial();
+
             OnRoundEnded?.Invoke(winner);
 
             // Notify clients about round end
