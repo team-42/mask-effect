@@ -173,21 +173,21 @@ Role: shields / mitigation / stabilization
 
 ### Implemented
 - **Core auto-battler**: Mech spawning (5-10 mirrored), movement AI with A* pathfinding, basic attack & damage system (evasion, armor, shield), health & death, win/loss condition.
-- **3 Mech chassis** (Scout, Jet, Tank) with 3D models and metal material textures. All chassis use ranged projectile combat.
-- **3 Masks** (Warrior, Rogue, Angel) with all L1 abilities, status effects (Shield, Mark, Slow, Root, Taunt), targeting overrides, and damage types/resistances.
+- **5 Mech chassis** (Scout, Jet, Tank, Sniper, Colossus) with 3D models and metal material textures. Sniper has charge-up mechanic; Colossus has dual-target cleave.
+- **5 Masks** (Warrior, Rogue, Angel, Phantom, Commander) with 25 mask-chassis abilities (5×5 matrix), status effects (Shield, Mark, Slow, Root, Taunt, Stun, Untargetable, Invisible, MissChance), targeting overrides.
 - **Battle Arena**: 20x10 visual grid with 3 colored zones, camera controls (WASD, right-click rotate, scroll zoom).
 - **Mask Assignment UI**: IMGUI left-side panel with colored mask buttons; click mask then click mech to assign. Two-tone mech visuals (bottom=team color, top=mask tint).
 - **Game loop**: Round Setup → Mask Assignment → Auto Combat → Next Round. Enemy masks pre-assigned randomly; combat auto-starts when all player masks placed.
-- **Networking skeleton**: Mirror integration with LobbyScene (UIToolkit), host/join flow, NetworkIdentity on all prefabs. Scene transition from LobbyScene → BattleArenaScene.
+- **Multiplayer networking**: Mirror fully integrated with Singleplayer (localhost host), Host Game, and Join Game (IP input) flows via LobbyScene (UIToolkit). Server-authoritative mech spawning, mask assignment (per-side limits via `CmdAssignMask`), mech repositioning (`CmdRepositionMech`), NetworkTransform sync. `NetworkHelper` dual-mode utility for seamless SP/MP code paths. Client-correct Game Over perspective.
 - **Prefab system**: All mechs and projectiles use prefab-based instantiation.
 - **URP materials**: All project and Mirror example materials converted to URP. YughuesFreeMetalMaterials pack integrated for mech metal textures.
-- **Visual polish**: Game Over UI, mask effect visual procs (shield/mark/taunt indicators), death particle effects. Enemy team color is yellow for clear distinction from player blue.
+- **Visual polish**: Game Over UI, mask effect visual procs (shield/mark/taunt indicators), death particle effects (EnergyExplosion VFX). Enemy team color is yellow for clear distinction from player blue. Procedural Mars environment (voronoi cracks, FBM terrain, dusty skybox).
+- **Audio**: Background music (2-track playlist, persistent MusicManager singleton). Chassis-specific laser SFX (Scout, Jet, Tank).
 
 ### Not Yet Implemented
 - Basic HUD (health bars, timer)
-- Sound effects & background music
+- Remaining sound effects (UI, Win/Loss)
 - Stat balancing
-- Full network synchronization (game state sync is skeleton-only)
 
 ---
 

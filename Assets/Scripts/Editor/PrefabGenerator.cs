@@ -35,12 +35,15 @@ namespace MaskEffect
             var maskIndicator = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/MaskIndicator.prefab");
             var projectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/ProjectilePrefab.prefab");
 
+            var deathEffectPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/EnergyExplosion.prefab");
+
             // Wire MechSpawner
             var spawner = Object.FindFirstObjectByType<MechSpawner>();
             if (spawner != null)
             {
                 var so = new SerializedObject(spawner);
                 so.FindProperty("mechPrefab").objectReferenceValue = mechPrefab;
+                so.FindProperty("deathEffectPrefab").objectReferenceValue = deathEffectPrefab;
                 so.ApplyModifiedProperties();
                 EditorUtility.SetDirty(spawner);
                 Debug.Log("[PrefabGenerator] Wired MechSpawner prefab references.");
@@ -169,7 +172,7 @@ namespace MaskEffect
 
             // Assign death effect VFX
             var deathVfx = AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/UnityTechnologies/ParticlePack/EffectExamples/Fire & Explosion Effects/Prefabs/EnergyExplosion.prefab");
+                "Assets/Prefabs/EnergyExplosion.prefab");
             if (deathVfx != null)
             {
                 go.GetComponent<MechController>().deathEffectPrefab = deathVfx;

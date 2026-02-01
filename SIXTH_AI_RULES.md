@@ -21,6 +21,12 @@ When performing a new task within the 'Mask Effect' project, Sixth AI should aut
 
 Sixth AI should use the information in these `CLAUDE.md` files to understand the current state of each component's development, prioritize sub-tasks, and ensure consistency with the overall project plan outlined in the root `CLAUDE.md`.
 
+## Prefab Convention
+
+- All project-owned `.prefab` files MUST be placed in `Assets/Prefabs/` (flat, no subfolders).
+- Never create prefabs in other directories (e.g. `Assets/Mechs/`, `Assets/Tiles/`).
+- Third-party prefabs (Mirror, Particle Pack, etc.) are exempt.
+
 ## Versions
 Make sure that all code fits the following versions strictly:
 - Unity 6000.3.6f1

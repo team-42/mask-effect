@@ -26,6 +26,12 @@ Sixt AI should make sure that all code strictly fits to the following versions:
 - Unity 6000.3.6f1
 - Mirror 96.0.1
 
+## Prefab Convention
+
+- All project-owned `.prefab` files MUST be placed in `Assets/Prefabs/` (flat, no subfolders).
+- Never create prefabs in other directories (e.g. `Assets/Mechs/`, `Assets/Tiles/`).
+- Third-party prefabs (Mirror, Particle Pack, etc.) are exempt.
+
 ## Conventions
 Sixt AI should update or extend relevant documentation.
 After each code change, Sixt AI should check the Unity MCP log for errors and fix them.

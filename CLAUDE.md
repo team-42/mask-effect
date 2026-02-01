@@ -6,6 +6,12 @@
 - **Render Pipeline:** URP (Universal Render Pipeline)
 - **Networking:** Mirror
 
+## Prefab Convention
+
+All project-owned `.prefab` files MUST be placed in `Assets/Prefabs/` (flat, no subfolders).
+Third-party prefabs (e.g. Mirror, Particle Pack) are exempt from this rule.
+Never create prefab files in other directories.
+
 ## Project Overview
 
 Mask Effect is an auto-battler where Mechs wear Masks to specify tactical roles. The core gameplay loop involves players assigning a few masks each round to reshape mech roles, targeting, and abilities. The MVP focuses on a local test mode with random AI opponents, 1 level, 3 mechs, and 3 masks, with a final score display.
@@ -31,7 +37,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Implement Health & Death System for Mechs.
   - [x] Implement Win/Loss Condition (Last Mech Standing, optional time limit).
 - [x] **Network Preparation & Randomized AI Opponent:**
-  - [x] Mirror networking integrated (skeleton: NetworkIdentity on prefabs, LobbyScene with scene transition).
+  - [x] Mirror networking fully functional (Host/Join flow, server-authoritative spawning, mask assignment, mech repositioning, NetworkTransform sync, dual-mode NetworkHelper).
   - [x] Prefabs created for all network-spawnable objects (MechPrefab, TilePrefab, MaskDragProxy, MaskIndicator, ProjectilePrefab).
   - [x] Develop a randomized AI opponent that assigns masks to its mechs for MVP battles.
 - [x] **Battle Arena Environment:**
