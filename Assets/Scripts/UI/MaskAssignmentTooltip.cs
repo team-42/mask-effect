@@ -14,10 +14,10 @@ namespace MaskEffect
         private string bodyText;
         private Color tooltipTintColor;
 
-        private const float Padding = 8f;
+        private const float Padding = 12f;
         private const float OffsetX = 14f;
         private const float OffsetY = -28f;
-        private const float MinBodyWidth = 200f;
+        private const float MinBodyWidth = 300f;
 
         /// <summary>
         /// Show the tooltip.  Safe to call every frame; internally a no-op when the
@@ -53,7 +53,7 @@ namespace MaskEffect
 
             GUIStyle headingStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 13,
+                fontSize = 20,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft
             };
@@ -62,7 +62,7 @@ namespace MaskEffect
 
             GUIStyle bodyStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 12,
+                fontSize = 18,
                 fontStyle = FontStyle.Normal,
                 alignment = TextAnchor.UpperLeft,
                 wordWrap = true
