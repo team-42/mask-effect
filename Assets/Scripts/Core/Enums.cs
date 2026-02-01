@@ -10,7 +10,9 @@ namespace MaskEffect
     {
         Scout,
         Jet,
-        Tank
+        Tank,
+        Sniper,
+        Colossus
     }
 
     public enum MaskType
@@ -18,7 +20,9 @@ namespace MaskEffect
         None,
         Warrior,
         Rogue,
-        Angel
+        Angel,
+        Phantom,
+        Commander
     }
 
     public enum TargetingMode
@@ -28,7 +32,8 @@ namespace MaskEffect
         HighestThreat,
         BacklinePriority,
         FarthestEnemy,
-        LowestHPAlly
+        LowestHPAlly,
+        FurthestInRange
     }
 
     public enum StatusEffectType
@@ -37,7 +42,11 @@ namespace MaskEffect
         Mark,
         Slow,
         Root,
-        Taunt
+        Taunt,
+        Stun,
+        Untargetable,
+        Invisible,
+        MissChance
     }
 
     public enum DamageType
@@ -66,5 +75,12 @@ namespace MaskEffect
         Player,
         Enemy,
         Neutral
+    }
+
+    public enum SpawnPreference
+    {
+        Random,
+        Backline,
+        FrontlineCenter
     }
 }

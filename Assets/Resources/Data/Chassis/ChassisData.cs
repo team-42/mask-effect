@@ -31,6 +31,9 @@ namespace MaskEffect
         public bool canFly = false;
         public float hoverHeight = 0f;
 
+        [Header("Spawn")]
+        public SpawnPreference spawnPreference = SpawnPreference.Random;
+
         [Header("Visuals - 3D Model")]
         public float indicatorHeight = 1.5f;
         public float indicatorRadius = 0.3f;

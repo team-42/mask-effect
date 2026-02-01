@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf93753612fe401468d2e2c8a08c0cc7, type: 3}
+  m_Name: Sniper
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.ChassisData
+  chassisName: Sniper
+  chassisType: 3
+  maxHP: 60
+  armor: 5
+  attackDamage: 45
+  attackInterval: 3
+  range: 5
+  moveSpeed: 0.8
+  evasion: 0
+  isRanged: 1
+  projectilePrefab: {fileID: 100589467397473233, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
+  baseDamageType: 0
+  resistanceType: 0
+  resistanceValue: 0
+  canFly: 0
+  hoverHeight: 0
+  spawnPreference: 1
+  indicatorHeight: 1.5
+  indicatorRadius: 0.3
+  modelRotationOffset: {x: 0, y: 0, z: 0}
+  primitiveShape: 3
+  chassisColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  chassisScale: {x: 0.009, y: 0.009, z: 0.009}

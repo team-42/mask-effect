@@ -8,6 +8,7 @@ namespace MaskEffect
             List<MechController> allMechs);
         void Tick(float dt);
         void OnAttackLanded(MechController target, int damage);
+        void OnTakeDamage(MechController attacker, int damage);
         void OnKill(MechController killed);
         void OnBattleStart();
         void Cleanup();

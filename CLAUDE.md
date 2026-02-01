@@ -107,10 +107,17 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 ## Current Status
 
 - [x] Core auto-battler mechanics (mech spawning, movement, combat, death).
-- [x] 3 masks (Warrior, Rogue, Angel) with L1 abilities, status effects, targeting overrides.
+- [x] 5 masks (Warrior, Rogue, Angel, Phantom, Commander) with full per-chassis abilities.
+- [x] 5 chassis types (Scout, Jet, Tank, Sniper, Colossus) with unique combat mechanics.
+- [x] Sniper charge-up mechanic (1s charge before firing, interrupted on hit, reset on kill via KillShot).
+- [x] Colossus dual-target cleave (melee hits 2 enemies in range).
+- [x] 25 mask-chassis abilities (5 masks x 5 chassis), each with ScriptableObject data assets.
+- [x] 4 new status effects: Stun (blocks actions), Untargetable (skipped by targeting), Invisible (skipped by targeting), MissChance (additive evasion).
+- [x] Per-chassis spawn preferences: Sniper → Backline, Colossus → FrontlineCenter, others → Random.
+- [x] masksPerSide increased from 2 to 3 for more strategic depth.
 - [x] Glowing ground ring under masked mechs (MaskRing shader, URP HLSL, additive glow + pulse).
-- [x] 3D mech models (Scout, Jet, Tank) with team colors and mask tint on top half.
-- [x] All chassis ranged with projectiles (Scout range 3, Tank range 2.5, Jet range 4).
+- [x] 3D mech models (Scout, Jet, Tank, Sniper, Colossus) with team colors and mask tint on top half.
+- [x] All ranged chassis fire projectiles (Scout range 3, Tank range 2.5, Jet range 4, Sniper range 5).
 - [x] Jet chassis hovers with bobbing animation; projectiles target VisualCenter height.
 - [x] Game loop: round setup → mask assignment → auto combat → round end → next round.
 - [x] BattleArenaScene: 28x12 grid, 3 zones (player 7, neutral 14, enemy 7), IMGUI mask panel, drag-to-reposition, camera controls (edge panning removed, arena bounds X:-20..20 Z:-15..15, zoom clamped).
@@ -132,6 +139,36 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Procedural Mars environment: `MaskEffect/MarsSurface` shader (`Assets/Shaders/MarsSurface.shader`, `Assets/Materials/MarsGround.mat`) with voronoi rock cracks, FBM sand/rock/dust terrain variation, bump mapping, distance fade to dusty horizon. 150x150 ground plane placed beneath grid. Skybox (`MaskEffect/SpaceSkybox`) retuned to Mars atmosphere (dusty orange tones, faint stars). Warm directional light (1, 0.85, 0.7) at 1.5 intensity. Dusty orange fog. Applied to all 3 arena scenes.
 - [ ] Remaining sound effects (UI, Win/Loss).
 - [ ] Demo build and presentation.
+
+## Mask-Chassis Ability Matrix (5x5)
+
+|              | **Scout**       | **Jet**          | **Tank**         | **Sniper**           | **Colossus**          |
+|--------------|-----------------|------------------|------------------|----------------------|-----------------------|
+| **Warrior**  | HitAndRun       | DiveSlash        | Challenge        | ArmorPiercingRound   | OverwhelmingForce     |
+| **Rogue**    | ExecuteChain    | Mark             | Grapple          | KillShot             | CrushingGrip          |
+| **Angel**    | GuardianLeap    | SkyBarrier       | Sanctuary        | OverwatchProtocol    | LivingFortress        |
+| **Phantom**  | PhaseDash       | Cloak            | Mirage           | RevengeBlink         | DisplacementField     |
+| **Commander**| RallyCry        | AirSuperiority   | IronWill         | Spotter              | TitanPresence         |
+
+## Mask Color Palette
+
+| Mask      | Color       | Hex     | RGB                |
+|-----------|-------------|---------|--------------------|
+| Warrior   | Red         | —       | Unity Color.red    |
+| Rogue     | Green       | —       | Unity Color.green  |
+| Angel     | Gold        | —       | Unity Color(1,0.84,0) |
+| Phantom   | Violet      | #9B5DE5 | (0.608, 0.365, 0.898) |
+| Commander | Light Blue  | #00B4D8 | (0, 0.706, 0.847)    |
+
+## Chassis Stats
+
+| Chassis  | HP  | Armor | Dmg | Interval | Range | Speed | Ranged | Special               |
+|----------|-----|-------|-----|----------|-------|-------|--------|-----------------------|
+| Scout    | 100 | 10    | 10  | 1.0s     | 3     | 2.0   | Yes    | —                     |
+| Jet      | 80  | 5     | 15  | 1.2s     | 4     | 3.0   | Yes    | Flies, hover bob      |
+| Tank     | 150 | 20    | 12  | 1.5s     | 2.5   | 1.0   | Yes    | —                     |
+| Sniper   | 60  | 5     | 45  | 3.0s     | 5     | 0.8   | Yes    | 1s charge-up, backline|
+| Colossus | 250 | 30    | 25  | 2.5s     | 1     | 0.25  | No     | Cleave 2 targets, front|
 
 ## Critical Risks & Mitigation
 

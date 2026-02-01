@@ -51,10 +51,15 @@ namespace MaskEffect
                 lineup[i] = chassisOptions[Random.Range(0, chassisOptions.Length)];
             }
 
-            // Pick random positions on the player side
+            // Pick spawn positions on the player side, sorted for preference matching
             int[] playerTiles = grid.GetSpawnTiles(Team.Player);
-            ShuffleTiles(playerTiles);
             int count = Mathf.Min(lineup.Length, playerTiles.Length);
+
+            // Assign tiles based on spawn preference:
+            // Backline chassis get the lowest X tiles (farthest from enemy for Player)
+            // FrontlineCenter chassis get the highest X tiles (closest to enemy)
+            // Random chassis get shuffled remaining tiles
+            AssignTilesByPreference(lineup, playerTiles, count);
 
             List<MechController> playerMechs = new List<MechController>();
             List<MechController> enemyMechs = new List<MechController>();
@@ -214,12 +219,107 @@ namespace MaskEffect
                 Destroy(collider);
         }
 
+        private void AssignTilesByPreference(ChassisData[] lineup, int[] tiles, int count)
+        {
+            // Sort tiles by X ascending (low X = backline for Player, high X = frontline)
+            System.Array.Sort(tiles, (a, b) =>
+                grid.GetTileWorldPosition(a).x.CompareTo(grid.GetTileWorldPosition(b).x));
+
+            // Separate lineup indices by preference
+            List<int> backlineIndices = new List<int>();
+            List<int> frontlineIndices = new List<int>();
+            List<int> randomIndices = new List<int>();
+
+            for (int i = 0; i < count; i++)
+            {
+                switch (lineup[i].spawnPreference)
+                {
+                    case SpawnPreference.Backline:
+                        backlineIndices.Add(i);
+                        break;
+                    case SpawnPreference.FrontlineCenter:
+                        frontlineIndices.Add(i);
+                        break;
+                    default:
+                        randomIndices.Add(i);
+                        break;
+                }
+            }
+
+            // Assign backline chassis to lowest X tiles (start of sorted array)
+            // Assign frontline chassis to highest X tiles (end of sorted array)
+            // Shuffle remaining tiles for random chassis
+            int[] assignedTileIndex = new int[count];
+            bool[] tileUsed = new bool[tiles.Length];
+
+            // Backline: assign from start (lowest X)
+            int tilePtr = 0;
+            foreach (int li in backlineIndices)
+            {
+                while (tilePtr < tiles.Length && tileUsed[tilePtr]) tilePtr++;
+                if (tilePtr < tiles.Length)
+                {
+                    assignedTileIndex[li] = tilePtr;
+                    tileUsed[tilePtr] = true;
+                    tilePtr++;
+                }
+            }
+
+            // Frontline: assign from end (highest X)
+            tilePtr = tiles.Length - 1;
+            foreach (int li in frontlineIndices)
+            {
+                while (tilePtr >= 0 && tileUsed[tilePtr]) tilePtr--;
+                if (tilePtr >= 0)
+                {
+                    assignedTileIndex[li] = tilePtr;
+                    tileUsed[tilePtr] = true;
+                    tilePtr--;
+                }
+            }
+
+            // Random: collect remaining unused tiles, shuffle, assign
+            List<int> remainingTileIndices = new List<int>();
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                if (!tileUsed[i]) remainingTileIndices.Add(i);
+            }
+            ShuffleList(remainingTileIndices);
+
+            int rPtr = 0;
+            foreach (int li in randomIndices)
+            {
+                if (rPtr < remainingTileIndices.Count)
+                {
+                    assignedTileIndex[li] = remainingTileIndices[rPtr];
+                    rPtr++;
+                }
+            }
+
+            // Reorder tiles array to match lineup order
+            int[] orderedTiles = new int[count];
+            for (int i = 0; i < count; i++)
+            {
+                orderedTiles[i] = tiles[assignedTileIndex[i]];
+            }
+            System.Array.Copy(orderedTiles, tiles, count);
+        }
+
         private void ShuffleTiles(int[] array)
         {
             for (int i = array.Length - 1; i > 0; i--)
             {
                 int j = Random.Range(0, i + 1);
                 (array[i], array[j]) = (array[j], array[i]);
+            }
+        }
+
+        private void ShuffleList(List<int> list)
+        {
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
             }
         }
 

@@ -254,6 +254,16 @@ namespace MaskEffect
             return gridWidth * gridHeight;
         }
 
+        public int GetColumn(int tileIndex)
+        {
+            return FromIndex(tileIndex).x;
+        }
+
+        public int GetRow(int tileIndex)
+        {
+            return FromIndex(tileIndex).z;
+        }
+
         public void ClearAllOccupants()
         {
             occupants.Clear();

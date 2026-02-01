@@ -10,8 +10,8 @@ namespace MaskEffect
         public static BattleManager Instance { get; private set; }
 
         [Header("Config")]
-        [SerializeField] private float roundTimeLimit = 45f;
-        [SerializeField] private int masksPerSide = 2;
+        [SerializeField] private float roundTimeLimit = 60f;
+        [SerializeField] private int masksPerSide = 3;
         [SerializeField] private bool autoStartCombat = false;
 
         [Header("References")]

@@ -16,6 +16,25 @@ namespace MaskEffect
             { "GuardianLeap",   () => new GuardianLeapAbility() },
             { "SkyBarrier",     () => new SkyBarrierAbility() },
             { "Sanctuary",      () => new SanctuaryAbility() },
+            // Phantom mask abilities
+            { "PhaseDash",          () => new PhaseDashAbility() },
+            { "Cloak",              () => new CloakAbility() },
+            { "Mirage",             () => new MirageAbility() },
+            { "RevengeBlink",       () => new RevengeBlinkAbility() },
+            { "DisplacementField",  () => new DisplacementFieldAbility() },
+            // Commander mask abilities
+            { "RallyCry",           () => new RallyCryAbility() },
+            { "AirSuperiority",     () => new AirSuperiorityAbility() },
+            { "IronWill",           () => new IronWillAbility() },
+            { "Spotter",            () => new SpotterAbility() },
+            { "TitanPresence",      () => new TitanPresenceAbility() },
+            // Existing masks x new chassis
+            { "ArmorPiercingRound", () => new ArmorPiercingRoundAbility() },
+            { "OverwhelmingForce",  () => new OverwhelmingForceAbility() },
+            { "KillShot",           () => new KillShotAbility() },
+            { "CrushingGrip",       () => new CrushingGripAbility() },
+            { "OverwatchProtocol",  () => new OverwatchProtocolAbility() },
+            { "LivingFortress",     () => new LivingFortressAbility() },
         };
 
         public static IMaskAbility Create(string abilityClassId)

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99a23a6f2cc0b14a9afa66f70b105fc, type: 3}
+  m_Name: Commander
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskData
+  maskName: Commander
+  maskType: 5
+  defaultTargetingMode: 0
+  bonusHP: 15
+  bonusArmor: 5
+  bonusAttackDamage: 0
+  bonusAttackInterval: 0
+  bonusEvasion: 0
+  damageTypeOverride: 0
+  damageMultiplier: 1
+  scoutAbility: {fileID: 11400000, guid: 737469dd95618264780f80d8a68f1d07, type: 2}
+  jetAbility: {fileID: 11400000, guid: b2adb491d65d92a459b18900ce6ccf8d, type: 2}
+  tankAbility: {fileID: 11400000, guid: a298893778d130b44a81851513fe595d, type: 2}
+  sniperAbility: {fileID: 11400000, guid: d1e5c03d88ce39447a79928228396deb, type: 2}
+  colossusAbility: {fileID: 11400000, guid: 5d9b3c0dc7eaadf4a903e4481b284d5d, type: 2}
+  maskTint: {r: 0, g: 0.706, b: 0.847, a: 1}

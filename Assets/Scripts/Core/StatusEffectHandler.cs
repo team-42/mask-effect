@@ -109,10 +109,32 @@ namespace MaskEffect
             return false;
         }
 
+        public bool IsStunned()
+        {
+            return HasEffect(StatusEffectType.Stun);
+        }
+
+        public bool IsUntargetable()
+        {
+            return HasEffect(StatusEffectType.Untargetable);
+        }
+
+        public bool IsInvisible()
+        {
+            return HasEffect(StatusEffectType.Invisible);
+        }
+
+        public float GetMissChance()
+        {
+            var effect = GetEffect(StatusEffectType.MissChance);
+            return effect != null ? effect.value : 0f;
+        }
+
         public float GetMarkMultiplier()
         {
-            if (HasEffect(StatusEffectType.Mark))
-                return 1.15f;
+            var mark = GetEffect(StatusEffectType.Mark);
+            if (mark != null)
+                return 1f + mark.value;
             return 1f;
         }
 

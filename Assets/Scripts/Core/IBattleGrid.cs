@@ -15,5 +15,7 @@ namespace MaskEffect
         bool IsBackline(int tileIndex, Team relativeTo);
         int GetMirroredTile(int tileIndex);
         int GetTileCount();
+        int GetColumn(int tileIndex);
+        int GetRow(int tileIndex);
     }
 }
