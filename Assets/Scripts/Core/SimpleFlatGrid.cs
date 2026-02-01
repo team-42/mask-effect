@@ -13,9 +13,9 @@ namespace MaskEffect
         [Header("Visual Tiles")]
         [SerializeField] private bool generateVisualTiles = false;
         [SerializeField] private GameObject tilePrefab;
-        [SerializeField] private Color playerTileColor = new Color(0.3f, 0.4f, 0.7f);
-        [SerializeField] private Color enemyTileColor = new Color(0.7f, 0.35f, 0.3f);
-        [SerializeField] private Color neutralTileColor = new Color(0.45f, 0.45f, 0.45f);
+        [SerializeField] private Color playerTileColor = new Color(0.75f, 0.82f, 1f);
+        [SerializeField] private Color enemyTileColor = new Color(1f, 0.75f, 0.7f);
+        [SerializeField] private Color neutralTileColor = new Color(0.9f, 0.9f, 0.9f);
 
         private Dictionary<int, MechController> occupants = new Dictionary<int, MechController>();
         private GameObject[] tileVisuals;

@@ -14,19 +14,19 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.01
+  m_Fog: 1
+  m_FogColor: {r: 0.02, g: 0.01, b: 0.04, a: 1}
+  m_FogMode: 2
+  m_FogDensity: 0.02
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientSkyColor: {r: 0.04, g: 0.04, b: 0.08, a: 1}
+  m_AmbientEquatorColor: {r: 0.06, g: 0.03, b: 0.08, a: 1}
+  m_AmbientGroundColor: {r: 0.02, g: 0.02, b: 0.03, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: b9b2a68219f326843bbe040c44e3bbbb, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -209,9 +209,9 @@ MonoBehaviour:
   gridOrigin: {x: -10, y: 0, z: -5}
   generateVisualTiles: 1
   tilePrefab: {fileID: 6643514479058934664, guid: b11a9d28c5423bb4bb432faa9e5352b8, type: 3}
-  playerTileColor: {r: 0.3, g: 0.4, b: 0.7, a: 1}
-  enemyTileColor: {r: 0.7, g: 0.35, b: 0.3, a: 1}
-  neutralTileColor: {r: 0.45, g: 0.45, b: 0.45, a: 1}
+  playerTileColor: {r: 0.75, g: 0.82, b: 1, a: 1}
+  enemyTileColor: {r: 1, g: 0.75, b: 0.7, a: 1}
+  neutralTileColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
 --- !u!4 &1731594
 Transform:
   m_ObjectHideFlags: 0
