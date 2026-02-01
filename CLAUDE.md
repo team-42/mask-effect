@@ -81,7 +81,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Add chassis-specific laser SFX (Scout, Jet, Tank sounds in `Resources/MechSounds/`, played via `MechController.PlayLaserSound()` on each ranged attack).
   - [ ] Add remaining Sound Effects (UI, Win/Loss).
   - [x] Integrate Background Music (persistent MusicManager singleton with DontDestroyOnLoad + own AudioListener).
-  - [x] Procedural Space Skybox (`MaskEffect/SpaceSkybox` shader) with stars, nebula clouds, and twinkle animation. Applied to all 3 arena scenes.
+  - [x] Procedural Mars environment: `MaskEffect/MarsSurface` ground shader (voronoi cracks, FBM sand/rock, distance fog) + `MaskEffect/SpaceSkybox` skybox retuned to dusty Mars atmosphere. Applied to all 3 arena scenes.
 - [x] **Render Pipeline & Material Compatibility:**
   - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
   - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
@@ -91,7 +91,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Imported `YughuesFreeMetalMaterials` asset pack (3 metal materials with diffuse/normal/specular textures).
   - [x] Updated model import settings (`.obj.meta`) for Scout, Jet, Tank models.
   - [x] Changed enemy team color from orange to yellow for better visual distinction.
-  - [x] Procedural Space Skybox shader (`Assets/Shaders/SpaceSkybox.shader`) with dark ambient lighting and fog. Applied to all arena scenes via `Assets/Editor/SetSkybox.cs` menu tool.
+  - [x] Procedural Mars surface shader (`Assets/Shaders/MarsSurface.shader`) with voronoi rock cracks, FBM sand/rock terrain, and distance fade. Skybox retuned to Mars atmosphere (dusty orange). Ground plane (150x150) placed via `Assets/Editor/SetSkybox.cs` menu tool. Directional light warm-tinted (1, 0.85, 0.7) at intensity 1.5.
 
 ### Phase 3: Demo & Submission (Final 12 Hours)
 
@@ -129,7 +129,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] MusicManager singleton (DontDestroyOnLoad) with own AudioListener, 2-track playlist loop, clip-null recovery via Resources.Load fallback. Audio files in `Assets/Resources/Audio/`.
 - [x] Background music integrated (2 tracks, persistent MusicManager with own AudioListener, auto-advances playlist, survives all scene transitions).
 - [x] Chassis-specific laser attack SFX (`scout_laser.wav`, `jet_laser.wav`, `tank_laser.wav` in `Assets/Resources/MechSounds/`). Loaded per chassis type via `Resources.Load`, played with `AudioSource.PlayOneShot` in `MechController.TryAttack()`.
-- [x] Procedural Space Skybox (`MaskEffect/SpaceSkybox` shader, `Assets/Materials/SpaceSkybox.mat`): dark space gradient, procedural stars with twinkle animation, FBM-based nebula clouds (purple/blue). Ambient lighting adjusted (dark cool tones). Exponential fog for depth. Applied to BattleArenaScene, BattleArenaMultiplayer, MultiplayerArenaScene.
+- [x] Procedural Mars environment: `MaskEffect/MarsSurface` shader (`Assets/Shaders/MarsSurface.shader`, `Assets/Materials/MarsGround.mat`) with voronoi rock cracks, FBM sand/rock/dust terrain variation, bump mapping, distance fade to dusty horizon. 150x150 ground plane placed beneath grid. Skybox (`MaskEffect/SpaceSkybox`) retuned to Mars atmosphere (dusty orange tones, faint stars). Warm directional light (1, 0.85, 0.7) at 1.5 intensity. Dusty orange fog. Applied to all 3 arena scenes.
 - [ ] Remaining sound effects (UI, Win/Loss).
 - [ ] Demo build and presentation.
 

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SpaceSkybox
-  m_Shader: {fileID: 4800000, guid: f1f4b5fd4b428764580dbec004470d61, type: 3}
+  m_Name: MarsGround
+  m_Shader: {fileID: 4800000, guid: 6f48593e9f6db5346a598ae4a5b879c2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,18 +25,21 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _HorizonSharpness: 2
-    - _NebulaIntensity: 0.5
-    - _NebulaScale: 2
-    - _StarBrightness: 1.5
-    - _StarDensity: 25
-    - _StarSize: 0.04
-    - _Twinkle: 1.5
+    - _DetailScale: 35
+    - _FadeEnd: 55
+    - _FadeStart: 20
+    - _HeightStrength: 0.3
+    - _Metallic: 0.05
+    - _NoiseScale: 6
+    - _RockScale: 5
+    - _Roughness: 0.7
+    - _Smoothness: 0.08
+    - _TessAmount: 1
     m_Colors:
-    - _BottomColor: {r: 0.4, g: 0.22, b: 0.13, a: 1}
-    - _HorizonColor: {r: 0.7, g: 0.4, b: 0.25, a: 1}
-    - _NebulaColor1: {r: 0.5, g: 0.25, b: 0.12, a: 1}
-    - _NebulaColor2: {r: 0.35, g: 0.15, b: 0.08, a: 1}
-    - _TopColor: {r: 0.35, g: 0.18, b: 0.12, a: 1}
+    - _Color1: {r: 0.82, g: 0.5, b: 0.3, a: 1}
+    - _Color2: {r: 0.55, g: 0.32, b: 0.2, a: 1}
+    - _Color3: {r: 0.9, g: 0.6, b: 0.4, a: 1}
+    - _DarkCrevice: {r: 0.35, g: 0.18, b: 0.1, a: 1}
+    - _HorizonColor: {r: 0.65, g: 0.38, b: 0.22, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
