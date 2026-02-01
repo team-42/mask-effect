@@ -214,7 +214,7 @@ MonoBehaviour:
   editorAutoStart: 0
   sendRate: 60
   offlineScene: Assets/Scenes/LobbyScene.unity
-  onlineScene: Assets/Scenes/MultiplayerArenaScene.unity
+  onlineScene: Assets/Scenes/BattleArenaMultiplayer.unity
   offlineSceneLoadDelay: 0
   transport: {fileID: 130451269}
   networkAddress: localhost
@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUIController
   battleArenaSceneName: BattleArenaScene
-  multiplayerSceneName: BattleArenaMultiplayer
+  multiplayerSceneName: MultiplayerArenaScene
 --- !u!114 &1003995663
 MonoBehaviour:
   m_ObjectHideFlags: 0
