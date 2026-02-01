@@ -37,6 +37,11 @@ namespace MaskEffect
             transform.localPosition = new Vector3(0f, 0.05f, 0f);
 
             // Create ability (server-only logic)
+            if (mech.chassisData == null)
+            {
+                Debug.LogError($"[NetworkMask] InitializeOnServer: mech.chassisData is null for mech {mech.mechId} team={mech.team}");
+                return;
+            }
             MaskAbilityData abilityData = data.GetAbilityForChassis(mech.chassisData.chassisType);
             if (abilityData != null)
             {

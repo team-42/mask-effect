@@ -314,8 +314,27 @@ namespace MaskEffect
             if (mech == null || mask == null) return;
             if (mech.equippedMask != null) return;
 
+            if (maskPrefab == null)
+            {
+                Debug.LogError("[BattleManager] maskPrefab is null! Cannot assign mask.");
+                return;
+            }
+
+            if (mech.chassisData == null)
+            {
+                Debug.LogError($"[BattleManager] mech.chassisData is null for mech {mech.mechId} team={mech.team}. Cannot assign mask.");
+                return;
+            }
+
             GameObject maskGO = Instantiate(maskPrefab);
             NetworkMask netMask = maskGO.GetComponent<NetworkMask>();
+            if (netMask == null)
+            {
+                Debug.LogError("[BattleManager] maskPrefab is missing NetworkMask component!");
+                Destroy(maskGO);
+                return;
+            }
+
             netMask.InitializeOnServer(mask, mech, grid, allMechs);
 
             // Network spawn so all clients receive the mask object
@@ -364,6 +383,18 @@ namespace MaskEffect
         [Command(requiresAuthority = false)]
         public void CmdAssignMask(uint mechNetId, string maskDataPath, NetworkConnectionToClient sender = null)
         {
+            try
+            {
+                CmdAssignMaskInternal(mechNetId, maskDataPath, sender);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[BattleManager] CmdAssignMask crashed: {e.Message}\n{e.StackTrace}");
+            }
+        }
+
+        private void CmdAssignMaskInternal(uint mechNetId, string maskDataPath, NetworkConnectionToClient sender)
+        {
             if (currentState != BattleState.MaskAssignment) return;
 
             // Enforce per-side mask limit
@@ -378,7 +409,11 @@ namespace MaskEffect
 
             // Resolve mask data
             MaskData mask = Resources.Load<MaskData>(maskDataPath);
-            if (mask == null) return;
+            if (mask == null)
+            {
+                Debug.LogWarning($"[BattleManager] CmdAssignMask: Could not load mask at '{maskDataPath}'");
+                return;
+            }
 
             // Validate team: host (connectionId 0) = Team.Player, client = Team.Enemy
             if (isSenderHost && mech.team != Team.Player) return;

@@ -25,7 +25,7 @@ public class PlayerNetworkBehaviour : NetworkBehaviour
         {
             instantiatedMech = Instantiate(mechPrefab, transform);
             instantiatedMech.transform.localPosition = Vector3.zero; // Position relative to player object
-            Debug.Log($"Mech instantiated for player {connectionToClient.connectionId}");
+            Debug.Log($"Mech instantiated for player {netId}");
         }
         else
         {

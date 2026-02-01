@@ -120,30 +120,36 @@ Shader "MaskEffect/FogWall"
             {
                 float2 uv = i.uv;
 
-                // Scrolling noise coordinates
-                float2 noiseUV = uv * _NoiseScale + float2(_Time.y * _ScrollSpeed, 0);
-                float2 detailUV = uv * _DetailScale + float2(_Time.y * _ScrollSpeed * 0.7, _Time.y * 0.1);
+                // Scrolling noise coordinates (drift in both directions for area fog)
+                float2 noiseUV = uv * _NoiseScale + float2(_Time.y * _ScrollSpeed, _Time.y * _ScrollSpeed * 0.4);
+                float2 detailUV = uv * _DetailScale + float2(_Time.y * _ScrollSpeed * 0.7, _Time.y * 0.15);
 
                 // Layered noise for organic fog look
                 float noise = fbm(noiseUV, 4);
                 float detail = fbm(detailUV, 3) * 0.3;
                 float fogPattern = saturate(noise + detail);
 
-                // Vertical gradient: dense at bottom (uv.y=0), transparent at top (uv.y=1)
-                float verticalFade = 1.0 - smoothstep(0.0, 0.85, uv.y);
+                // Edge fade on all 4 sides (soft rectangular border)
+                float edgeSoftness = 0.2;
+                float edgeFade = smoothstep(0.0, edgeSoftness, uv.x)
+                               * smoothstep(0.0, edgeSoftness, 1.0 - uv.x)
+                               * smoothstep(0.0, edgeSoftness, uv.y)
+                               * smoothstep(0.0, edgeSoftness, 1.0 - uv.y);
 
-                // Horizontal edge fade (soft edges at left/right of wall)
-                float edgeFade = smoothstep(0.0, 0.1, uv.x) * smoothstep(0.0, 0.1, 1.0 - uv.x);
+                // Center density boost (denser in the middle of the area)
+                float2 center = uv - 0.5;
+                float centerDist = length(center) * 1.4;
+                float centerBoost = 1.0 - saturate(centerDist);
 
                 // Combined alpha
-                float alpha = fogPattern * verticalFade * edgeFade * _Density;
+                float alpha = fogPattern * edgeFade * lerp(0.7, 1.0, centerBoost) * _Density;
 
-                // Color: blend between bottom fog color and top fade color
-                half4 color = lerp(_Color, _TopColor, uv.y);
+                // Color: base fog color with subtle variation from noise
+                half4 color = lerp(_Color, _TopColor, fogPattern * 0.4);
 
                 // Dissolve effect
                 float dissolveNoise = fbm(uv * 6.0 + float2(3.7, 1.2), 3);
-                float dissolveThreshold = _Dissolve * 1.3; // slightly overshoot to ensure full dissolve
+                float dissolveThreshold = _Dissolve * 1.3;
                 float dissolveMask = smoothstep(dissolveThreshold - _DissolveEdge, dissolveThreshold, dissolveNoise);
 
                 // Glowing dissolve edge

@@ -18,10 +18,13 @@ namespace MaskEffect
         private GameObject fogWallInstance;
         private Material fogWallMaterial;
         private Coroutine revealCoroutine;
+        private Coroutine scanCoroutine;
 
         // Track hidden renderers/colliders per mech for clean reveal
         private Dictionary<MechController, List<Renderer>> hiddenRenderers = new Dictionary<MechController, List<Renderer>>();
         private Dictionary<MechController, List<Collider>> hiddenColliders = new Dictionary<MechController, List<Collider>>();
+        // Track which mechs we've already processed (even if they had no renderers yet)
+        private HashSet<MechController> trackedEnemyMechs = new HashSet<MechController>();
 
         // Perspective: which team is "mine" vs "enemy"
         private Team MyTeam
@@ -44,6 +47,11 @@ namespace MaskEffect
                 return;
             }
             Instance = this;
+
+            // Subscribe immediately — BattleManager.Instance is already set
+            // (BattleManager.Awake sets it, and we're created after that in EnsureUIComponents)
+            if (BattleManager.Instance != null)
+                BattleManager.Instance.OnStateChanged += OnBattleStateChanged;
         }
 
         private void OnDestroy()
@@ -56,14 +64,11 @@ namespace MaskEffect
 
         private void Start()
         {
-            // Subscribe to battle state changes
-            if (BattleManager.Instance != null)
+            // Catch case where state was already set before we subscribed
+            if (BattleManager.Instance != null &&
+                BattleManager.Instance.currentState == BattleState.MaskAssignment)
             {
-                BattleManager.Instance.OnStateChanged += OnBattleStateChanged;
-
-                // If we start and state is already MaskAssignment (late join), activate fog
-                if (BattleManager.Instance.currentState == BattleState.MaskAssignment)
-                    ActivateFog();
+                ActivateFog();
             }
         }
 
@@ -101,21 +106,74 @@ namespace MaskEffect
 
             hiddenRenderers.Clear();
             hiddenColliders.Clear();
+            trackedEnemyMechs.Clear();
 
-            // Hide all enemy mechs
-            if (BattleManager.Instance != null)
-            {
-                foreach (var mech in BattleManager.Instance.allMechs)
-                {
-                    if (mech != null && mech.team == EnemyTeam)
-                        HideMech(mech);
-                }
-            }
+            // Find ALL enemy mechs in the scene (not just from allMechs list,
+            // which is only populated on the server)
+            HideAllEnemyMechs();
 
-            // Create fog wall visual
+            // Create fog area visual
             CreateFogWall();
 
             fogActive = true;
+
+            // Start periodic scan to catch mechs that spawn or get visuals after fog activation
+            if (scanCoroutine != null)
+                StopCoroutine(scanCoroutine);
+            scanCoroutine = StartCoroutine(ScanForNewEnemyMechs());
+        }
+
+        /// <summary>
+        /// Finds and hides all enemy mechs currently in the scene.
+        /// Uses FindObjectsByType to work on both server and client
+        /// (BattleManager.allMechs is only populated on the server).
+        /// </summary>
+        private void HideAllEnemyMechs()
+        {
+            MechController[] allMechs = FindObjectsByType<MechController>(FindObjectsSortMode.None);
+            foreach (var mech in allMechs)
+            {
+                if (mech != null && mech.team == EnemyTeam && !trackedEnemyMechs.Contains(mech))
+                {
+                    trackedEnemyMechs.Add(mech);
+                    HideMech(mech);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Periodically scans for new enemy mechs or newly created renderers.
+        /// Handles: late-spawned mechs on client, SetupVisuals() running after fog activation.
+        /// Runs every 0.2s while fog is active.
+        /// </summary>
+        private IEnumerator ScanForNewEnemyMechs()
+        {
+            while (fogActive)
+            {
+                yield return new WaitForSeconds(0.2f);
+
+                if (!fogActive) break;
+
+                // Find any new enemy mechs
+                MechController[] allMechs = FindObjectsByType<MechController>(FindObjectsSortMode.None);
+                foreach (var mech in allMechs)
+                {
+                    if (mech == null || mech.team != EnemyTeam) continue;
+
+                    if (!trackedEnemyMechs.Contains(mech))
+                    {
+                        // Brand new mech — hide everything
+                        trackedEnemyMechs.Add(mech);
+                        HideMech(mech);
+                    }
+                    else
+                    {
+                        // Already tracked — check for new renderers (SetupVisuals ran late)
+                        HideNewRenderers(mech);
+                    }
+                }
+            }
+            scanCoroutine = null;
         }
 
         private void HideMech(MechController mech)
@@ -148,6 +206,41 @@ namespace MaskEffect
         }
 
         /// <summary>
+        /// For an already-tracked mech, find any renderers/colliders that were
+        /// created after the initial HideMech call (e.g. SetupVisuals ran late).
+        /// </summary>
+        private void HideNewRenderers(MechController mech)
+        {
+            if (!hiddenRenderers.TryGetValue(mech, out var knownRenderers))
+                knownRenderers = new List<Renderer>();
+
+            Renderer[] currentRenderers = mech.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in currentRenderers)
+            {
+                if (r.enabled && !knownRenderers.Contains(r))
+                {
+                    r.enabled = false;
+                    knownRenderers.Add(r);
+                }
+            }
+            hiddenRenderers[mech] = knownRenderers;
+
+            if (!hiddenColliders.TryGetValue(mech, out var knownColliders))
+                knownColliders = new List<Collider>();
+
+            Collider[] currentColliders = mech.GetComponentsInChildren<Collider>(true);
+            foreach (var c in currentColliders)
+            {
+                if (c.enabled && !knownColliders.Contains(c))
+                {
+                    c.enabled = false;
+                    knownColliders.Add(c);
+                }
+            }
+            hiddenColliders[mech] = knownColliders;
+        }
+
+        /// <summary>
         /// Called by NetworkMask.SetupClientSide() when mask visuals are created.
         /// If fog is active and the mech belongs to the enemy team, hide the new visuals.
         /// </summary>
@@ -168,67 +261,75 @@ namespace MaskEffect
             hiddenRenderers[mech].AddRange(maskRenderers);
         }
 
-        // ---- Fog Wall Visual ----
+        // ---- Fog Area Visual ----
 
         private void CreateFogWall()
         {
             if (fogWallInstance != null) return;
 
-            // Determine wall position based on perspective
             SimpleFlatGrid grid = BattleManager.Instance != null ? BattleManager.Instance.Grid : null;
-            float wallX;
-            if (grid != null)
+            if (grid == null) return;
+
+            // Calculate enemy zone bounds in world space
+            int playerEndX = grid.GridWidth / 4;               // 7
+            int enemyStartX = grid.GridWidth - grid.GridWidth / 4; // 21
+
+            float zoneStartX, zoneEndX;
+            if (MyTeam == Team.Player)
             {
-                int playerEndX = grid.GridWidth / 4;          // 7
-                int enemyStartX = grid.GridWidth - grid.GridWidth / 4; // 21
-
-                if (MyTeam == Team.Player)
-                    wallX = grid.GridOrigin.x + enemyStartX * grid.TileSize; // 7.0
-                else
-                    wallX = grid.GridOrigin.x + playerEndX * grid.TileSize;  // -7.0
-
-                float wallZ = grid.GridOrigin.z + (grid.GridHeight * 0.5f) * grid.TileSize; // 0.0
-                float wallWidth = grid.GridHeight * grid.TileSize + 4f; // 16 units
-                float wallHeight = 6f;
-
-                // Create a quad
-                fogWallInstance = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                fogWallInstance.name = "FogWall";
-
-                // Remove collider (we don't want it to block raycasts)
-                Collider col = fogWallInstance.GetComponent<Collider>();
-                if (col != null) Destroy(col);
-
-                // Position and orient: face toward the player's side
-                fogWallInstance.transform.position = new Vector3(wallX, wallHeight * 0.5f, wallZ);
-                fogWallInstance.transform.localScale = new Vector3(wallWidth, wallHeight, 1f);
-
-                // Rotate to face the correct direction
-                if (MyTeam == Team.Player)
-                    fogWallInstance.transform.rotation = Quaternion.Euler(0, -90, 0); // face left (toward player)
-                else
-                    fogWallInstance.transform.rotation = Quaternion.Euler(0, 90, 0); // face right (toward client's team)
-
-                // Apply fog material
-                Material fogMat = Resources.Load<Material>("Materials/FogWall");
-                if (fogMat != null)
-                {
-                    fogWallMaterial = new Material(fogMat); // Instance so we can animate
-                    fogWallMaterial.SetFloat("_Dissolve", 0f);
-                }
-                else
-                {
-                    // Fallback: create a semi-transparent material
-                    fogWallMaterial = new Material(Shader.Find("MaskEffect/FogWall"));
-                    if (fogWallMaterial.shader == null || fogWallMaterial.shader.name == "Hidden/InternalErrorShader")
-                    {
-                        fogWallMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-                        fogWallMaterial.SetFloat("_Surface", 1); // Transparent
-                        fogWallMaterial.color = new Color(0.72f, 0.45f, 0.3f, 0.7f);
-                    }
-                }
-                fogWallInstance.GetComponent<Renderer>().material = fogWallMaterial;
+                // Hide enemy zone (right side): tile columns 21..28
+                zoneStartX = grid.GridOrigin.x + enemyStartX * grid.TileSize; // 7.0
+                zoneEndX = grid.GridOrigin.x + grid.GridWidth * grid.TileSize; // 14.0
             }
+            else
+            {
+                // Client hides player zone (left side): tile columns 0..7
+                zoneStartX = grid.GridOrigin.x;                                // -14.0
+                zoneEndX = grid.GridOrigin.x + playerEndX * grid.TileSize;     // -7.0
+            }
+
+            float zoneStartZ = grid.GridOrigin.z;                              // -6.0
+            float zoneEndZ = grid.GridOrigin.z + grid.GridHeight * grid.TileSize; // 6.0
+
+            float zoneSizeX = zoneEndX - zoneStartX;   // 7
+            float zoneSizeZ = zoneEndZ - zoneStartZ;   // 12
+            float centerX = (zoneStartX + zoneEndX) * 0.5f;
+            float centerZ = (zoneStartZ + zoneEndZ) * 0.5f;
+
+            // Add padding so the fog extends slightly beyond the zone edges
+            float padding = 1.5f;
+
+            // Create a horizontal quad facing upward
+            fogWallInstance = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            fogWallInstance.name = "FogArea";
+
+            // Remove collider
+            Collider col = fogWallInstance.GetComponent<Collider>();
+            if (col != null) Destroy(col);
+
+            // Orient: face upward, positioned just above ground level
+            fogWallInstance.transform.rotation = Quaternion.Euler(90, 0, 0);
+            fogWallInstance.transform.position = new Vector3(centerX, 1.5f, centerZ);
+            fogWallInstance.transform.localScale = new Vector3(zoneSizeX + padding, zoneSizeZ + padding, 1f);
+
+            // Apply fog material
+            Material fogMat = Resources.Load<Material>("Materials/FogWall");
+            if (fogMat != null)
+            {
+                fogWallMaterial = new Material(fogMat);
+                fogWallMaterial.SetFloat("_Dissolve", 0f);
+            }
+            else
+            {
+                fogWallMaterial = new Material(Shader.Find("MaskEffect/FogWall"));
+                if (fogWallMaterial.shader == null || fogWallMaterial.shader.name == "Hidden/InternalErrorShader")
+                {
+                    fogWallMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                    fogWallMaterial.SetFloat("_Surface", 1);
+                    fogWallMaterial.color = new Color(0.02f, 0.02f, 0.05f, 0.9f);
+                }
+            }
+            fogWallInstance.GetComponent<Renderer>().material = fogWallMaterial;
         }
 
         // ---- Fog Deactivation (with reveal animation) ----
@@ -236,12 +337,20 @@ namespace MaskEffect
         private void DeactivateFog()
         {
             if (!fogActive) return;
+
+            // Stop scanning
+            if (scanCoroutine != null)
+            {
+                StopCoroutine(scanCoroutine);
+                scanCoroutine = null;
+            }
+
             revealCoroutine = StartCoroutine(RevealSequence());
         }
 
         private IEnumerator RevealSequence()
         {
-            // Phase 1: Dissolve the fog wall
+            // Phase 1: Dissolve the fog area
             if (fogWallInstance != null && fogWallMaterial != null)
             {
                 float duration = 0.8f;
@@ -255,7 +364,7 @@ namespace MaskEffect
                 }
             }
 
-            // Destroy fog wall
+            // Destroy fog area
             if (fogWallInstance != null)
             {
                 Destroy(fogWallInstance);
@@ -295,6 +404,7 @@ namespace MaskEffect
             // Cleanup
             hiddenRenderers.Clear();
             hiddenColliders.Clear();
+            trackedEnemyMechs.Clear();
             fogActive = false;
             revealCoroutine = null;
         }
@@ -308,6 +418,11 @@ namespace MaskEffect
             {
                 StopCoroutine(revealCoroutine);
                 revealCoroutine = null;
+            }
+            if (scanCoroutine != null)
+            {
+                StopCoroutine(scanCoroutine);
+                scanCoroutine = null;
             }
 
             // Re-enable all hidden renderers
@@ -328,8 +443,9 @@ namespace MaskEffect
 
             hiddenRenderers.Clear();
             hiddenColliders.Clear();
+            trackedEnemyMechs.Clear();
 
-            // Destroy fog wall
+            // Destroy fog area
             if (fogWallInstance != null)
             {
                 Destroy(fogWallInstance);
