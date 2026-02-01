@@ -214,7 +214,7 @@ MonoBehaviour:
   editorAutoStart: 0
   sendRate: 60
   offlineScene: Assets/Scenes/LobbyScene.unity
-  onlineScene: Assets/Scenes/BattleArenaMultiplayer.unity
+  onlineScene: Assets/Scenes/MultiplayerArenaScene.unity
   offlineSceneLoadDelay: 0
   transport: {fileID: 130451269}
   networkAddress: localhost
