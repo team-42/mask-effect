@@ -69,6 +69,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Fix client missing Game Over UI — added `OnStartClient()` override in BattleManager to create `GameOverUI` on clients.
   - [x] Fix win/loss perspective for client — `GameOverUI` now uses `MyTeam` property so client sees "SIEG!" when their team wins.
   - [x] Fix missing mask assignment UI in MP — `BattleManager.EnsureUIComponents()` dynamically creates `MaskAssignmentManager`, `MaskPanelUI`, and `GameOverUI` if not present in scene (multiplayer scene was missing these).
+  - [x] Fix client unable to reposition mechs in MP — mech dragging was local-only; added `CmdRepositionMech` command in BattleManager with server-side validation (team, zone, occupancy); `MaskAssignmentManager.EndMechDrag()` now routes through command in multiplayer; NetworkTransform syncs position to all clients.
 - [ ] **Gameplay Refinement:**
   - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
@@ -116,6 +117,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] Multiplayer: Host/Join flow via Mirror (StartHost / StartClient with IP).
 - [x] Multiplayer: Server-side per-side mask limit enforced in `CmdAssignMask()`. Client mask panel with slot tracking and "(vergeben)" feedback. `EnsureUIComponents()` dynamically creates `MaskAssignmentManager`, `MaskPanelUI`, `GameOverUI` in MP scene.
 - [x] Multiplayer: AI enemy mask pre-assignment uses `autoCreatePlayer` flag (not connection count) to reliably detect MP mode before client connects.
+- [x] Multiplayer: Client mech repositioning via `CmdRepositionMech` command (server-validated team/zone/occupancy, NetworkTransform syncs position).
 - [x] Game Over UI: IMGUI overlay with stats, next round, and lobby return (with proper network cleanup). Perspective-correct for client (`MyTeam` property: client sees "SIEG!" when Enemy team wins).
 - [x] NetworkHelper dual-mode system (IsOffline, IsServerOrOffline, SmartDestroy, SpawnOrIgnore).
 - [x] URP-compatible materials throughout (tiles, projectiles, masks, ring shader, all Mirror examples).

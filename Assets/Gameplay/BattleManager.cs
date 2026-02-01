@@ -39,11 +39,12 @@ namespace MaskEffect
         public List<MechController> playerMechs = new List<MechController>();
         public List<MechController> enemyMechs = new List<MechController>();
 
-        private int playerMasksAssigned;
-        private int enemyMasksAssigned;
+        [SyncVar] private int playerMasksAssigned;
+        [SyncVar] private int enemyMasksAssigned;
 
         // Public accessors
         public int PlayerMasksAssigned => playerMasksAssigned;
+        public int EnemyMasksAssigned => enemyMasksAssigned;
         public int MasksPerSide => masksPerSide;
         public MaskData[] AvailableMasks => availableMasks;
         public SimpleFlatGrid Grid => grid;
@@ -201,13 +202,51 @@ namespace MaskEffect
             }
 
             // Pre-assign enemy masks only in singleplayer (AI opponent).
-            if (AIControlsEnemySide)
+            // autoCreatePlayer is the reliable MP indicator: false in SP, true in MP
+            // (set by LobbyUIController before scene transition).
+            bool expectsRemotePlayer = NetworkManager.singleton != null
+                && NetworkManager.singleton.autoCreatePlayer;
+            if (AIControlsEnemySide && !expectsRemotePlayer)
             {
                 AIAssignMasks();
                 enemySideReady = true;
             }
 
             SetState(BattleState.MaskAssignment);
+        }
+
+        // --- Mech Repositioning ---
+
+        /// <summary>
+        /// Mirror Command: client (or host) requests mech repositioning on the server.
+        /// requiresAuthority=false because BattleManager is a scene object with no owner.
+        /// </summary>
+        [Command(requiresAuthority = false)]
+        public void CmdRepositionMech(uint mechNetId, int fromTileIndex, int toTileIndex, NetworkConnectionToClient sender = null)
+        {
+            if (currentState != BattleState.MaskAssignment) return;
+
+            // Resolve mech
+            if (!NetworkServer.spawned.TryGetValue(mechNetId, out NetworkIdentity mechIdentity)) return;
+            MechController mech = mechIdentity.GetComponent<MechController>();
+            if (mech == null || !mech.isAlive) return;
+
+            // Validate team: host (connectionId 0) = Team.Player, client = Team.Enemy
+            bool isSenderHost = sender == null || sender.connectionId == 0;
+            if (isSenderHost && mech.team != Team.Player) return;
+            if (!isSenderHost && mech.team != Team.Enemy) return;
+
+            // Validate target tile zone
+            TileZone requiredZone = mech.team == Team.Player ? TileZone.Player : TileZone.Enemy;
+            if (grid.GetTileZone(toTileIndex) != requiredZone) return;
+
+            // Validate target tile is unoccupied (or same as origin)
+            if (toTileIndex != fromTileIndex && grid.IsTileOccupied(toTileIndex)) return;
+
+            // Server-side: update grid and position
+            grid.ClearTile(fromTileIndex);
+            grid.SetTileOccupant(toTileIndex, mech);
+            mech.transform.position = grid.GetTileWorldPosition(toTileIndex);
         }
 
         // --- Mask Assignment ---

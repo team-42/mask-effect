@@ -19,6 +19,7 @@ This document outlines networking-related tasks for the 'Mask Effect' project. A
 - [x] Update `MechController.TryAttack` to spawn networked projectiles.
 - [x] Make `MechController.cs` a `NetworkBehaviour` and add `[SyncVar]` to relevant properties.
 - [x] Add `NetworkTransform` to `ProjectilePrefab` (manual step required in Unity Editor).
+- [x] Implement `CmdRepositionMech` in BattleManager for client mech repositioning during mask assignment phase (server-validated team/zone/occupancy, synced via NetworkTransform).
 
 ## CURRENT_STATUS.md
 
@@ -35,3 +36,4 @@ This document outlines networking-related tasks for the 'Mask Effect' project. A
 - [x] `MechController.TryAttack` now uses `NetworkServer.Spawn` for projectiles and passes `netId`s.
 - [x] `MechController.cs` now inherits from `NetworkBehaviour` and uses `[SyncVar]` for `mechId`, `team`, `maxHP`, `currentHP`, `armor`, `attackDamage`, `attackInterval`, `range`, `moveSpeed`, `evasion`, `currentDamageType`, `currentResistanceType`, `currentResistanceValue`, `isAlive`, `currentTargetNetId`, `targetingMode`, `attackCooldown`, and `retargetTimer`.
 - [x] `NetworkTransform` component needs to be manually added to `Assets/Prefabs/ProjectilePrefab.prefab` in the Unity Editor.
+- [x] `CmdRepositionMech` command added to BattleManager — enables client mech drag-and-drop repositioning in multiplayer mask assignment phase.

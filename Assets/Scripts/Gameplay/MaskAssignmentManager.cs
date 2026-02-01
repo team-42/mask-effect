@@ -185,9 +185,20 @@ namespace MaskEffect
 
             if (validDrop)
             {
-                grid.ClearTile(mechOriginalTile);
-                grid.SetTileOccupant(targetTile, draggedMech);
-                draggedMech.transform.position = grid.GetTileWorldPosition(targetTile);
+                if (NetworkHelper.IsOffline)
+                {
+                    // Singleplayer: direct local move
+                    grid.ClearTile(mechOriginalTile);
+                    grid.SetTileOccupant(targetTile, draggedMech);
+                    draggedMech.transform.position = grid.GetTileWorldPosition(targetTile);
+                }
+                else
+                {
+                    // Multiplayer: route through server command.
+                    // Server updates grid + position; NetworkTransform syncs to all clients.
+                    BattleManager.Instance.CmdRepositionMech(
+                        draggedMech.netId, mechOriginalTile, targetTile);
+                }
             }
             else
             {
@@ -267,8 +278,7 @@ namespace MaskEffect
                         BattleManager.Instance.CmdAssignMask(highlightedMech.netId, maskPath);
                     }
 
-                    if (maskPanel != null)
-                        maskPanel.MarkSlotUsed(carriedSlotIndex);
+                    // Slot already marked used by MaskPanelUI on button click
                     FinishMaskCarry();
                 }
                 else
@@ -281,6 +291,13 @@ namespace MaskEffect
         private void CancelMaskCarry()
         {
             ClearMechHighlight();
+
+            // Return the slot to the panel since mask wasn't placed
+            if (maskPanel == null)
+                maskPanel = FindFirstObjectByType<MaskPanelUI>();
+            if (maskPanel != null)
+                maskPanel.UnmarkSlot(carriedSlotIndex);
+
             if (maskDragProxy != null)
                 Destroy(maskDragProxy);
             carriedMask = null;

@@ -9,7 +9,6 @@ namespace MaskEffect
         [SerializeField] private MaskAssignmentManager assignmentManager;
 
         private List<MaskSlotEntry> slots = new List<MaskSlotEntry>();
-        private int masksUsed;
         private int totalMasks;
         private bool visible;
         private Rect panelRect;
@@ -22,6 +21,27 @@ namespace MaskEffect
             public MaskData mask;
             public bool used;
         }
+
+        /// <summary>
+        /// Returns the server-authoritative mask count for this player's side.
+        /// Uses SyncVar-backed fields so the client always sees the real count.
+        /// </summary>
+        private int ServerMasksUsed
+        {
+            get
+            {
+                if (BattleManager.Instance == null) return 0;
+                bool isClient = !NetworkHelper.IsOffline && !NetworkServer.active;
+                return isClient
+                    ? BattleManager.Instance.EnemyMasksAssigned
+                    : BattleManager.Instance.PlayerMasksAssigned;
+            }
+        }
+
+        /// <summary>
+        /// True when the server says the mask limit is reached for this side.
+        /// </summary>
+        private bool AllMasksAssigned => ServerMasksUsed >= totalMasks;
 
         private void Start()
         {
@@ -59,7 +79,6 @@ namespace MaskEffect
         {
             visible = true;
             slots.Clear();
-            masksUsed = 0;
             totalMasks = BattleManager.Instance.MasksPerSide;
 
             MaskData[] available = BattleManager.Instance.AvailableMasks;
@@ -86,7 +105,14 @@ namespace MaskEffect
             var entry = slots[slotIndex];
             entry.used = true;
             slots[slotIndex] = entry;
-            masksUsed++;
+        }
+
+        public void UnmarkSlot(int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= slots.Count) return;
+            var entry = slots[slotIndex];
+            entry.used = false;
+            slots[slotIndex] = entry;
         }
 
         public bool IsMouseOverPanel()
@@ -117,13 +143,14 @@ namespace MaskEffect
             GUILayout.BeginArea(panelRect);
             GUILayout.Space(10f);
 
-            // Header
+            // Header — use server-synced count for accuracy
+            int displayCount = ServerMasksUsed;
             GUIStyle headerStyle = new GUIStyle(GUI.skin.label);
             headerStyle.fontSize = 16;
             headerStyle.fontStyle = FontStyle.Bold;
             headerStyle.alignment = TextAnchor.MiddleCenter;
             headerStyle.normal.textColor = Color.white;
-            GUILayout.Label($"Masken ({masksUsed}/{totalMasks})", headerStyle);
+            GUILayout.Label($"Masken ({displayCount}/{totalMasks})", headerStyle);
 
             GUILayout.Space(8f);
 
@@ -150,12 +177,15 @@ namespace MaskEffect
         {
             MaskSlotEntry slot = slots[index];
 
+            // Slot is blocked if locally marked OR server says all masks assigned
+            bool blocked = slot.used || AllMasksAssigned;
+
             bool wasEnabled = GUI.enabled;
-            GUI.enabled = !slot.used;
+            GUI.enabled = !blocked;
 
             // Create a colored button with the mask name
             Color prevBg = GUI.backgroundColor;
-            Color tint = slot.used ? Color.gray : slot.mask.maskTint;
+            Color tint = blocked ? Color.gray : slot.mask.maskTint;
             GUI.backgroundColor = tint;
 
             GUIStyle btnStyle = new GUIStyle(GUI.skin.button);
@@ -167,12 +197,22 @@ namespace MaskEffect
             btnStyle.active.textColor = Color.white;
             btnStyle.padding = new RectOffset(10, 10, 10, 10);
 
-            string label = slot.used ? $"[{slot.mask.maskName}] (vergeben)" : slot.mask.maskName;
+            string label = slot.used
+                ? $"[{slot.mask.maskName}] (vergeben)"
+                : slot.mask.maskName;
 
             if (GUILayout.Button(label, btnStyle, GUILayout.Height(55f)))
             {
-                if (!slot.used && assignmentManager != null)
-                    assignmentManager.StartCarryingMask(slot.mask, index);
+                if (!blocked)
+                {
+                    // Mark slot used immediately so it can't be clicked again
+                    MarkSlotUsed(index);
+
+                    if (assignmentManager == null)
+                        assignmentManager = FindFirstObjectByType<MaskAssignmentManager>();
+                    if (assignmentManager != null)
+                        assignmentManager.StartCarryingMask(slot.mask, index);
+                }
             }
 
             GUI.backgroundColor = prevBg;
