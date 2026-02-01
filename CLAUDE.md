@@ -1,5 +1,11 @@
 # Mask Effect AI Agent Action Plan
 
+## Technical Environment
+
+- **Unity Version:** 6.3 LTS (6000.3.6f1)
+- **Render Pipeline:** URP (Universal Render Pipeline)
+- **Networking:** Mirror
+
 ## Project Overview
 
 Mask Effect is an auto-battler where Mechs wear Masks to specify tactical roles. The core gameplay loop involves players assigning a few masks each round to reshape mech roles, targeting, and abilities. The MVP focuses on a local test mode with random AI opponents, 1 level, 3 mechs, and 3 masks, with a final score display.
@@ -45,16 +51,24 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Implement LobbyScene with UIToolkit start menu and scene transition to BattleArenaScene.
   - [ ] Design & Implement Basic HUD (Health bars, timer).
   - [x] Implement Clear Visual Procs for mask effects (shield icons, mark icons, grapple animation, taunt indicator, **mech death particle effect using EnergyExplosion VFX**).
-  - [ ] Implement Game Over UI.
+  - [x] Implement Game Over UI (IMGUI overlay with round stats, "Naechste Runde" and "Zurueck zur Lobby" buttons).
 
 ### Phase 2: Refinement & Polish (Next 12-18 Hours)
 
+- [x] **Bug Fixes & Stability:**
+  - [x] Fix SP server binding to all interfaces — restricted to localhost before StartHost().
+  - [x] Fix server persisting after lobby return — StopHost() called in GameOverUI before scene transition.
+  - [x] Fix multiplayer not working — added Host/Join UI flow with IP input, StartClient() for joining.
+  - [x] Fix jets not flying — added hover logic + HoverBob in SetupVisuals() (was lost on SyncVar rebuild).
+  - [x] Fix projectiles as white cubes — yellow URP material, reduced scale.
+  - [x] Fix MaskRing shader edgeFade bug — inverted smoothstep was zeroing out the entire ring.
 - [ ] **Gameplay Refinement:**
   - [x] Implement remaining L1 Mask Abilities for Warrior, Rogue, Angel masks.
   - [ ] Balance Mech Stats and Mask Effects for engaging combat.
   - [x] Integrate Mask Selection into Player Flow (Round Setup -> Mask Assignment -> Auto Combat -> Next Round).
 - [ ] **Visual & Audio Polish (MVP Level):**
   - [x] Replace primitive mech shapes with 3D models (Scout, Jet, Tank loaded from Resources/Models/).
+  - [x] MaskRing shader rewritten for URP (HLSLPROGRAM, SRP Batcher compatible, additive glow).
   - [ ] Create Placeholder Mask Icons (3 icons).
   - [ ] Add Basic Sound Effects (Attacks, UI, Win/Loss).
   - [ ] Integrate Background Music.
@@ -62,9 +76,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [x] Identified and resolved pink material issues on tiles, projectiles, and masks after importing the Particle Pack.
   - [x] Created new URP-compatible materials (`TileMaterial.mat`, `ProjectileMaterial_URP.mat`, `MaskMaterial_URP.mat`) and assigned them to respective prefabs (`TilePrefab`, `ProjectilePrefab`, `MaskDragProxy`, `MaskIndicator`).
   - [x] Ensured all new materials use the `Universal Render Pipeline/Lit` shader.
-- [ ] **AI Tool Integration (Ongoing):**
-  - [ ] Utilize AI for small utility scripts.
-  - [ ] Utilize AI for placeholder textures/materials.
+  - [x] MaskRing material uses custom `MaskEffect/MaskRing` shader (URP HLSL, additive blending).
 
 ### Phase 3: Demo & Submission (Final 12 Hours)
 
@@ -77,27 +89,24 @@ Based on the consensus from multiple AI models, the original work breakdown has 
   - [ ] Prepare Readme/Submission Documentation.
   - [ ] Upload Game & Submit Project.
 
-## CURRENT_STATUS.md
+## Current Status
 
-- [x] Initial project setup and directory structure.
-- [x] Core auto-battler mechanics implemented (mech spawning, movement, basic combat).
-- [x] Basic mask system with 3 masks and simplified L1 abilities.
-- [x] Mask tint colors configured; glowing ground ring indicator replaces old head disc (custom MaskRing shader with pulse animation).
-- [x] Essential UI and visual feedback for gameplay.
-- [x] Game loop (round setup, mask assignment, combat, next round) functional.
-- [x] BattleArenaScene: visual grid (20x10, 3 colored zones), drag-and-drop mask assignment via IMGUI side panel, mech repositioning, enemy masks pre-assigned randomly, combat auto-starts when all player masks placed.
-- [x] Player interaction: click mask in left-side panel then click player mech to assign (ground ring appears in mask color); drag player mechs to reposition on player-zone tiles; camera controls (WASD, right-click rotate, scroll zoom).
-- [x] 3D mech models replace primitives (Scout, Jet, Tank loaded from Resources/Models/).
-- [x] Prefab system: MechPrefab, TilePrefab, MaskDragProxy, MaskIndicator, ProjectilePrefab with NetworkIdentity for Mirror readiness.
-- [x] LobbyScene with UIToolkit start menu; scene transition to BattleArenaScene works.
-- [x] Mirror networking skeleton integrated (NetworkIdentity on spawnable prefabs, Player + GameController prefabs).
-- [x] Camera adjusted for full battlefield view (position 0/25/-12, 60deg pitch).
-- [x] Jet chassis flies: elevated hover with bobbing animation, direct movement ignoring ground obstacles, projectiles spawn/target at visual height.
-- [x] Death particle effects (EnergyExplosion VFX) on mech death via deathEffectPrefab.
-- [x] URP-compatible materials for tiles, projectiles, and masks (TileMaterial, ProjectileMaterial_URP, MaskMaterial_URP).
-- [x] UnityTechnologies ParticlePack integrated for VFX assets.
-- [ ] Basic art and audio placeholders integrated.
-- [ ] Demo build and presentation prepared.
+- [x] Core auto-battler mechanics (mech spawning, movement, combat, death).
+- [x] 3 masks (Warrior, Rogue, Angel) with L1 abilities, status effects, targeting overrides.
+- [x] Glowing ground ring under masked mechs (MaskRing shader, URP HLSL, additive glow + pulse).
+- [x] 3D mech models (Scout, Jet, Tank) with team colors and mask tint on top half.
+- [x] Jet chassis hovers with bobbing animation; projectiles target VisualCenter height.
+- [x] Game loop: round setup → mask assignment → auto combat → round end → next round.
+- [x] BattleArenaScene: 20x10 grid, 3 zones, IMGUI mask panel, drag-to-reposition, camera controls.
+- [x] LobbyScene: UIToolkit menu with Singleplayer, Host Game, Join (IP field + button).
+- [x] Singleplayer: localhost-only Mirror host, autoCreatePlayer=false, StopHost() on lobby return.
+- [x] Multiplayer: Host/Join flow via Mirror (StartHost / StartClient with IP).
+- [x] Game Over UI: IMGUI overlay with stats, next round, and lobby return (with proper network cleanup).
+- [x] NetworkHelper dual-mode system (IsOffline, IsServerOrOffline, SmartDestroy, SpawnOrIgnore).
+- [x] URP-compatible materials throughout (tiles, projectiles, masks, ring shader).
+- [x] Death particle effects (EnergyExplosion VFX).
+- [ ] Basic art and audio placeholders.
+- [ ] Demo build and presentation.
 
 ## Critical Risks & Mitigation
 

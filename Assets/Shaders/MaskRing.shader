@@ -3,94 +3,107 @@ Shader "MaskEffect/MaskRing"
     Properties
     {
         _Color ("Ring Color", Color) = (1,1,1,1)
-        _InnerRadius ("Inner Radius", Range(0.0, 0.5)) = 0.35
-        _OuterRadius ("Outer Radius", Range(0.0, 0.5)) = 0.45
-        _GlowWidth ("Glow Width", Range(0.0, 0.2)) = 0.08
-        _GlowIntensity ("Glow Intensity", Range(0.0, 5.0)) = 2.0
-        _PulseSpeed ("Pulse Speed", Range(0.0, 5.0)) = 1.5
-        _PulseAmount ("Pulse Amount", Range(0.0, 1.0)) = 0.3
+        _RingRadius ("Ring Radius", Range(0.1, 0.5)) = 0.42
+        _RingThickness ("Ring Thickness", Range(0.001, 0.1)) = 0.025
+        _GlowFalloff ("Glow Falloff", Range(0.01, 0.3)) = 0.1
+        _GlowIntensity ("Glow Intensity", Range(0.0, 15.0)) = 5.0
+        _CoreBrightness ("Core Brightness", Range(1.0, 30.0)) = 12.0
+        _PulseSpeed ("Pulse Speed", Range(0.0, 5.0)) = 1.2
+        _PulseAmount ("Pulse Amount", Range(0.0, 0.5)) = 0.1
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="True" }
+        Tags
+        {
+            "RenderType" = "Transparent"
+            "Queue" = "Transparent+1"
+            "RenderPipeline" = "UniversalPipeline"
+            "IgnoreProjector" = "True"
+        }
         LOD 100
-        Blend SrcAlpha OneMinusSrcAlpha
+
+        Blend SrcAlpha One
         ZWrite Off
         Cull Off
 
         Pass
         {
-            CGPROGRAM
+            Name "MaskRingPass"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
 
-            struct appdata
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
+                float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
+                float4 positionHCS : SV_POSITION;
             };
 
-            fixed4 _Color;
-            float _InnerRadius;
-            float _OuterRadius;
-            float _GlowWidth;
-            float _GlowIntensity;
-            float _PulseSpeed;
-            float _PulseAmount;
+            CBUFFER_START(UnityPerMaterial)
+                half4 _Color;
+                float _RingRadius;
+                float _RingThickness;
+                float _GlowFalloff;
+                float _GlowIntensity;
+                float _CoreBrightness;
+                float _PulseSpeed;
+                float _PulseAmount;
+            CBUFFER_END
 
-            v2f vert (appdata v)
+            Varyings vert(Attributes input)
             {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                return o;
+                Varyings output;
+                output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv = input.uv;
+                return output;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-                // Map UV to centered coordinates (-0.5 to 0.5)
-                float2 centered = i.uv - 0.5;
+                float2 centered = input.uv - 0.5;
                 float dist = length(centered);
 
-                // Ring shape with soft edges
-                float ringCenter = (_InnerRadius + _OuterRadius) * 0.5;
-                float ringHalfWidth = (_OuterRadius - _InnerRadius) * 0.5;
+                // Distance from the ring centerline
+                float ringDist = abs(dist - _RingRadius);
 
-                // Smooth ring mask
-                float ring = 1.0 - smoothstep(0.0, ringHalfWidth, abs(dist - ringCenter));
+                // Sharp bright core of the ring
+                float core = exp(-ringDist * ringDist / (_RingThickness * _RingThickness));
 
-                // Outer glow
-                float outerGlow = 1.0 - smoothstep(0.0, _GlowWidth, dist - _OuterRadius);
-                outerGlow = max(0, outerGlow) * 0.5;
+                // Soft glow around the ring
+                float glow = exp(-ringDist / _GlowFalloff);
 
-                // Inner glow
-                float innerGlow = 1.0 - smoothstep(0.0, _GlowWidth, _InnerRadius - dist);
-                innerGlow = max(0, innerGlow) * 0.3;
+                // Combine: bright core + softer glow
+                float intensity = core * _CoreBrightness + glow * _GlowIntensity;
 
-                // Combine
-                float alpha = saturate(ring + outerGlow + innerGlow);
-
-                // Pulse animation
+                // Pulse
                 float pulse = 1.0 + sin(_Time.y * _PulseSpeed) * _PulseAmount;
-                alpha *= pulse;
+                intensity *= pulse;
 
-                // Apply color with glow intensity
-                fixed4 col = _Color * _GlowIntensity;
-                col.a = alpha * _Color.a;
+                // Fade at quad edge to avoid hard cutoff
+                float edgeFade = smoothstep(0.5, 0.45, dist);
+                intensity *= edgeFade;
 
-                // Clip fully transparent pixels
+                // Color output
+                half4 col;
+                col.rgb = _Color.rgb * intensity;
+                col.a = saturate(intensity);
+
+                // Hard clip transparent pixels
                 clip(col.a - 0.01);
 
                 return col;
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

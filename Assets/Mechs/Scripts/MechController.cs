@@ -300,7 +300,7 @@ namespace MaskEffect
                 indicator.transform.SetParent(transform, false);
                 // Rotate quad to lie flat on the ground
                 indicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                float ringSize = chassisData.indicatorRadius * 7f;
+                float ringSize = chassisData.indicatorRadius * 3.5f;
                 indicator.transform.localScale = new Vector3(ringSize, ringSize, 1f);
                 // Position just above ground to avoid z-fighting
                 indicator.transform.localPosition = new Vector3(0f, 0.05f, 0f);

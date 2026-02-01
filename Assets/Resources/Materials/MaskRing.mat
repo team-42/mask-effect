@@ -25,12 +25,20 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _GlowIntensity: 2.5
-    - _GlowWidth: 0.12
-    - _InnerRadius: 0.28
-    - _OuterRadius: 0.45
-    - _PulseAmount: 0.3
-    - _PulseSpeed: 1.5
+    - _AuraIntensity: 0.4
+    - _AuraRadius: 0.48
+    - _CoreBrightness: 8
+    - _GlowFalloff: 0.06
+    - _GlowIntensity: 4
+    - _GlowWidth: 0.15
+    - _InnerRadius: 0.32
+    - _OuterRadius: 0.38
+    - _PulseAmount: 0.1
+    - _PulseSpeed: 1.2
+    - _RingRadius: 0.42
+    - _RingThickness: 0.012
+    - _ShimmerAmount: 0.25
+    - _ShimmerSpeed: 3
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
