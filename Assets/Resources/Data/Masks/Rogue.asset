@@ -22,9 +22,9 @@ MonoBehaviour:
   bonusEvasion: 0.1
   damageTypeOverride: 0
   damageMultiplier: 1
-  scoutAbility: {fileID: 11400000, guid: 9781d2d01f9404a44bf3aeae7fc966a8, type: 2}
-  jetAbility: {fileID: 11400000, guid: a0d4807328d1c9345b2d30ce184e920f, type: 2}
-  tankAbility: {fileID: 11400000, guid: 71a8d10477d0d974ba92e93dd8050f12, type: 2}
+  scoutAbility: {fileID: 11400000, guid: 8b70f5902550c80439a30c87809774ed, type: 2}
+  jetAbility: {fileID: 11400000, guid: 1f72cec9bfd7b8844bc8d5269d07eddb, type: 2}
+  tankAbility: {fileID: 11400000, guid: 933e6d1067190bd4fa991d6691c9f530, type: 2}
   sniperAbility: {fileID: 11400000, guid: d6c2a3b9b662f1249934fd62bfe0eccd, type: 2}
   colossusAbility: {fileID: 11400000, guid: 91ea8a6c4e345e34db9bf7ebfd728ea5, type: 2}
   maskTint: {r: 0.15, g: 0.8, b: 0.2, a: 1}
