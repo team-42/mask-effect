@@ -8,7 +8,7 @@ namespace MaskEffect
     {
         [SerializeField] private ChassisData[] chassisOptions;
         public static Color PlayerTeamColor { get; private set; } = new Color(0.2f, 0.4f, 1f);
-        public static Color EnemyTeamColor { get; private set; } = new Color(1f, 0.5f, 0.1f);
+        public static Color EnemyTeamColor { get; private set; } = new Color(1f, 0.95f, 0.0f);
 
         [SerializeField] private Color _playerTeamColor = new Color(0.2f, 0.4f, 1f); // For Inspector assignment
         [SerializeField] private Color _enemyTeamColor = new Color(1f, 0.5f, 0.1f); // For Inspector assignment
