@@ -16,7 +16,7 @@ namespace MaskEffect
                 if (taunter.isAlive) return taunter;
             }
 
-            // Get enemies
+            // Get enemies (skip untargetable and invisible mechs)
             List<MechController> enemies = new List<MechController>();
             List<MechController> allies = new List<MechController>();
             for (int i = 0; i < allMechs.Count; i++)
@@ -24,7 +24,12 @@ namespace MaskEffect
                 if (!allMechs[i].isAlive) continue;
                 if (allMechs[i] == seeker) continue;
                 if (allMechs[i].team != seeker.team)
+                {
+                    if (allMechs[i].statusHandler != null &&
+                        (allMechs[i].statusHandler.IsUntargetable() || allMechs[i].statusHandler.IsInvisible()))
+                        continue;
                     enemies.Add(allMechs[i]);
+                }
                 else
                     allies.Add(allMechs[i]);
             }
@@ -40,6 +45,7 @@ namespace MaskEffect
                 TargetingMode.BacklinePriority => FindBacklinePriority(seeker, enemies, grid),
                 TargetingMode.FarthestEnemy => FindFarthestEnemy(seeker, enemies),
                 TargetingMode.LowestHPAlly => FindLowestHPAlly(allies),
+                TargetingMode.FurthestInRange => FindFurthestInRange(seeker, enemies),
                 _ => FindNearest(seeker, enemies)
             };
         }
@@ -163,6 +169,27 @@ namespace MaskEffect
                 }
             }
             return best;
+        }
+
+        private static MechController FindFurthestInRange(MechController seeker,
+            List<MechController> candidates)
+        {
+            MechController best = null;
+            float bestDist = -1f;
+
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                float dist = Vector3.Distance(seeker.transform.position, candidates[i].transform.position);
+                if (dist > seeker.range) continue; // Only consider targets within range
+                if (dist > bestDist || (Mathf.Approximately(dist, bestDist) && IsBetterTieBreak(candidates[i], best)))
+                {
+                    bestDist = dist;
+                    best = candidates[i];
+                }
+            }
+
+            // If no target in range, fall back to farthest enemy overall
+            return best ?? FindFarthestEnemy(seeker, candidates);
         }
 
         private static bool IsBetterTieBreak(MechController candidate, MechController current)

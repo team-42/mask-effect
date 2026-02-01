@@ -26,6 +26,8 @@ namespace MaskEffect
         public MaskAbilityData scoutAbility;
         public MaskAbilityData jetAbility;
         public MaskAbilityData tankAbility;
+        public MaskAbilityData sniperAbility;
+        public MaskAbilityData colossusAbility;
 
         [Header("Visuals")]
         public Color maskTint = Color.white;
@@ -37,6 +39,8 @@ namespace MaskEffect
                 ChassisType.Scout => scoutAbility,
                 ChassisType.Jet => jetAbility,
                 ChassisType.Tank => tankAbility,
+                ChassisType.Sniper => sniperAbility,
+                ChassisType.Colossus => colossusAbility,
                 _ => null
             };
         }

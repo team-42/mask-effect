@@ -35,6 +35,7 @@ namespace MaskEffect
             }
         }
 
+        public void OnTakeDamage(MechController attacker, int damage) { }
         public void OnKill(MechController killed) { }
 
         public void OnBattleStart()

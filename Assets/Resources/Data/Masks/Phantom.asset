@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99a23a6f2cc0b14a9afa66f70b105fc, type: 3}
+  m_Name: Phantom
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskData
+  maskName: Phantom
+  maskType: 4
+  defaultTargetingMode: 1
+  bonusHP: 0
+  bonusArmor: 0
+  bonusAttackDamage: 0
+  bonusAttackInterval: 0
+  bonusEvasion: 0.1
+  damageTypeOverride: 0
+  damageMultiplier: 1.1
+  scoutAbility: {fileID: 11400000, guid: 00ef3942f6a5de940a4d83fb95133f1d, type: 2}
+  jetAbility: {fileID: 11400000, guid: 38f2cc2537e692d439b885744d53d85b, type: 2}
+  tankAbility: {fileID: 11400000, guid: ad0445513773529499447c0987417f69, type: 2}
+  sniperAbility: {fileID: 11400000, guid: c1dcf69e3eaa2be48af9b8baa68cc024, type: 2}
+  colossusAbility: {fileID: 11400000, guid: 5bfe23dcb35898444813e41905fc3ca2, type: 2}
+  maskTint: {r: 0.608, g: 0.365, b: 0.898, a: 1}

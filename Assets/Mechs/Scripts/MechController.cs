@@ -36,6 +36,11 @@ namespace MaskEffect
         [SyncVar] public float attackCooldown;
         [SyncVar] public float retargetTimer;
 
+        [Header("Sniper Charge")]
+        [SyncVar] public bool isCharging;
+        [SyncVar] public float chargeTimer;
+        private bool chargeInterrupted;
+
         [Header("References")]
         public StatusEffectHandler statusHandler;
         public MechMovement movement;
@@ -329,11 +334,26 @@ namespace MaskEffect
             if (!isAlive) return;
 
             float markMultiplier = statusHandler.GetMarkMultiplier();
-            bool evaded = CombatMath.RollEvasion(evasion);
+            float totalEvasion = evasion + statusHandler.GetMissChance();
+            bool evaded = CombatMath.RollEvasion(totalEvasion);
 
             if (evaded) return;
 
+            // Interrupt Sniper charge on hit
+            if (isCharging)
+            {
+                isCharging = false;
+                chargeInterrupted = true;
+                attackCooldown = attackInterval * 0.5f;
+            }
+
+            int hpBefore = currentHP;
             CombatMath.ApplyDamage(rawDamage, attacker.currentDamageType, armor, currentResistanceType, currentResistanceValue, markMultiplier, ref currentHP, statusHandler);
+            int actualDamage = hpBefore - currentHP;
+
+            // Notify ability of incoming damage
+            if (activeAbility != null)
+                activeAbility.OnTakeDamage(attacker, actualDamage);
 
             if (currentHP <= 0)
             {
@@ -409,6 +429,13 @@ namespace MaskEffect
 
             statusHandler.TickEffects(dt);
 
+            // Stunned: skip all actions
+            if (statusHandler.IsStunned())
+            {
+                isCharging = false;
+                return;
+            }
+
             // Retarget periodically
             retargetTimer -= dt;
             if (retargetTimer <= 0f || currentTarget == null || !currentTarget.isAlive)
@@ -430,11 +457,49 @@ namespace MaskEffect
             // Attack cooldown
             attackCooldown -= dt;
 
-            bool inRange = movement.MoveToward(currentTarget, dt);
-
-            if (inRange && attackCooldown <= 0f)
+            // Sniper: hold position while target in range, use charge-up before firing
+            if (chassisData != null && chassisData.chassisType == ChassisType.Sniper)
             {
-                TryAttack();
+                bool targetInRange = movement.IsInRange(currentTarget);
+                if (!targetInRange)
+                {
+                    movement.MoveToward(currentTarget, dt);
+                    isCharging = false;
+                }
+                else if (attackCooldown <= 0f)
+                {
+                    if (!isCharging)
+                    {
+                        isCharging = true;
+                        chargeTimer = 1.0f;
+                        chargeInterrupted = false;
+                    }
+
+                    if (isCharging && !chargeInterrupted)
+                    {
+                        chargeTimer -= dt;
+                        if (chargeTimer <= 0f)
+                        {
+                            isCharging = false;
+                            TryAttack();
+                        }
+                    }
+                    else if (chargeInterrupted)
+                    {
+                        // Wait for cooldown to reset before trying again
+                        isCharging = false;
+                        chargeInterrupted = false;
+                    }
+                }
+            }
+            else
+            {
+                // Standard combat for all other chassis
+                bool inRange = movement.MoveToward(currentTarget, dt);
+                if (inRange && attackCooldown <= 0f)
+                {
+                    TryAttack();
+                }
             }
         }
 
@@ -462,12 +527,10 @@ namespace MaskEffect
                 {
                     if (NetworkHelper.IsOffline)
                     {
-                        // Singleplayer: direct references, no network spawn
                         projectile.InitializeOffline(this, currentTarget, attackDamage, currentDamageType);
                     }
                     else
                     {
-                        // Multiplayer: direct refs + netIds, then network spawn
                         projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
                         NetworkServer.Spawn(projectileGO);
                     }
@@ -477,11 +540,58 @@ namespace MaskEffect
             }
             else
             {
+                // Melee attack
                 currentTarget.TakeDamage(attackDamage, this);
+
+                // Colossus cleave: hit a second target within range
+                if (chassisData != null && chassisData.chassisType == ChassisType.Colossus)
+                {
+                    MechController secondTarget = FindSecondCleaveTarget();
+                    if (secondTarget != null)
+                    {
+                        secondTarget.TakeDamage(attackDamage, this);
+                        if (activeAbility != null)
+                            activeAbility.OnAttackLanded(secondTarget, attackDamage);
+                    }
+                }
             }
 
             if (activeAbility != null)
                 activeAbility.OnAttackLanded(currentTarget, attackDamage);
+        }
+
+        private MechController FindSecondCleaveTarget()
+        {
+            if (allMechs == null) return null;
+            MechController closest = null;
+            float closestDist = float.MaxValue;
+
+            for (int i = 0; i < allMechs.Count; i++)
+            {
+                if (!allMechs[i].isAlive) continue;
+                if (allMechs[i].team == team) continue;
+                if (allMechs[i] == currentTarget) continue;
+
+                float dist = Vector3.Distance(transform.position, allMechs[i].transform.position);
+                if (dist <= range && dist < closestDist)
+                {
+                    closestDist = dist;
+                    closest = allMechs[i];
+                }
+            }
+            return closest;
+        }
+
+        /// <summary>
+        /// Resets the Sniper charge state, allowing the next shot to fire without charge-up.
+        /// Used by KillShotAbility on kill.
+        /// </summary>
+        public void ResetCharge()
+        {
+            isCharging = false;
+            chargeTimer = 0f;
+            chargeInterrupted = false;
+            attackCooldown = 0f;
         }
 
         public void OnBattleStart()

@@ -20,7 +20,11 @@ MonoBehaviour:
   bonusAttackDamage: 3
   bonusAttackInterval: -0.1
   bonusEvasion: 0
+  damageTypeOverride: 0
+  damageMultiplier: 1
   scoutAbility: {fileID: 11400000, guid: 730ff3d9a56c0ac428619523ac0e2293, type: 2}
   jetAbility: {fileID: 11400000, guid: 072b46ba99f94b74d80f72ec065481a0, type: 2}
   tankAbility: {fileID: 11400000, guid: 2ecd17d2a8453984ba8177966a89ae25, type: 2}
+  sniperAbility: {fileID: 11400000, guid: 047ef1c86fb8aeb468ec9938310ecdd4, type: 2}
+  colossusAbility: {fileID: 11400000, guid: 4724c0a3874745c42b953835badb8559, type: 2}
   maskTint: {r: 0.9, g: 0.15, b: 0.15, a: 1}
