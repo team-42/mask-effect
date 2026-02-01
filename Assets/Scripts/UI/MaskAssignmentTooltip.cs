@@ -41,6 +41,25 @@ namespace MaskEffect
             visible = true;
         }
 
+        /// <summary>
+        /// Show the chassis-info tooltip (idle hover, no mask being carried).
+        /// Safe to call every frame; internally a no-op when displayed content
+        /// has not changed.
+        /// </summary>
+        public void ShowForChassis(MechController mech)
+        {
+            string newHeading = mech.chassisData.chassisName;
+            string newBody = mech.chassisData.description ?? "";
+
+            if (visible && headingText == newHeading && bodyText == newBody)
+                return;
+
+            headingText = newHeading;
+            bodyText = newBody;
+            tooltipTintColor = Color.gray;
+            visible = true;
+        }
+
         /// <summary>Hide the tooltip immediately.</summary>
         public void Hide()
         {

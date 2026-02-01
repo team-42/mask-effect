@@ -7,6 +7,7 @@ namespace MaskEffect
     {
         public string chassisName;
         public ChassisType chassisType;
+        public string description;
 
         [Header("Base Stats")]
         public int maxHP = 100;

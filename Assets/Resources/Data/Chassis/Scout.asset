@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.ChassisData
   chassisName: Scout
   chassisType: 0
+  description: Mobile Skirmisher — Fast and evasive, closes distance quickly to strike
   maxHP: 80
   armor: 10
   attackDamage: 12

@@ -121,6 +121,22 @@ namespace MaskEffect
 
         private void HandleIdleInput()
         {
+            // Hover: show/hide chassis tooltip
+            Ray hoverRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hoverHit;
+            if (Physics.Raycast(hoverRay, out hoverHit, 100f, mechLayerMask))
+            {
+                MechController hoverMech = hoverHit.collider.GetComponent<MechController>();
+                if (hoverMech != null && hoverMech.team == MyTeam && hoverMech.isAlive)
+                    GetTooltip().ShowForChassis(hoverMech);
+                else
+                    GetTooltip().Hide();
+            }
+            else
+            {
+                GetTooltip().Hide();
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 // Don't start drag if clicking on the IMGUI panel
@@ -147,6 +163,7 @@ namespace MaskEffect
             mechOriginalPosition = mech.transform.position;
             mechOriginalTile = grid.GetNearestTile(mech.transform.position);
             currentMode = DragMode.DraggingMech;
+            GetTooltip().Hide();
         }
 
         private void UpdateMechDrag()
