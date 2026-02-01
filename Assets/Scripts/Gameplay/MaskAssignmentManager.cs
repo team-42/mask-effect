@@ -98,22 +98,22 @@ namespace MaskEffect
             carriedSlotIndex = slotIndex;
             currentMode = DragMode.CarryingMask;
 
-            // Create drag proxy from prefab
-            if (maskDragProxyPrefab != null)
-            {
-                maskDragProxy = Instantiate(maskDragProxyPrefab);
-            }
-            else
-            {
-                maskDragProxy = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                maskDragProxy.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                var col = maskDragProxy.GetComponent<Collider>();
-                if (col != null) col.enabled = false;
-            }
-            maskDragProxy.name = "MaskDragProxy";
-            var proxyRenderer = maskDragProxy.GetComponent<Renderer>();
-            if (proxyRenderer != null)
-                proxyRenderer.material.color = mask.maskTint;
+            // Create drag proxy as a GameObject with a SpriteRenderer
+            maskDragProxy = new GameObject("MaskDragProxy");
+            SpriteRenderer spriteRenderer = maskDragProxy.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = carriedMask.maskIcon;
+            spriteRenderer.sortingOrder = 100; // Ensure it renders above everything else during drag
+
+            // Set scale and rotation for the sprite
+            maskDragProxy.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Adjust size as needed
+            maskDragProxy.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); // Face upwards
+
+            // Add Billboard component to make it always face the camera during drag
+            maskDragProxy.AddComponent<Billboard>();
+
+            // Disable collider if any, as it's purely visual
+            var col = maskDragProxy.GetComponent<Collider>();
+            if (col != null) col.enabled = false;
         }
 
         private void HandleIdleInput()
