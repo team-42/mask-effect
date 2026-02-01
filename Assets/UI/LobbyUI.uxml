@@ -9,4 +9,7 @@
             <ui:Button name="multiplayerJoinButton" text="Join" style="width: 80px; height: 40px; font-size: 20px; margin-left: 5px;" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement style="position: absolute; right: 10px; top: 10px;">
+        <ui:Button name="exitGameButton" text="Exit" style="width: 80px; height: 30px; font-size: 16px;" />
+    </ui:VisualElement>
 </ui:UXML>

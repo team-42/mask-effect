@@ -23,3 +23,4 @@ This document outlines the specific UI asset and prefab-related tasks for the 'M
 - [ ] Mask effect visual proc prefabs created (shield icons, mark icons, grapple animation, taunt indicator).
 - [ ] Main Menu UI prefabs created.
 - [ ] Game Over UI prefabs created.
+- [x] Implemented "Exit Game" button in LobbyUIController.

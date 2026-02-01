@@ -9,6 +9,16 @@ public class LobbyUIController : MonoBehaviour
     public string multiplayerSceneName = "BattleArenaMultiplayer";
 
     private TextField ipField;
+    private GameExitManager gameExitManager;
+
+    void Awake()
+    {
+        gameExitManager = FindAnyObjectByType<GameExitManager>();
+        if (gameExitManager == null)
+        {
+            Debug.LogError("GameExitManager not found in the scene. Please add a GameExitManager prefab to the scene.");
+        }
+    }
 
     void OnEnable()
     {
@@ -39,6 +49,10 @@ public class LobbyUIController : MonoBehaviour
         var multiplayerButton = root.Q<Button>("multiplayerButton");
         if (multiplayerButton != null)
             multiplayerButton.clicked += HostMultiplayerGame;
+
+        var exitGameButton = root.Q<Button>("exitGameButton");
+        if (exitGameButton != null)
+            exitGameButton.clicked += ExitGame;
     }
 
     void OnDisable()
@@ -64,6 +78,10 @@ public class LobbyUIController : MonoBehaviour
         var multiplayerButton = root.Q<Button>("multiplayerButton");
         if (multiplayerButton != null)
             multiplayerButton.clicked -= HostMultiplayerGame;
+
+        var exitGameButton = root.Q<Button>("exitGameButton");
+        if (exitGameButton != null)
+            exitGameButton.clicked -= ExitGame;
     }
 
     void LoadBattleArenaScene()
@@ -110,5 +128,17 @@ public class LobbyUIController : MonoBehaviour
         nm.autoCreatePlayer = true;
         nm.networkAddress = ip;
         nm.StartClient();
+    }
+
+    void ExitGame()
+    {
+        if (gameExitManager != null)
+        {
+            gameExitManager.ExitGame();
+        }
+        else
+        {
+            Debug.LogError("GameExitManager is null, cannot exit game.");
+        }
     }
 }

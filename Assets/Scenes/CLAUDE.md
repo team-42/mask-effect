@@ -26,3 +26,4 @@ This document outlines the specific scene-related tasks for the 'Mask Effect' pr
 - [x] Camera repositioned for optimal battlefield view.
 - [ ] Main Menu Scene created (UIToolkit).
 - [ ] Game Over Scene created (UIToolkit).
+- [x] Implemented "Exit Game" functionality from the main screen.
