@@ -23,7 +23,7 @@ MonoBehaviour:
   moveSpeed: 0.8
   evasion: 0
   isRanged: 1
-  projectilePrefab: {fileID: 100589467397473233, guid: 4405a12c1de703442a6f2889b8279ac7, type: 3}
+  projectileData: {fileID: 11400000, guid: f3acbf23493ea554599fa6cf22853c3a, type: 2}
   baseDamageType: 0
   resistanceType: 0
   resistanceValue: 0

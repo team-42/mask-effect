@@ -66,7 +66,7 @@ namespace MaskEffect
             sniper.canFly = false;
             sniper.hoverHeight = 0f;
             sniper.spawnPreference = SpawnPreference.Backline;
-            sniper.projectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/ProjectilePrefab.prefab");
+            sniper.projectileData = AssetDatabase.LoadAssetAtPath<ProjectileData>("Assets/Resources/Data/Projectiles/SniperProjectileData.asset");
             sniper.chassisScale = new Vector3(0.009f, 0.009f, 0.009f);
             sniper.indicatorHeight = 1.5f;
             sniper.indicatorRadius = 0.3f;
@@ -90,6 +90,7 @@ namespace MaskEffect
             colossus.canFly = false;
             colossus.hoverHeight = 0f;
             colossus.spawnPreference = SpawnPreference.FrontlineCenter;
+            colossus.projectileData = AssetDatabase.LoadAssetAtPath<ProjectileData>("Assets/Resources/Data/Projectiles/ColossusProjectileData.asset");
             colossus.chassisScale = new Vector3(0.013f, 0.013f, 0.013f);
             colossus.indicatorHeight = 2.0f;
             colossus.indicatorRadius = 0.5f;

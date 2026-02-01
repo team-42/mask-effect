@@ -625,21 +625,37 @@ namespace MaskEffect
                     transform.forward = dir;
             }
 
-            if (chassisData.isRanged && chassisData.projectilePrefab != null)
+            if (chassisData.isRanged)
             {
-                GameObject projectileGO = Instantiate(chassisData.projectilePrefab, VisualCenter, Quaternion.identity);
+                if (chassisData.projectileData == null)
+                {
+                    Debug.LogError($"Mech {chassisData.chassisName} is ranged but has no ProjectileData assigned!");
+                    return;
+                }
+                if (chassisData.projectileData.ProjectilePrefab == null)
+                {
+                    Debug.LogError($"Mech {chassisData.chassisName}'s ProjectileData has no ProjectilePrefab assigned!");
+                    return;
+                }
+
+                GameObject projectileGO = Instantiate(chassisData.projectileData.ProjectilePrefab, VisualCenter, Quaternion.identity);
                 Projectile projectile = projectileGO.GetComponent<Projectile>();
                 if (projectile != null)
                 {
                     if (NetworkHelper.IsOffline)
                     {
-                        projectile.InitializeOffline(this, currentTarget, attackDamage, currentDamageType);
+                        projectile.InitializeOffline(this, currentTarget, chassisData.projectileData, currentDamageType);
                     }
                     else
                     {
-                        projectile.Initialize(this, currentTarget, attackDamage, currentDamageType);
+                        projectile.Initialize(this, currentTarget, chassisData.projectileData, currentDamageType);
                         NetworkServer.Spawn(projectileGO);
                     }
+                    Debug.Log($"Spawned projectile {projectileGO.name} for {chassisData.chassisName}.");
+                }
+                else
+                {
+                    Debug.LogError($"Projectile prefab {chassisData.projectileData.ProjectilePrefab.name} is missing Projectile component!");
                 }
 
                 PlayLaserSound(); // Server/host hears it locally
