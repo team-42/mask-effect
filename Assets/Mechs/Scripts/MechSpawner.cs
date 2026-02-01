@@ -21,6 +21,7 @@ namespace MaskEffect
         [SerializeField] private GameObject mechPrefab;
         [SerializeField] private GameObject maskIndicatorPrefab;
         [SerializeField] private Material maskRingMaterial;
+        [SerializeField] private GameObject healthBarUIPrefab; // Add this field
 
         private IBattleGrid grid;
 
@@ -189,6 +190,7 @@ namespace MaskEffect
             // Pass indicator prefab reference so MechController can instantiate it
             controller.maskIndicatorPrefab = maskIndicatorPrefab;
             controller.maskRingMaterial = maskRingMaterial;
+            controller.healthBarUIPrefab = healthBarUIPrefab; // Pass health bar prefab
             controller.Initialize(chassis, team, id, grid);
 
             // Set the chassisDataPath SyncVar on the server (or locally in singleplayer)

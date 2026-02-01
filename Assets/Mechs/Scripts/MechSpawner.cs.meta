@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: 05854c9e151562441bbe553415c6d0b4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
+  - maskIndicatorPrefab: {instanceID: 0}
+  - maskRingMaterial: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -78,6 +78,8 @@ MonoBehaviour:
   syncInterval: 0
   mechId: 0
   team: 0
+  chassisDataPath: 
+  equippedMaskPath: 
   chassisData: {fileID: 0}
   equippedMask: {fileID: 0}
   maxHP: 0
@@ -100,7 +102,9 @@ MonoBehaviour:
   statusHandler: {fileID: 0}
   movement: {fileID: 0}
   deathEffectPrefab: {fileID: 1329845292236604, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
+  healthBarUIPrefab: {fileID: 3175739028107533979, guid: 8b9c4d4dd3dffc743aedafe00343c78e, type: 3}
   maskIndicatorPrefab: {fileID: 0}
+  maskRingMaterial: {fileID: 0}
   allMechs: []
 --- !u!65 &4523296577345017769
 BoxCollider:

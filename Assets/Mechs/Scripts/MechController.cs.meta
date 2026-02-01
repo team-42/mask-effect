@@ -1,2 +1,20 @@
 fileFormatVersion: 2
 guid: 6c1352869c3eb2b4e841b3b7cd8e4cbe
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - chassisData: {instanceID: 0}
+  - equippedMask: {instanceID: 0}
+  - currentTarget: {instanceID: 0}
+  - statusHandler: {instanceID: 0}
+  - movement: {instanceID: 0}
+  - deathEffectPrefab: {instanceID: 0}
+  - healthBarUIPrefab: {fileID: 3175739028107533979, guid: 8b9c4d4dd3dffc743aedafe00343c78e, type: 3}
+  - maskIndicatorPrefab: {instanceID: 0}
+  - maskRingMaterial: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

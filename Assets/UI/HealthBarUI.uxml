@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" editor-extension-inspector-author="Unity Technologies" editor-extension-inspector-uri="unity.com" editor-extension-inspector-version="1.0.0" name="HealthBarUI" editor-extension-inspector-description="This is a health bar UI for units.">
+    <ui:VisualElement name="health-bar-container" style="flex-direction: row; align-items: center; justify-content: center; width: 150px; height: 20px; background-color: rgba(0, 0, 0, 0.5);">
+        <ui:VisualElement name="mask-effect-placeholder" style="width: 20px; height: 20px; background-color: rgba(100, 100, 100, 0.5); margin-right: 5px;" />
+        <ui:VisualElement name="health-bar-background" style="flex-grow: 1; height: 100%; background-color: red;">
+            <ui:VisualElement name="health-bar-fill" style="width: 100%; height: 100%; background-color: green; transform-origin: left center;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

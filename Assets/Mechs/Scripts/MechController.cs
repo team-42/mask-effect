@@ -42,6 +42,10 @@ namespace MaskEffect
         [Header("VFX")]
         public GameObject deathEffectPrefab;
 
+        [Header("UI")]
+        public GameObject healthBarUIPrefab; // Assign this prefab in the Inspector
+        private HealthBarUIController healthBarUIController;
+
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
@@ -65,11 +69,15 @@ namespace MaskEffect
 
         private void Start()
         {
+            // Debug.Log($"MechController Start() called for {gameObject.name}. HealthBarUIPrefab: {(healthBarUIPrefab != null ? healthBarUIPrefab.name : "NULL")}"); // Removed debug log
             // In singleplayer (no NetworkManager), OnStartClient() never fires.
             // Run visual setup here instead.
+            // We will rely on OnStartClient for health bar setup in networked scenarios.
+            // For offline, SetupVisuals is still needed.
             if (NetworkHelper.IsOffline)
             {
                 SetupVisuals();
+                // SetupHealthBarUI will be called from OnStartClient or OnChassisDataPathChanged
             }
         }
 
@@ -84,8 +92,10 @@ namespace MaskEffect
         public override void OnStartClient()
         {
             base.OnStartClient();
+            Debug.Log($"MechController OnStartClient() called for {gameObject.name}. HealthBarUIPrefab: {(healthBarUIPrefab != null ? healthBarUIPrefab.name : "NULL")}"); // Added debug log
             // Ensure visuals are set up when the client spawns the mech
             SetupVisuals();
+            // SetupHealthBarUI will now be called from OnChassisDataPathChanged
         }
 
         // Callback for chassisDataPath SyncVar
@@ -95,6 +105,12 @@ namespace MaskEffect
             {
                 chassisData = Resources.Load<ChassisData>(newPath);
                 SetupVisuals(); // Update visuals when chassis data changes
+                if (healthBarUIController == null) // Only setup if not already done
+                {
+                    Debug.Log($"Calling SetupHealthBarUI() from OnChassisDataPathChanged for {gameObject.name}"); // Added for debugging
+                    SetupHealthBarUI();
+                }
+                UpdateHealthBarUI();
             }
         }
 
@@ -105,6 +121,7 @@ namespace MaskEffect
             {
                 equippedMask = Resources.Load<MaskData>(newPath);
                 SetupVisuals(); // Update visuals when mask data changes
+                UpdateHealthBarUI();
             }
         }
 
@@ -228,6 +245,46 @@ namespace MaskEffect
                 Destroy(collider);
         }
 
+        private void SetupHealthBarUI()
+        {
+            Debug.Log($"SetupHealthBarUI() called for {gameObject.name}. Checking healthBarUIPrefab..."); // Added debug log
+            if (healthBarUIPrefab == null)
+            {
+                Debug.LogWarning($"HealthBarUIPrefab is not assigned on {gameObject.name}. Health bar will not be displayed.");
+                return;
+            }
+
+            Debug.Log($"Setting up Health Bar UI for {gameObject.name}. Prefab assigned: {healthBarUIPrefab.name}");
+
+            GameObject healthBarGO = Instantiate(healthBarUIPrefab);
+            healthBarGO.transform.SetParent(transform); // Explicitly set parent
+            Debug.Log($"Instantiated HealthBarUI GameObject: {healthBarGO.name}. Parent: {healthBarGO.transform.parent.name}"); // Added debug log
+            healthBarGO.transform.localPosition = new Vector3(0, -0.5f, 0); // Position below the unit
+            // The Billboard script will handle facing the camera, so remove this line
+            // healthBarGO.transform.forward = Camera.main.transform.forward; 
+
+            healthBarUIController = healthBarGO.GetComponent<HealthBarUIController>();
+            if (healthBarUIController != null)
+            {
+                Debug.Log($"HealthBarUIController found on {healthBarGO.name}. Updating health bar."); // Added debug log
+                healthBarUIController.UpdateHealthBar(currentHP, maxHP);
+                healthBarUIController.UpdateMaskEffectPlaceholder(equippedMask != null);
+            }
+            else
+            {
+                Debug.LogError($"HealthBarUIController not found on instantiated HealthBarUIPrefab for {gameObject.name}.");
+            }
+        }
+
+        private void UpdateHealthBarUI()
+        {
+            if (healthBarUIController != null)
+            {
+                healthBarUIController.UpdateHealthBar(currentHP, maxHP);
+                healthBarUIController.UpdateMaskEffectPlaceholder(equippedMask != null);
+            }
+        }
+
         public void Initialize(ChassisData chassis, Team team, int id, IBattleGrid grid)
         {
             // Set team and identity BEFORE chassisDataPath, because the
@@ -261,6 +318,7 @@ namespace MaskEffect
             currentHP = maxHP;
             attackCooldown = 0f;
             retargetTimer = 0f;
+            UpdateHealthBarUI();
         }
 
         public void SetAllMechsList(List<MechController> mechs)
@@ -278,6 +336,7 @@ namespace MaskEffect
             targetingMode = mask.defaultTargetingMode;
             RecalculateStats();
             currentHP = maxHP; // reset HP with new max
+            UpdateHealthBarUI();
 
             MaskAbilityData abilityData = mask.GetAbilityForChassis(chassisData.chassisType);
             if (abilityData != null)
@@ -362,6 +421,7 @@ namespace MaskEffect
             if (evaded) return;
 
             CombatMath.ApplyDamage(rawDamage, attacker.currentDamageType, armor, currentResistanceType, currentResistanceValue, markMultiplier, ref currentHP, statusHandler);
+            UpdateHealthBarUI(); // Update health bar after taking damage
 
             if (currentHP <= 0)
             {
@@ -379,6 +439,7 @@ namespace MaskEffect
             if (!isAlive) return;
             isAlive = false;
             currentHP = 0;
+            UpdateHealthBarUI(); // Update health bar to show 0 HP
 
             if (activeAbility != null)
                 activeAbility.Cleanup();
