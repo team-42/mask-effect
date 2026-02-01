@@ -111,6 +111,8 @@ namespace MaskEffect
                 gameObject.AddComponent<MaskPanelUI>();
             if (FindFirstObjectByType<GameOverUI>() == null)
                 gameObject.AddComponent<GameOverUI>();
+            if (FindFirstObjectByType<FogOfWarManager>() == null)
+                gameObject.AddComponent<FogOfWarManager>();
         }
 
         private void Start()

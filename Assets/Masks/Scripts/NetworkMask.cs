@@ -116,6 +116,10 @@ namespace MaskEffect
 
             // Notify the mech about this mask (for stat recalc, tint, etc.)
             ownerMech.ApplyMaskFromNetwork(this);
+
+            // Notify FogOfWarManager so mask visuals are hidden if fog is active
+            if (FogOfWarManager.Instance != null)
+                FogOfWarManager.Instance.OnMaskVisualsCreated(ownerMech, this);
         }
 
         private void CreateRingVisual()
