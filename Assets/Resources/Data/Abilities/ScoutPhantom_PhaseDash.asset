@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScoutPhantom_PhaseDash
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Phase Dash
-  description: 40% chance to become untargetable for 1s after each attack.
+  description: 'After each attack: 40% chance to become untargetable for 1s'
   requiredChassis: 0
   requiredMask: 4
   cooldown: 0

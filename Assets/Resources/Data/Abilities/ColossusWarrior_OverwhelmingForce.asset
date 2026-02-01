@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: ColossusWarrior_OverwhelmingForce
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Overwhelming Force
-  description: Every 4th attack stuns target for 1s. +15% bonus damage to stunned
-    targets.
+  description: 'Every 4th attack: Stun both targets for 1s; attacks deal +15% damage to stunned targets'
   requiredChassis: 4
   requiredMask: 1
   cooldown: 0

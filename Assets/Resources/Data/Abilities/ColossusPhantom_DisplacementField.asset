@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ColossusPhantom_DisplacementField
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Displacement Field
-  description: 'Passive: 25% miss chance on all attacks against this mech.'
+  description: 'Passive: Attackers have 25% miss chance against Colossus'
   requiredChassis: 4
   requiredMask: 4
   cooldown: 0

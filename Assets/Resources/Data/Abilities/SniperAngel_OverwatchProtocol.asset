@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SniperAngel_OverwatchProtocol
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Overwatch Protocol
-  description: 'Every 5s: shield lowest HP ally for 15% of Sniper''s attack damage.'
+  description: 'Every 5s: Shield an ally for 15% of Sniper''s Attack Damage; if shielded ally is attacked, Sniper instantly fires at the attacker (no charge-up)'
   requiredChassis: 3
   requiredMask: 3
   cooldown: 5

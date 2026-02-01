@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: JetWarrior_DiveSlash
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Dive Slash
-  description: Every 6s, dive the target, deal 2x burst damage, return to original
-    position
+  description: 'Every 6s: Dive the target, deal burst damage, return to original tile'
   requiredChassis: 1
   requiredMask: 1
   cooldown: 6

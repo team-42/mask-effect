@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: ColossusAngel_LivingFortress
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Living Fortress
-  description: 'Allies behind Colossus get periodic shield. Every 10s: AoE shield
-    to allies in 3 tiles.'
+  description: 'Passive: Allies directly behind Colossus (same column, higher row) take -25% damage; every 10s, Colossus grants himself and adjacent allies a shield (10% Max HP)'
   requiredChassis: 4
   requiredMask: 3
   cooldown: 10

@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Sanctuary
   description: Adjacent allies take -10% damage; every 8s emit a small heal pulse
-    (5% Max HP)
   requiredChassis: 2
   requiredMask: 3
   cooldown: 8

@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: ColossusRogue_CrushingGrip
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Crushing Grip
-  description: 'Every 6s: root nearest enemy for 2s and mark them for +50% damage
-    from Colossus.'
+  description: 'Every 6s: Grab one target, making it untargetable by allies but taking 50% more damage from Colossus for 2s'
   requiredChassis: 4
   requiredMask: 2
   cooldown: 6

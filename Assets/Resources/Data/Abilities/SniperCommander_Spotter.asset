@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: SniperCommander_Spotter
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Spotter
-  description: 'Every 5s: mark current target for 4s, all allies deal +20% damage
-    to marked target.'
+  description: 'Every 5s: Mark a target for 4s; all allies have +20% damage against marked target'
   requiredChassis: 3
   requiredMask: 5
   cooldown: 5

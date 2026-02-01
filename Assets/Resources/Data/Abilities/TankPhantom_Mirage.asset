@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TankPhantom_Mirage
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Mirage
-  description: 'Every 10s: taunt 2 nearest enemies for 3s.'
+  description: 'Every 10s: Create an illusion with 1 HP that draws aggro for 3s'
   requiredChassis: 2
   requiredMask: 4
   cooldown: 10

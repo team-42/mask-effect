@@ -10,12 +10,14 @@ namespace MaskEffect
     public class MaskAssignmentTooltip : MonoBehaviour
     {
         private bool visible;
-        private string tooltipText;
+        private string headingText;
+        private string bodyText;
         private Color tooltipTintColor;
 
         private const float Padding = 8f;
         private const float OffsetX = 14f;
         private const float OffsetY = -28f;
+        private const float MinBodyWidth = 200f;
 
         /// <summary>
         /// Show the tooltip.  Safe to call every frame; internally a no-op when the
@@ -23,11 +25,18 @@ namespace MaskEffect
         /// </summary>
         public void Show(MaskData mask, MechController mech)
         {
-            string newText = $"{mask.maskName} \u2192 {mech.chassisData.chassisName}";
-            if (visible && tooltipText == newText)
+            string newHeading = $"{mask.maskName} \u2192 {mech.chassisData.chassisName}";
+
+            MaskAbilityData ability = mask.GetAbilityForChassis(mech.chassisData.chassisType);
+            string newBody = ability != null
+                ? $"{ability.abilityName} \u2014 {ability.description}"
+                : "";
+
+            if (visible && headingText == newHeading && bodyText == newBody)
                 return;
 
-            tooltipText = newText;
+            headingText = newHeading;
+            bodyText = newBody;
             tooltipTintColor = mask.maskTint;
             visible = true;
         }
@@ -42,18 +51,36 @@ namespace MaskEffect
         {
             if (!visible) return;
 
-            GUIStyle style = new GUIStyle(GUI.skin.label)
+            GUIStyle headingStyle = new GUIStyle(GUI.skin.label)
             {
                 fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft
             };
-            style.normal.textColor = Color.white;
-            style.hover.textColor = Color.white;
+            headingStyle.normal.textColor = Color.white;
+            headingStyle.hover.textColor = Color.white;
 
-            Vector2 textSize = style.CalcSize(new GUIContent(tooltipText));
-            float boxW = textSize.x + Padding * 2f;
-            float boxH = textSize.y + Padding * 2f;
+            GUIStyle bodyStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 12,
+                fontStyle = FontStyle.Normal,
+                alignment = TextAnchor.UpperLeft,
+                wordWrap = true
+            };
+            bodyStyle.normal.textColor = Color.white;
+            bodyStyle.hover.textColor = Color.white;
+
+            Vector2 headingSize = headingStyle.CalcSize(new GUIContent(headingText));
+            float boxW = Mathf.Max(headingSize.x, MinBodyWidth) + Padding * 2f;
+            float bodyW = boxW - Padding * 2f;
+
+            float bodyH = bodyText.Length > 0
+                ? bodyStyle.CalcHeight(new GUIContent(bodyText), bodyW)
+                : 0f;
+
+            float separatorH = bodyH > 0 ? 1f : 0f;
+            float gapH = bodyH > 0 ? Padding * 0.5f : 0f;
+            float boxH = Padding + headingSize.y + gapH + separatorH + gapH + bodyH + Padding;
 
             // GUI-space origin is top-left; Input.mousePosition origin is bottom-left.
             float rawX = Input.mousePosition.x + OffsetX;
@@ -74,12 +101,31 @@ namespace MaskEffect
             GUI.Box(tooltipRect, GUIContent.none);
             GUI.backgroundColor = prevBg;
 
-            Rect labelRect = new Rect(
+            // Heading
+            Rect headingRect = new Rect(
                 tooltipRect.x + Padding,
                 tooltipRect.y + Padding,
-                textSize.x,
-                textSize.y);
-            GUI.Label(labelRect, tooltipText, style);
+                bodyW,
+                headingSize.y);
+            GUI.Label(headingRect, headingText, headingStyle);
+
+            if (bodyH > 0)
+            {
+                // Thin separator line
+                float sepY = headingRect.y + headingRect.height + gapH;
+                Color prevColor = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, 0.25f);
+                GUI.DrawTexture(new Rect(tooltipRect.x + Padding, sepY, bodyW, separatorH), Texture2D.whiteTexture);
+                GUI.color = prevColor;
+
+                // Body
+                Rect bodyRect = new Rect(
+                    tooltipRect.x + Padding,
+                    sepY + separatorH + gapH,
+                    bodyW,
+                    bodyH);
+                GUI.Label(bodyRect, bodyText, bodyStyle);
+            }
         }
     }
 }

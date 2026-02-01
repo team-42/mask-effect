@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: ScoutWarrior_HitAndRun
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Hit & Run
-  description: Every 3rd attack grants +40% Attack Speed for 2s; step back 1 tile
-    after each attack
+  description: Every 3rd attack grants +40% Attack Speed for 2s; after each attack, step back 1 tile if free
   requiredChassis: 0
   requiredMask: 1
   cooldown: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TankCommander_IronWill
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Iron Will
-  description: 'Passive: adjacent allies are immune to Slow and Root effects.'
+  description: 'Passive: Adjacent allies are immune to Slow and Root'
   requiredChassis: 2
   requiredMask: 5
   cooldown: 0

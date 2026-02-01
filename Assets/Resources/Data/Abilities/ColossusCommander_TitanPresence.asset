@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ColossusCommander_TitanPresence
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Titan Presence
-  description: 'Passive: allies within 3 tiles regenerate 2% max HP per second.'
+  description: 'Passive: Allies within 3 tiles regenerate 2% Max HP per second'
   requiredChassis: 4
   requiredMask: 5
   cooldown: 0

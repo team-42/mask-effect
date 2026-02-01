@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TankRogue_Grapple
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Grapple
-  description: Every 7s, pull the farthest enemy into frontline and Root for 1s
+  description: 'Every 7s: Pull the farthest enemy into frontline and Root for 1s'
   requiredChassis: 2
   requiredMask: 2
   cooldown: 7

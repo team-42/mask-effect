@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: JetAngel_SkyBarrier
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Sky Barrier
-  description: Every 6s, shield 2 allies for 3s
+  description: 'Every 6s: Shield 2 allies for 3s'
   requiredChassis: 1
   requiredMask: 3
   cooldown: 6

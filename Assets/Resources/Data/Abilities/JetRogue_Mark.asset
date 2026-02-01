@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: JetRogue_Mark
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Mark
-  description: First hit marks target for 6s; marked targets take +15% damage from
-    team
+  description: First hit marks target for 6s; marked targets take +15% damage from your team; Jet prioritizes marks
   requiredChassis: 1
   requiredMask: 2
   cooldown: 0

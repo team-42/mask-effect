@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: TankWarrior_Challenge
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Challenge
-  description: On battle start, taunt nearby enemies for 3s. Every 5s on hit, gain
-    shield = 10% Max HP
+  description: 'On battle start: Taunt nearby enemies for 3s; then every 5s on hit, gain a shield (10% Max HP)'
   requiredChassis: 2
   requiredMask: 1
   cooldown: 5

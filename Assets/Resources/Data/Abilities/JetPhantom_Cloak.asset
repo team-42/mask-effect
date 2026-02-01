@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: JetPhantom_Cloak
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Cloak
-  description: 'Every 8s: become invisible for 2s, next attack deals +30% damage.'
+  description: 'Every 8s: Become invisible for 2s; next attack deals +30% damage'
   requiredChassis: 1
   requiredMask: 4
   cooldown: 8

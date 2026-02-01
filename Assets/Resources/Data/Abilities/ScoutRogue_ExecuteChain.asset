@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScoutRogue_ExecuteChain
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Execute Chain
-  description: On kill, dash to next target; next hit deals +25% damage
+  description: 'On kill: Dash to the next target; next hit deals +25% damage'
   requiredChassis: 0
   requiredMask: 2
   cooldown: 0

@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: JetCommander_AirSuperiority
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Air Superiority
-  description: 'Passive: allies in the same column receive periodic shield (10% damage
-    reduction).'
+  description: 'Passive: Allies in the same column as Jet take -10% damage'
   requiredChassis: 1
   requiredMask: 5
   cooldown: 0

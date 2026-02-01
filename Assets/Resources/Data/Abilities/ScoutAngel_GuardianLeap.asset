@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScoutAngel_GuardianLeap
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Guardian Leap
-  description: Every 6s, leap to lowest-HP ally; grant shield (20% Max HP) for 3s
+  description: 'Every 6s: Leap to lowest-HP ally; grant a shield (20% Max HP) for 3s'
   requiredChassis: 0
   requiredMask: 3
   cooldown: 6

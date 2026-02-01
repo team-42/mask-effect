@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SniperWarrior_ArmorPiercingRound
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Armor Piercing Round
-  description: Every 3rd shot ignores 50% armor + distance bonus damage.
+  description: Every 3rd shot ignores 50% of target's Armor; gain +10% damage for each tile of distance to target
   requiredChassis: 3
   requiredMask: 1
   cooldown: 0

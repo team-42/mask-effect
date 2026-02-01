@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: SniperRogue_KillShot
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Kill Shot
-  description: 'Targets below 30% HP take +75% damage. On kill: skip charge-up for
-    next shot.'
+  description: Targets below 30% HP take +75% damage; on kill, next shot has no charge-up time
   requiredChassis: 3
   requiredMask: 2
   cooldown: 0

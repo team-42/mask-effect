@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: SniperPhantom_RevengeBlink
   m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.MaskAbilityData
   abilityName: Revenge Blink
-  description: 'When hit: teleport to safest tile and next shot deals +50% damage.
-    10s cooldown.'
+  description: 'When hit: Teleport to a tile at maximum range from any enemy; next shot deals +50% damage. Cooldown: 10s'
   requiredChassis: 3
   requiredMask: 4
   cooldown: 10
