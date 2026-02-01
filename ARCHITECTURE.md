@@ -4,6 +4,7 @@
 
 The 'Mask Effect' project is structured to organize game assets and scripts logically, primarily within the `Assets/` directory. Key subdirectories correspond to major game components:
 
+* **`Assets/Prefabs/`**: **Central prefab directory.** ALL project-owned prefabs live here (flat, no subfolders). Third-party prefabs (Mirror, etc.) remain in their own directories.
 * **`Assets/Audio/`**: Manages sound effects and background music.
 * **`Assets/Resources/Data/`**: Stores ScriptableObjects for game data, such as `ChassisData` (Mech stats) and `MaskData` (Mask definitions and abilities).
 * **`Assets/Gameplay/`**: Contains core gameplay logic, including `BattleManager` for combat flow, AI, and game state management.
@@ -48,14 +49,17 @@ The game flow generally follows these stages:
 
 ## 4. Mirror Networking Integration
 
-Mirror has been integrated as the networking solution.
+Mirror is fully integrated and multiplayer is functional.
 
 * **`CustomNetworkManager.cs`**: Extends Mirror's `NetworkManager` to handle custom network events, scene transitions, and player management.
-* **NetworkIdentity**: All network-spawnable prefabs (e.g., `MechPrefab`, `TilePrefab`, `MaskDragProxy`, `MaskIndicator`, `ProjectilePrefab`, `Player`, `GameController`) have a `NetworkIdentity` component, indicating their readiness for network synchronization.
-* **Lobby and Scene Transitions**: Basic lobby functionality and scene transitions between `LobbyScene` and `BattleArenaScene` are implemented and work over the network.
-
-**Current Status of Networking Synchronization:**
-While the framework is in place, the `Networking/CLAUDE.md` indicates that synchronization of core gameplay elements like Mech spawning, movement, actions, health, and combat events is *not yet implemented*. The MVP focuses on a local AI auto-battler, so the current networking integration serves as a skeleton for future multiplayer expansion.
+* **`NetworkHelper`**: Dual-mode utility providing `IsOffline`, `IsServerOrOffline`, `SmartDestroy`, and `SpawnOrIgnore` methods so gameplay code works seamlessly in both singleplayer and multiplayer.
+* **NetworkIdentity**: All network-spawnable prefabs (`MechPrefab`, `TilePrefab`, `MaskDragProxy`, `MaskIndicator`, `ProjectilePrefab`, `Player`, `GameController`) have `NetworkIdentity` and are registered in the `NetworkManager`'s spawn list.
+* **Lobby**: `LobbyScene` provides Singleplayer (localhost-only host, `autoCreatePlayer=false`), Host Game, and Join Game (IP input + `StartClient()`) flows via UIToolkit.
+* **Mech Spawning & Movement**: Mechs are spawned server-side via `NetworkServer.Spawn()`. `NetworkTransformReliable` synchronizes positions to all clients.
+* **Mask Assignment**: Server-side per-side mask limit enforced in `CmdAssignMask()`. Client mask panel tracks slots and shows feedback. `EnsureUIComponents()` dynamically creates `MaskAssignmentManager`, `MaskPanelUI`, and `GameOverUI` in the multiplayer scene if not present.
+* **Mech Repositioning**: Clients reposition mechs via `CmdRepositionMech` command with server-side validation (team, zone, occupancy).
+* **AI in Multiplayer**: AI enemy mask pre-assignment uses `autoCreatePlayer` flag (not connection count) to reliably detect multiplayer mode before the client connects.
+* **Game Over**: `GameOverUI` uses `MyTeam` property so the client sees the correct win/loss perspective. `StopHost()` is called before returning to the lobby.
 
 ## 5. Adherence to Unity Best Practices
 
@@ -73,25 +77,20 @@ The project demonstrates adherence to several Unity best practices:
 
 ## 7. Current Development Status (MVP Focus)
 
-The project has made significant progress towards the MVP, focusing on a polished core local AI auto-battler experience. Many core mechanics, data structures, and UI elements are implemented. Remaining tasks primarily involve balancing, visual/audio polish, and completing UI elements. The networking aspect is currently a foundational setup for future expansion, with core gameplay synchronization pending.
+The project has made significant progress towards the MVP. Core auto-battler mechanics, data structures, UI elements, and multiplayer networking are all functional. Both singleplayer (local AI opponent) and multiplayer (Host/Join via Mirror) modes work. Remaining tasks primarily involve balancing, visual/audio polish, and completing UI elements.
 
 ---
 
 # Cleanup and Refactoring Suggestions (Phase 2 - Step 1)
 
-## Networking Integration Review
+## Networking Status
 
-**Current State:**
-The project has Mirror integrated, and basic network functionality like scene transitions and `NetworkIdentity` on prefabs is in place. However, the `Networking/CLAUDE.md` explicitly states that synchronization of "Mech Spawning Across Network," "Mech Movement & Actions," and "Health & Combat Events" is *not yet implemented*. The root `CLAUDE.md` also emphasizes an MVP focus on a "local test mode with random AI opponents."
+Multiplayer is functional. Singleplayer uses a localhost-only Mirror host with `autoCreatePlayer=false`. Multiplayer uses the Host/Join flow via `StartHost()` / `StartClient()` with IP input. The `NetworkHelper` dual-mode utility abstracts singleplayer vs. multiplayer differences so gameplay code does not need to branch explicitly.
 
-**Suggestions:**
-
-1. **Clarify Networking Scope for MVP:** Given the MVP's focus on local AI, it's crucial to explicitly define whether the current networking skeleton is purely for future-proofing or if any minimal network synchronization is intended for the MVP.
-    * **Recommendation:** If multiplayer is strictly out of scope for the MVP, consider temporarily disabling or clearly marking network-related code that is not actively used to avoid confusion and potential bugs. Ensure that the local AI auto-battler functions entirely independently of any network manager presence.
-2. **Implement Essential Synchronization (if MVP scope changes):** If the MVP scope *does* expand to include basic multiplayer, the following are critical next steps:
-    * **Networked Mech Spawning:** Implement `NetworkServer.Spawn()` for mechs and projectiles within `CustomNetworkManager` or a dedicated `NetworkSpawner` script.
-    * **Networked Movement:** Utilize `NetworkTransform` or custom `SyncVar`s and `[Command]` methods for reliable mech movement synchronization.
-    * **Networked Combat:** Implement `[Command]` and `[ClientRpc]` attributes for damage calculation, health updates, and status effect application to ensure all clients have a consistent view of combat.
-3. **Separate Local vs. Networked Logic:** For scripts that handle both local AI and potentially networked player input/actions (e.g., `BattleManager`, Mech control scripts), clearly separate the logic. Use `isLocalPlayer` and `isServer` checks to ensure the correct code paths are executed.
-4. **Review `CustomNetworkManager`:** Ensure `CustomNetworkManager.cs` is lean and focused. If it's accumulating too much game-specific logic, consider offloading responsibilities to other dedicated network components (e.g., a `NetworkGameManager` for game state synchronization).
-5. **Consistency in Prefab NetworkIdentity:** Double-check that *all* prefabs intended to be spawned or managed over the network have a `NetworkIdentity` component and are registered in the `NetworkManager`'s spawnable prefabs list.
+Key networking features implemented:
+* Server-authoritative mech spawning, mask assignment (with per-side limits), and mech repositioning.
+* `NetworkTransformReliable` for position synchronization.
+* `SyncVar`-based chassis data path synchronization for client-side model reconstruction.
+* Dynamic UI component creation (`EnsureUIComponents()`) for multiplayer scenes.
+* Correct client-side Game Over perspective via `MyTeam` property.
+* Clean network teardown (`StopHost()`) on lobby return.

@@ -19,6 +19,7 @@ namespace MaskEffect
 
         [Header("Prefabs")]
         [SerializeField] private GameObject mechPrefab;
+        [SerializeField] private GameObject deathEffectPrefab;
 
         private IBattleGrid grid;
 
@@ -190,8 +191,8 @@ namespace MaskEffect
             controller.Initialize(chassis, team, id, grid);
 
             // Ensure death VFX is assigned (fallback if prefab reference was lost)
-            if (controller.deathEffectPrefab == null)
-                controller.deathEffectPrefab = Resources.Load<GameObject>("VFX/EnergyExplosion");
+            if (controller.deathEffectPrefab == null && deathEffectPrefab != null)
+                controller.deathEffectPrefab = deathEffectPrefab;
 
             // Set the chassisDataPath SyncVar on the server (or locally in singleplayer)
             if (NetworkHelper.IsServerOrOffline)
