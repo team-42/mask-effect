@@ -27,15 +27,18 @@ namespace MaskEffect
 
         private void Awake()
         {
-            if (generateVisualTiles)
-                GenerateVisualTiles();
+            // Tile generation is now triggered by BattleManager after networking is ready.
         }
 
-        private void GenerateVisualTiles()
+        /// <summary>
+        /// Creates visual tiles and network-spawns them so clients receive the grid.
+        /// Called by BattleManager on server/offline after networking is initialized.
+        /// </summary>
+        public void GenerateVisualTiles()
         {
+            if (tileVisuals != null) return; // Already generated
+
             tileVisuals = new GameObject[gridWidth * gridHeight];
-            GameObject tilesParent = new GameObject("Tiles");
-            tilesParent.transform.SetParent(transform);
 
             int groundLayer = LayerMask.NameToLayer("Ground");
             if (groundLayer == -1)
@@ -55,28 +58,64 @@ namespace MaskEffect
                         ? Instantiate(tilePrefab)
                         : GameObject.CreatePrimitive(PrimitiveType.Cube);
                     tile.name = $"Tile_{x}_{z}";
-                    tile.transform.SetParent(tilesParent.transform);
                     tile.transform.position = new Vector3(worldPos.x, -0.05f, worldPos.z);
                     tile.transform.localScale = new Vector3(tileSize * 0.95f, 0.1f, tileSize * 0.95f);
 
                     if (groundLayer >= 0)
                         tile.layer = groundLayer;
 
-                    Color tileColor;
+                    // Determine zone and color
+                    TileZone zone;
+                    Color color;
                     if (x < playerEndX)
-                        tileColor = playerTileColor;
+                    {
+                        zone = TileZone.Player;
+                        color = playerTileColor;
+                    }
                     else if (x >= enemyStartX)
-                        tileColor = enemyTileColor;
+                    {
+                        zone = TileZone.Enemy;
+                        color = enemyTileColor;
+                    }
                     else
-                        tileColor = neutralTileColor;
+                    {
+                        zone = TileZone.Neutral;
+                        color = neutralTileColor;
+                    }
 
+                    // Set SyncVars on TileController before spawning
+                    var tileCtrl = tile.GetComponent<TileController>();
+                    if (tileCtrl != null)
+                    {
+                        tileCtrl.tileIndex = idx;
+                        tileCtrl.zone = zone;
+                        tileCtrl.tileColor = color;
+                    }
+
+                    // Apply color immediately (server/offline sees it right away)
                     var renderer = tile.GetComponent<Renderer>();
                     if (renderer != null)
-                        renderer.material.color = tileColor;
+                        renderer.material.color = color;
+
+                    // Network-spawn so clients receive the tile
+                    NetworkHelper.SpawnOrIgnore(tile);
 
                     tileVisuals[idx] = tile;
                 }
             }
+        }
+
+        /// <summary>
+        /// Called by TileController on clients to register their tile visual
+        /// after receiving the networked spawn.
+        /// </summary>
+        public void RegisterTileVisual(int tileIndex, GameObject tileGO)
+        {
+            if (tileVisuals == null)
+                tileVisuals = new GameObject[gridWidth * gridHeight];
+
+            if (tileIndex >= 0 && tileIndex < tileVisuals.Length)
+                tileVisuals[tileIndex] = tileGO;
         }
 
         public GameObject GetTileVisual(int tileIndex)

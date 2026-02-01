@@ -49,6 +49,13 @@ namespace MaskEffect
         public SimpleFlatGrid Grid => grid;
 
         /// <summary>
+        /// Set by LobbyUIController before scene transition.
+        /// true = singleplayer (AI controls enemy side),
+        /// false = multiplayer (human enemy player).
+        /// </summary>
+        public static bool AIControlsEnemySide = true;
+
+        /// <summary>
         /// True when there are 2+ network connections (real multiplayer, not SP via localhost).
         /// </summary>
         public bool IsMultiplayerMatch =>
@@ -74,6 +81,7 @@ namespace MaskEffect
         {
             base.OnStartServer();
             spawner.Initialize(grid);
+            grid.GenerateVisualTiles();
             EnsureUIComponents();
 
             StartNewRound();
@@ -111,6 +119,7 @@ namespace MaskEffect
             if (NetworkHelper.IsOffline)
             {
                 spawner.Initialize(grid);
+                grid.GenerateVisualTiles();
                 StartNewRound();
 
                 if (autoStartCombat)
@@ -192,11 +201,7 @@ namespace MaskEffect
             }
 
             // Pre-assign enemy masks only in singleplayer (AI opponent).
-            // Use autoCreatePlayer to detect MP mode reliably even before the
-            // client connects (IsMultiplayerMatch would be false at that point).
-            bool expectsRemotePlayer = NetworkManager.singleton != null
-                && NetworkManager.singleton.autoCreatePlayer;
-            if (!expectsRemotePlayer)
+            if (AIControlsEnemySide)
             {
                 AIAssignMasks();
                 enemySideReady = true;
@@ -220,6 +225,10 @@ namespace MaskEffect
             NetworkHelper.SpawnOrIgnore(maskGO);
 
             mech.EquipMask(netMask);
+
+            // On the host, OnStartClient may be deferred until LateUpdate.
+            // Trigger visual setup immediately so ring + tint appear in round 1.
+            netMask.SetupClientSide();
         }
 
         /// <summary>
@@ -423,6 +432,11 @@ namespace MaskEffect
 
         private void AIAssignMasks()
         {
+            // Defensive: ensure mask data is loaded (scene serialization can lose references)
+            if (availableMasks == null || availableMasks.Length == 0 || availableMasks[0] == null)
+                availableMasks = Resources.LoadAll<MaskData>("Data/Masks");
+
+            Debug.Log($"[BattleManager] AIAssignMasks: enemies={enemyMechs.Count}, masks={availableMasks?.Length ?? 0}, maskPrefab={(maskPrefab != null ? "OK" : "NULL")}");
             RandomAssignMasks(enemyMechs);
         }
 

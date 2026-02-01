@@ -160,9 +160,15 @@ MonoBehaviour:
   spawner: {fileID: 0}
   grid: {fileID: 0}
   availableMasks: []
+  maskPrefab: {fileID: 5657663725193784015, guid: a943b79de4030924d840545fa4627161, type: 3}
   currentState: 0
   roundNumber: 0
   roundTimer: 0
+  lastRoundWinner: 0
+  lastPlayerAlive: 0
+  lastEnemyAlive: 0
+  playerSideReady: 0
+  enemySideReady: 0
   allMechs: []
   playerMechs: []
   enemyMechs: []
@@ -185,8 +191,6 @@ MonoBehaviour:
   minMechCount: 1
   maxMechCount: 1
   mechPrefab: {fileID: 7328276048541487975, guid: 5631c65c84057e3488f4c44c20711bd9, type: 3}
-  maskIndicatorPrefab: {fileID: 760611183611869202, guid: 52199cf8b32415740bc7d8a446065768, type: 3}
-  maskRingMaterial: {fileID: 0}
 --- !u!114 &1731593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,8 +442,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraControl
   moveSpeed: 5
-  edgePanBorder: 20
-  enableEdgePanning: 1
   arenaBoundsX: {x: -20, y: 20}
   arenaBoundsZ: {x: -15, y: 15}
   rotationSpeed: 3

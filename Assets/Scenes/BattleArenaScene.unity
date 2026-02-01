@@ -194,6 +194,11 @@ MonoBehaviour:
   currentState: 0
   roundNumber: 0
   roundTimer: 0
+  lastRoundWinner: 0
+  lastPlayerAlive: 0
+  lastEnemyAlive: 0
+  playerSideReady: 0
+  enemySideReady: 0
   allMechs: []
   playerMechs: []
   enemyMechs: []

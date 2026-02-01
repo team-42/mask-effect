@@ -62,7 +62,13 @@ namespace MaskEffect
             SetupClientSide();
         }
 
-        private void SetupClientSide()
+        /// <summary>
+        /// Ensures client-side visuals are created. Safe to call multiple times
+        /// (ring creation and mech notification are idempotent).
+        /// Called from OnStartClient, Start (offline), and explicitly by
+        /// BattleManager after spawn to handle deferred OnStartClient on host.
+        /// </summary>
+        public void SetupClientSide()
         {
             // Load mask data from Resources if not already set (server sets it directly)
             if (maskData == null && !string.IsNullOrEmpty(maskDataPath))

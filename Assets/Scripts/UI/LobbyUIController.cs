@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Mirror;
+using MaskEffect;
 
 public class LobbyUIController : MonoBehaviour
 {
@@ -86,6 +87,7 @@ public class LobbyUIController : MonoBehaviour
 
     void LoadBattleArenaScene()
     {
+        BattleManager.AIControlsEnemySide = true;
         var nm = NetworkManager.singleton;
         if (nm != null)
         {
@@ -102,6 +104,7 @@ public class LobbyUIController : MonoBehaviour
 
     void HostMultiplayerGame()
     {
+        BattleManager.AIControlsEnemySide = false;
         var nm = NetworkManager.singleton;
         if (nm != null)
         {
@@ -117,6 +120,7 @@ public class LobbyUIController : MonoBehaviour
 
     void JoinMultiplayerGame()
     {
+        BattleManager.AIControlsEnemySide = false;
         var nm = NetworkManager.singleton;
         if (nm == null) return;
 

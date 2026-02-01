@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4261218652911098814}
   - component: {fileID: 4255418722885236532}
   - component: {fileID: 7498045696258906945}
+  - component: {fileID: 5314989535452136798}
+  - component: {fileID: 2089844958565128132}
   m_Layer: 0
   m_Name: TilePrefab
   m_TagString: Untagged
@@ -112,3 +114,38 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5314989535452136798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6643514479058934664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &2089844958565128132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6643514479058934664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86907ce9f5d8bc048858351fa42c9fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaskEffect.TileController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  tileIndex: 0
+  zone: 0
+  tileColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

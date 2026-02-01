@@ -99,7 +99,7 @@ namespace MaskEffect
             var netManager = Object.FindFirstObjectByType<NetworkManager>();
             if (netManager != null)
             {
-                RegisterSpawnPrefabs(netManager, mechPrefab, maskPrefab, projectilePrefab);
+                RegisterSpawnPrefabs(netManager, mechPrefab, maskPrefab, projectilePrefab, tilePrefab);
             }
 
             Debug.Log("[PrefabGenerator] All prefab references wired in current scene. Save the scene to persist.");
@@ -193,6 +193,10 @@ namespace MaskEffect
             go.name = "TilePrefab";
             // Default scale; overridden at runtime based on tileSize
             go.transform.localScale = new Vector3(0.95f, 0.1f, 0.95f);
+
+            // Network identity so tiles sync to clients
+            go.AddComponent<NetworkIdentity>();
+            go.AddComponent<TileController>();
 
             SavePrefab(go, path);
         }
