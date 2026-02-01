@@ -29,4 +29,4 @@ Sixt AI should make sure that all code strictly fits to the following versions:
 ## Conventions
 Sixt AI should update or extend relevant documentation.
 After each code change, Sixt AI should check the Unity MCP log for errors and fix them.
-Work in small self-contained feature increments. After each iteration, ALWAYS trigger a Unity refresh via MCP and then check the Unity log for compile errors.
+Work in small self-contained feature increments. After each iteration, ALWAYS trigger a Unity refresh via MCP and then check the Unity log for compile errors. To be more efficient, please consider for loading Scenes all the time opening with the index instead of the path.
