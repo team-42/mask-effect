@@ -4,10 +4,8 @@ public class PlayerCameraControl : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 1200.0f; // Drastically increased move speed for interpolation responsiveness
-    public float edgePanBorder = 20f; // Pixels from screen edge for panning
-    public bool enableEdgePanning = true;
-    public Vector2 arenaBoundsX = new Vector2(-20f, 20f); // Placeholder X bounds for the arena
-    public Vector2 arenaBoundsZ = new Vector2(-15f, 15f); // Placeholder Z bounds for the arena
+    public Vector2 arenaBoundsX = new Vector2(-3f, 3f);
+    public Vector2 arenaBoundsZ = new Vector2(-3f, 0f);
 
     [Header("Rotation Settings")]
     public float rotationSpeed = 3.0f;
@@ -32,7 +30,6 @@ public class PlayerCameraControl : MonoBehaviour
     void Update()
     {
         HandleMovement();
-        HandleEdgePanning();
         HandleDragPanning();
         HandleRotation();
         HandleZoom();
@@ -61,29 +58,6 @@ public class PlayerCameraControl : MonoBehaviour
 
         // Clamp camera movement to arena bounds
         ClampCameraPosition();
-    }
-
-    void HandleEdgePanning()
-    {
-        if (!enableEdgePanning) return;
-
-        Vector3 moveDirection = Vector3.zero;
-
-        if (Input.mousePosition.x >= Screen.width - edgePanBorder)
-            moveDirection += Vector3.right;
-        if (Input.mousePosition.x <= edgePanBorder)
-            moveDirection += Vector3.left;
-        if (Input.mousePosition.y >= Screen.height - edgePanBorder)
-            moveDirection += Vector3.forward;
-        if (Input.mousePosition.y <= edgePanBorder)
-            moveDirection += Vector3.back;
-
-        if (moveDirection != Vector3.zero)
-        {
-            // Move in world-space cardinal directions, not camera-relative
-            cameraTargetPosition += moveDirection.normalized * moveSpeed * Time.deltaTime;
-            ClampCameraPosition();
-        }
     }
 
     void HandleDragPanning()
@@ -166,6 +140,7 @@ public class PlayerCameraControl : MonoBehaviour
                 cameraTargetPosition.y = targetHeight; // Set the height
 
                 cameraTargetRotation = Quaternion.Euler(pitchAngle, cameraTargetRotation.eulerAngles.y, 0);
+                ClampCameraPosition();
             }
         }
     }

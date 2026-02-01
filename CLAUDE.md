@@ -104,7 +104,7 @@ Based on the consensus from multiple AI models, the original work breakdown has 
 - [x] All chassis ranged with projectiles (Scout range 3, Tank range 2.5, Jet range 4).
 - [x] Jet chassis hovers with bobbing animation; projectiles target VisualCenter height.
 - [x] Game loop: round setup → mask assignment → auto combat → round end → next round.
-- [x] BattleArenaScene: 20x10 grid, 3 zones, IMGUI mask panel, drag-to-reposition, camera controls.
+- [x] BattleArenaScene: 20x10 grid, 3 zones, IMGUI mask panel, drag-to-reposition, camera controls (edge panning removed, tight arena bounds X:-3..3 Z:-3..0, zoom clamped).
 - [x] LobbyScene: UIToolkit menu with Singleplayer, Host Game, Join (IP field + button).
 - [x] Singleplayer: localhost-only Mirror host, autoCreatePlayer=false, StopHost() on lobby return.
 - [x] Multiplayer: Host/Join flow via Mirror (StartHost / StartClient with IP).
