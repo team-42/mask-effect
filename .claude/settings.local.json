@@ -32,5 +32,9 @@
       "Bash(cmd /c 'move \"\"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Audio\\\\Neon Bracket Clash_p1.mp3\"\" \"\"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Resources\\\\Audio\\\\\"\"')",
       "Bash(find:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "UnityMCP"
+  ],
+  "enableAllProjectMcpServers": true
 }

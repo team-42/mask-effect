@@ -17,10 +17,10 @@ namespace MaskEffect
 
         /// <summary>
         /// Apply damage to a mech. Shield absorbs first, then HP.
-        /// Returns actual damage dealt to HP.
+        /// Returns the new HP value after damage is applied.
         /// </summary>
         public static int ApplyDamage(int rawDamage, DamageType damageType, int armor, ResistanceType resistanceType, float resistanceValue, float markMultiplier,
-            ref int currentHP, StatusEffectHandler statusHandler)
+            int currentHP, StatusEffectHandler statusHandler)
         {
             int damage = rawDamage;
 
@@ -34,25 +34,27 @@ namespace MaskEffect
             damage = Mathf.FloorToInt(damage * markMultiplier);
             damage = Mathf.Max(damage, 1);
 
+            int newHP = currentHP;
+
             float shield = statusHandler.GetShieldAmount();
             if (shield > 0f)
             {
                 if (shield >= damage)
                 {
                     statusHandler.DamageShield(damage);
-                    return 0;
+                    return newHP;  // No HP damage, return unchanged
                 }
                 else
                 {
                     int remaining = damage - Mathf.FloorToInt(shield);
                     statusHandler.DamageShield(shield);
-                    currentHP -= remaining;
-                    return remaining;
+                    newHP -= remaining;
+                    return newHP;
                 }
             }
 
-            currentHP -= damage;
-            return damage;
+            newHP -= damage;
+            return newHP;
         }
     }
 }

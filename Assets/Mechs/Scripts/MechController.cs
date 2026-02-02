@@ -17,7 +17,7 @@ namespace MaskEffect
 
         [Header("Runtime Stats")]
         [SyncVar] public int maxHP;
-        [SyncVar] public int currentHP;
+        [SyncVar(hook = nameof(OnCurrentHPChanged))] public int currentHP;
         [SyncVar] public int armor;
         [SyncVar] public int attackDamage;
         [SyncVar] public float attackInterval;
@@ -55,6 +55,9 @@ namespace MaskEffect
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
+        // Health bar visual
+        private MechHealthBar _healthBar;
+
         // References set by BattleManager
         private IBattleGrid grid;
         public List<MechController> allMechs; // Made public for TilePathfinder
@@ -75,6 +78,8 @@ namespace MaskEffect
             {
                 SetupVisuals();
             }
+            // Always ensure health bar exists (even if chassisData isn't ready yet)
+            CreateHealthBar();
         }
 
         public override void OnStartServer()
@@ -90,6 +95,8 @@ namespace MaskEffect
             base.OnStartClient();
             // Ensure visuals are set up when the client spawns the mech
             SetupVisuals();
+            // Always ensure health bar exists (even if chassisData isn't ready yet)
+            CreateHealthBar();
         }
 
         // Callback for chassisDataPath SyncVar
@@ -100,6 +107,13 @@ namespace MaskEffect
                 chassisData = Resources.Load<ChassisData>(newPath);
                 SetupVisuals(); // Update visuals when chassis data changes
             }
+        }
+
+        // Callback for currentHP SyncVar - updates health bar visual
+        private void OnCurrentHPChanged(int oldHP, int newHP)
+        {
+            if (_healthBar != null && maxHP > 0)
+                _healthBar.UpdateHealth((float)newHP / maxHP);
         }
 
         // Callback for currentTargetNetId SyncVar
@@ -123,7 +137,7 @@ namespace MaskEffect
         {
             if (chassisData == null) return;
 
-            // Clear existing visual children to prevent duplicates
+            // Clear existing visual children to prevent duplicates (preserve HealthBarPivot)
             foreach (Transform child in transform)
             {
                 if (child.name == "Body" || child.name == "BottomHalf" || child.name == MechSpawner.TOP_HALF_NAME)
@@ -207,6 +221,16 @@ namespace MaskEffect
             }
 
             SetupAudio();
+            CreateHealthBar();
+        }
+
+        private void CreateHealthBar()
+        {
+            if (_healthBar != null) return;
+            GameObject pivot = new GameObject("HealthBarPivot");
+            pivot.transform.SetParent(transform, false);
+            _healthBar = pivot.AddComponent<MechHealthBar>();
+            _healthBar.Initialize(this);
         }
 
         // Helper methods for SetupVisuals (copied from MechSpawner)
@@ -348,8 +372,12 @@ namespace MaskEffect
             }
 
             int hpBefore = currentHP;
-            CombatMath.ApplyDamage(rawDamage, attacker.currentDamageType, armor, currentResistanceType, currentResistanceValue, markMultiplier, ref currentHP, statusHandler);
+            currentHP = CombatMath.ApplyDamage(rawDamage, attacker.currentDamageType, armor, currentResistanceType, currentResistanceValue, markMultiplier, currentHP, statusHandler);
             int actualDamage = hpBefore - currentHP;
+
+            // Manually update health bar on server/offline (SyncVar hook won't fire locally)
+            if (_healthBar != null && maxHP > 0)
+                _healthBar.UpdateHealth((float)currentHP / maxHP);
 
             // Notify ability of incoming damage
             if (activeAbility != null)
@@ -371,6 +399,10 @@ namespace MaskEffect
             if (!isAlive) return;
             isAlive = false;
             currentHP = 0;
+
+            // Hide health bar before destruction
+            if (_healthBar != null)
+                _healthBar.ForceHide();
 
             // Cleanup ability via NetworkMask (it owns the ability now)
             if (networkMask != null)

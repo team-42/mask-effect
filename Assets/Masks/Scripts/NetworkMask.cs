@@ -160,22 +160,44 @@ namespace MaskEffect
             if (_iconVisual != null) return;
             if (ownerMech == null || maskData == null || maskData.maskIcon == null) return;
 
-            GameObject iconGO = new GameObject("MaskIcon");
+            // Create quad primitive for the icon
+            GameObject iconGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            iconGO.name = "MaskIcon";
             iconGO.transform.SetParent(transform, false);
-            // Position slightly above the mech, higher than the ring
-            iconGO.transform.localPosition = new Vector3(0f, 1.25f, 0f); // Hovering higher above the models
-            iconGO.transform.localScale = new Vector3(0.175f, 0.175f, 0.175f); // Further decreased size by 50%
+            iconGO.transform.localPosition = new Vector3(0f, 1.25f, 0f);
+            iconGO.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
 
-            SpriteRenderer spriteRenderer = iconGO.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = maskData.maskIcon;
-            spriteRenderer.sortingOrder = 10; // Ensure it renders above other elements
+            // Remove collider
+            var collider = iconGO.GetComponent<Collider>();
+            if (collider != null) Object.Destroy(collider);
 
-            // Add HoverBob for animation
+            // Load base material and sprite texture
+            Material baseMaterial = Resources.Load<Material>("Materials/SpriteIcon");
+            Texture2D spriteTexture = maskData.maskIcon.texture;
+
+            if (baseMaterial != null && spriteTexture != null)
+            {
+                // Create instance and assign texture
+                Material iconMaterial = new Material(baseMaterial);
+                iconMaterial.mainTexture = spriteTexture;
+
+                // Set high render queue (above transparent, below health bar)
+                iconMaterial.renderQueue = 4800;
+
+                var renderer = iconGO.GetComponent<Renderer>();
+                renderer.material = iconMaterial;
+                renderer.allowOcclusionWhenDynamic = false;
+            }
+            else
+            {
+                Debug.LogWarning("[NetworkMask] Failed to load SpriteIcon material or sprite texture");
+            }
+
+            // Add animation and billboard
             HoverBob bob = iconGO.AddComponent<HoverBob>();
             bob.amplitude = 0.1f;
             bob.frequency = 1.5f;
 
-            // Add Billboard component to face the camera
             iconGO.AddComponent<Billboard>();
 
             _iconVisual = iconGO;
