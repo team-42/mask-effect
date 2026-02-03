@@ -64,7 +64,7 @@ namespace MaskEffect
             if (grid == null)
                 grid = FindFirstObjectByType<SimpleFlatGrid>();
             if (maskPanel == null)
-                maskPanel = FindFirstObjectByType<MaskPanelUI>();
+                maskPanel = MaskPanelUI.Instance;
 
             // Auto-detect layers
             int mechLayer = LayerMask.NameToLayer("Mech");
@@ -304,10 +304,7 @@ namespace MaskEffect
                     // Slot already marked used by MaskPanelUI on button click
                     FinishMaskCarry();
                 }
-                else
-                {
-                    CancelMaskCarry();
-                }
+                // else: do nothing, mask remains selected
             }
         }
 
@@ -318,7 +315,7 @@ namespace MaskEffect
 
             // Return the slot to the panel since mask wasn't placed
             if (maskPanel == null)
-                maskPanel = FindFirstObjectByType<MaskPanelUI>();
+                maskPanel = MaskPanelUI.Instance;
             if (maskPanel != null)
                 maskPanel.UnmarkSlot(carriedSlotIndex);
 

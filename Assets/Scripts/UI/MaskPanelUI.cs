@@ -14,7 +14,7 @@ namespace MaskEffect
         private Rect panelRect;
 
         // Singleton guard to prevent duplicate rendering
-        private static MaskPanelUI _activeInstance;
+        public static MaskPanelUI Instance { get; private set; }
 
         private struct MaskSlotEntry
         {
@@ -45,13 +45,13 @@ namespace MaskEffect
 
         private void Start()
         {
-            if (_activeInstance != null && _activeInstance != this)
+            if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("[MaskPanelUI] Duplicate instance found, disabling this one.");
-                enabled = false;
+                Debug.LogWarning("[MaskPanelUI] Duplicate instance found, destroying this one.");
+                Destroy(this);
                 return;
             }
-            _activeInstance = this;
+            Instance = this;
 
             if (assignmentManager == null)
                 assignmentManager = FindFirstObjectByType<MaskAssignmentManager>();
@@ -59,8 +59,8 @@ namespace MaskEffect
 
         private void OnDestroy()
         {
-            if (_activeInstance == this)
-                _activeInstance = null;
+            if (Instance == this)
+                Instance = null;
         }
 
         private void Update()
