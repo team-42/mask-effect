@@ -424,10 +424,39 @@ namespace MaskEffect
                 grid.ClearTile(tile);
             }
 
-            // Instantiate death effect
+            // Instantiate death effect (local + RPC in multiplayer)
             if (deathEffectPrefab != null)
             {
-                GameObject effect = Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+                Vector3 deathPosition = transform.position; // Capture position before destruction
+
+                // Always instantiate locally (for offline/singleplayer AND for server in multiplayer)
+                GameObject effect = Instantiate(deathEffectPrefab, deathPosition, Quaternion.identity);
+                ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+                if (ps != null)
+                {
+                    Destroy(effect, ps.main.duration);
+                }
+                else
+                {
+                    Destroy(effect, 3f);
+                }
+
+                // Additionally send to clients in multiplayer
+                if (!NetworkHelper.IsOffline)
+                {
+                    RpcInstantiateDeathEffect(deathPosition);
+                }
+            }
+
+            NetworkHelper.SmartDestroy(gameObject);
+        }
+
+        [ClientRpc]
+        private void RpcInstantiateDeathEffect(Vector3 position)
+        {
+            if (deathEffectPrefab != null)
+            {
+                GameObject effect = Instantiate(deathEffectPrefab, position, Quaternion.identity);
                 ParticleSystem ps = effect.GetComponent<ParticleSystem>();
                 if (ps != null)
                 {
@@ -438,8 +467,6 @@ namespace MaskEffect
                     Destroy(effect, 3f); // Default destroy time if no ParticleSystem found
                 }
             }
-
-            NetworkHelper.SmartDestroy(gameObject);
         }
 
         public override void OnStartLocalPlayer()
