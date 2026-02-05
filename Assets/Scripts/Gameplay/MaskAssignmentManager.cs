@@ -58,6 +58,12 @@ namespace MaskEffect
         private TileZone MyZone =>
             MyTeam == Team.Player ? TileZone.Player : TileZone.Enemy;
 
+        /// <summary>
+        /// Returns true if this manager is currently handling a drag operation.
+        /// Used by ChassisHoverTooltip to avoid tooltip conflicts during drag.
+        /// </summary>
+        public bool IsBusy => currentMode != DragMode.None;
+
         private void Start()
         {
             mainCamera = Camera.main;
@@ -121,22 +127,6 @@ namespace MaskEffect
 
         private void HandleIdleInput()
         {
-            // Hover: show/hide chassis tooltip
-            Ray hoverRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hoverHit;
-            if (Physics.Raycast(hoverRay, out hoverHit, 100f, mechLayerMask))
-            {
-                MechController hoverMech = hoverHit.collider.GetComponent<MechController>();
-                if (hoverMech != null && hoverMech.team == MyTeam && hoverMech.isAlive)
-                    GetTooltip().ShowForChassis(hoverMech);
-                else
-                    GetTooltip().Hide();
-            }
-            else
-            {
-                GetTooltip().Hide();
-            }
-
             if (Input.GetMouseButtonDown(0))
             {
                 // Don't start drag if clicking on the IMGUI panel

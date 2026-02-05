@@ -122,6 +122,8 @@ namespace MaskEffect
                 gameObject.AddComponent<GameOverUI>();
             if (FindFirstObjectByType<FogOfWarManager>() == null)
                 gameObject.AddComponent<FogOfWarManager>();
+            if (FindFirstObjectByType<ChassisHoverTooltip>() == null)
+                gameObject.AddComponent<ChassisHoverTooltip>();
         }
 
         private void Start()

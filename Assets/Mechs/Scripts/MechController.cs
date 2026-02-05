@@ -180,6 +180,11 @@ namespace MaskEffect
                 foreach (var rend in bodyRenderers)
                     rend.material.color = teamColor;
 
+                // Remove colliders from model children (only root should have collider)
+                Collider[] modelColliders = body.GetComponentsInChildren<Collider>();
+                foreach (var col in modelColliders)
+                    Destroy(col);
+
                 // If a mask is equipped, apply its tint to the top half
                 if (equippedMask != null)
                 {
@@ -191,6 +196,9 @@ namespace MaskEffect
                             topRenderer.material.color = equippedMask.maskTint;
                     }
                 }
+
+                // Setup interaction collider based on model bounds
+                SetupColliderFromRenderers(bodyRenderers);
             }
             else
             {
@@ -218,10 +226,49 @@ namespace MaskEffect
                 {
                     SetRendererColor(top, equippedMask.maskTint);
                 }
+
+                // Setup interaction collider for primitives
+                BoxCollider collider = GetComponent<BoxCollider>();
+                if (collider == null)
+                    collider = gameObject.AddComponent<BoxCollider>();
+                collider.center = new Vector3(0f, scale.y * 0.5f, 0f);
+                collider.size = scale;
             }
+
+            // Ensure mech layer
+            int mechLayer = LayerMask.NameToLayer("Mech");
+            if (mechLayer >= 0)
+                gameObject.layer = mechLayer;
 
             SetupAudio();
             CreateHealthBar();
+        }
+
+        /// <summary>
+        /// Sets up the interaction collider based on renderer bounds.
+        /// Called for 3D models to ensure collider matches visual bounds (including elevated Jets).
+        /// </summary>
+        private void SetupColliderFromRenderers(Renderer[] renderers)
+        {
+            BoxCollider collider = GetComponent<BoxCollider>();
+            if (collider == null)
+                collider = gameObject.AddComponent<BoxCollider>();
+
+            // Auto-compute collider from rendered model bounds
+            if (renderers.Length > 0)
+            {
+                Bounds bounds = renderers[0].bounds;
+                for (int i = 1; i < renderers.Length; i++)
+                    bounds.Encapsulate(renderers[i].bounds);
+                collider.center = transform.InverseTransformPoint(bounds.center);
+                collider.size = bounds.size;
+            }
+            else
+            {
+                // Fallback if no renderers
+                collider.center = new Vector3(0f, 0.4f, 0f);
+                collider.size = new Vector3(0.6f, 0.8f, 0.6f);
+            }
         }
 
         private void CreateHealthBar()
