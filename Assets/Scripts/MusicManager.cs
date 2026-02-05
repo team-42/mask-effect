@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Persistent background music player that survives scene transitions.
 /// Owns an AudioListener so audio output works in every scene.
-/// Place on a GameObject in the first scene (e.g. LobbyScene).
+/// Place on a GameObject in the first scene (e.g. MainMenu).
 /// </summary>
 public class MusicManager : MonoBehaviour
 {

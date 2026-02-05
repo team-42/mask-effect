@@ -184,8 +184,8 @@ MonoBehaviour:
   headlessStartMode: 0
   editorAutoStart: 0
   sendRate: 60
-  offlineScene: Assets/Scenes/LobbyScene.unity
-  onlineScene: Assets/Scenes/BattleArenaScene.unity
+  offlineScene: Assets/Scenes/MainMenu.unity
+  onlineScene: Assets/Scenes/MultiplayerTest.unity
   offlineSceneLoadDelay: 0
   transport: {fileID: 130451264}
   networkAddress: localhost
@@ -502,8 +502,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6770a8373e147b448f45740b4c62958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUIController
-  battleArenaSceneName: BattleArenaScene
-  multiplayerSceneName: BattleArenaMultiplayer
+  battleArenaSceneName: BattleArena
+  multiplayerSceneName: BattleArena
 --- !u!114 &1003995663
 MonoBehaviour:
   m_ObjectHideFlags: 0

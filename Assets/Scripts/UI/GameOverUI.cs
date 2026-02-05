@@ -159,11 +159,11 @@ namespace MaskEffect
                     else if (NetworkClient.isConnected)
                         NetworkManager.singleton.StopClient();
                     else
-                        SceneManager.LoadScene("LobbyScene");
+                        SceneManager.LoadScene("MainMenu");
                 }
                 else
                 {
-                    SceneManager.LoadScene("LobbyScene");
+                    SceneManager.LoadScene("MainMenu");
                 }
             }
 

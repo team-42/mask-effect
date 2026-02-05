@@ -9,7 +9,7 @@ public class CustomNetworkManager : NetworkManager
         base.Start();
         // Ensure we return to lobby when networking stops
         if (string.IsNullOrEmpty(offlineScene))
-            offlineScene = "LobbyScene";
+            offlineScene = "MainMenu";
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)

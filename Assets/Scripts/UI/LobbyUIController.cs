@@ -6,8 +6,8 @@ using MaskEffect;
 
 public class LobbyUIController : MonoBehaviour
 {
-    public string battleArenaSceneName = "BattleArenaScene";
-    public string multiplayerSceneName = "BattleArenaMultiplayer";
+    public string battleArenaSceneName = "BattleArena";
+    public string multiplayerSceneName = "MultiplayerTest";
 
     private TextField ipField;
     private GameExitManager gameExitManager;

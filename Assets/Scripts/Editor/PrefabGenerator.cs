@@ -98,7 +98,7 @@ namespace MaskEffect
                 Debug.LogWarning("[PrefabGenerator] BattleManager not found in scene.");
             }
 
-            // Wire NetworkManager spawnPrefabs (only found in LobbyScene)
+            // Wire NetworkManager spawnPrefabs (only found in MainMenu)
             var netManager = Object.FindFirstObjectByType<NetworkManager>();
             if (netManager != null)
             {
