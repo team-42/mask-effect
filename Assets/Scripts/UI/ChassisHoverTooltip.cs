@@ -62,7 +62,15 @@ namespace MaskEffect
                 MechController mech = hit.collider.GetComponent<MechController>();
                 if (IsValidHoverTarget(mech))
                 {
-                    GetTooltip().ShowForChassis(mech);
+                    // Show combined tooltip if mech has a mask, otherwise chassis-only
+                    if (mech.equippedMask != null)
+                    {
+                        GetTooltip().ShowCombined(mech);
+                    }
+                    else
+                    {
+                        GetTooltip().ShowForChassis(mech);
+                    }
                 }
                 else
                 {

@@ -13,6 +13,8 @@ namespace MaskEffect
         private string headingText;
         private string bodyText;
         private Color tooltipTintColor;
+        private bool isCombinedMode;
+        private Color maskTintForAbility;
 
         private const float Padding = 12f;
         private const float OffsetX = 14f;
@@ -38,6 +40,7 @@ namespace MaskEffect
             headingText = newHeading;
             bodyText = newBody;
             tooltipTintColor = mask.maskTint;
+            isCombinedMode = false;
             visible = true;
         }
 
@@ -57,6 +60,41 @@ namespace MaskEffect
             headingText = newHeading;
             bodyText = newBody;
             tooltipTintColor = Color.gray;
+            isCombinedMode = false;
+            visible = true;
+        }
+
+        /// <summary>
+        /// Show combined chassis + mask ability tooltip (idle hover over masked mech).
+        /// </summary>
+        public void ShowCombined(MechController mech)
+        {
+            if (mech == null || mech.chassisData == null || mech.equippedMask == null)
+            {
+                Debug.LogWarning("ShowCombined called with incomplete mech data");
+                Hide();
+                return;
+            }
+
+            string newHeading = mech.chassisData.chassisName;
+
+            string chassisDesc = mech.chassisData.description ?? "";
+
+            MaskAbilityData ability = mech.equippedMask.GetAbilityForChassis(mech.chassisData.chassisType);
+            string abilityInfo = ability != null
+                ? $"{mech.equippedMask.maskName}: {ability.abilityName}\n{ability.description}"
+                : $"{mech.equippedMask.maskName}: (No ability configured)";
+
+            string newBody = $"{chassisDesc}\n\n{abilityInfo}";
+
+            if (visible && isCombinedMode && headingText == newHeading && bodyText == newBody)
+                return;
+
+            headingText = newHeading;
+            bodyText = newBody;
+            tooltipTintColor = Color.Lerp(Color.gray, mech.equippedMask.maskTint, 0.3f);
+            maskTintForAbility = mech.equippedMask.maskTint;
+            isCombinedMode = true;
             visible = true;
         }
 
@@ -137,13 +175,53 @@ namespace MaskEffect
                 GUI.DrawTexture(new Rect(tooltipRect.x + Padding, sepY, bodyW, separatorH), Texture2D.whiteTexture);
                 GUI.color = prevColor;
 
-                // Body
-                Rect bodyRect = new Rect(
-                    tooltipRect.x + Padding,
-                    sepY + separatorH + gapH,
-                    bodyW,
-                    bodyH);
-                GUI.Label(bodyRect, bodyText, bodyStyle);
+                // Body rendering - split into two sections for combined mode
+                if (isCombinedMode)
+                {
+                    string[] sections = bodyText.Split(new string[] { "\n\n" }, 2, System.StringSplitOptions.None);
+                    string chassisBody = sections.Length > 0 ? sections[0] : "";
+                    string abilityBody = sections.Length > 1 ? sections[1] : "";
+
+                    float yOffset = sepY + separatorH + gapH;
+
+                    // Chassis body (normal style)
+                    if (chassisBody.Length > 0)
+                    {
+                        float chassisH = bodyStyle.CalcHeight(new GUIContent(chassisBody), bodyW);
+                        GUI.Label(new Rect(tooltipRect.x + Padding, yOffset, bodyW, chassisH), chassisBody, bodyStyle);
+                        yOffset += chassisH + 8f;  // 8px gap between sections
+                    }
+
+                    // Ability body (italic, tinted)
+                    if (abilityBody.Length > 0)
+                    {
+                        GUIStyle abilityStyle = new GUIStyle(bodyStyle)
+                        {
+                            fontStyle = FontStyle.Italic
+                        };
+                        Color abilityColor = new Color(
+                            maskTintForAbility.r * 0.85f + 0.15f,
+                            maskTintForAbility.g * 0.85f + 0.15f,
+                            maskTintForAbility.b * 0.85f + 0.15f,
+                            1f
+                        );
+                        abilityStyle.normal.textColor = abilityColor;
+                        abilityStyle.hover.textColor = abilityColor;
+
+                        float abilityH = abilityStyle.CalcHeight(new GUIContent(abilityBody), bodyW);
+                        GUI.Label(new Rect(tooltipRect.x + Padding, yOffset, bodyW, abilityH), abilityBody, abilityStyle);
+                    }
+                }
+                else
+                {
+                    // Normal single-body rendering
+                    Rect bodyRect = new Rect(
+                        tooltipRect.x + Padding,
+                        sepY + separatorH + gapH,
+                        bodyW,
+                        bodyH);
+                    GUI.Label(bodyRect, bodyText, bodyStyle);
+                }
             }
         }
     }
