@@ -642,7 +642,11 @@ namespace MaskEffect
                     }
                 }
 
-                PlayLaserSound();
+                PlayLaserSound(); // Server/host hears it locally
+                if (!NetworkHelper.IsOffline)
+                {
+                    RpcPlayLaserSound(); // Broadcast to all clients
+                }
             }
             else
             {
@@ -728,6 +732,12 @@ namespace MaskEffect
         {
             if (_laserClip == null || _sfxSource == null) return;
             _sfxSource.PlayOneShot(_laserClip);
+        }
+
+        [ClientRpc]
+        private void RpcPlayLaserSound()
+        {
+            PlayLaserSound();
         }
 
         public float GetDPS()
