@@ -30,11 +30,13 @@
       "Bash(git log:*)",
       "mcp__UnityMCP__manage_prefabs",
       "Bash(cmd /c 'move \"\"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Audio\\\\Neon Bracket Clash_p1.mp3\"\" \"\"c:\\\\Users\\\\matth\\\\mask-effect\\\\Assets\\\\Resources\\\\Audio\\\\\"\"')",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "mcp__UnityMCP__validate_script"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "UnityMCP"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

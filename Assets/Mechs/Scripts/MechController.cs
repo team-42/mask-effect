@@ -55,8 +55,14 @@ namespace MaskEffect
         // Ability (set when mask is equipped)
         [System.NonSerialized] public IMaskAbility activeAbility;
 
+        [Header("Shield Sync")]
+        [SyncVar(hook = nameof(OnShieldChanged))] public float currentShield;
+
         // Health bar visual
         private MechHealthBar _healthBar;
+
+        // Shield visual
+        private ShieldVisual _shieldVisual;
 
         // References set by BattleManager
         private IBattleGrid grid;
@@ -114,6 +120,13 @@ namespace MaskEffect
         {
             if (_healthBar != null && maxHP > 0)
                 _healthBar.UpdateHealth((float)newHP / maxHP);
+        }
+
+        // Callback for currentShield SyncVar - updates shield visual on clients
+        private void OnShieldChanged(float oldVal, float newVal)
+        {
+            if (_shieldVisual != null)
+                _shieldVisual.UpdateShield(newVal, maxHP);
         }
 
         // Callback for currentTargetNetId SyncVar
@@ -273,11 +286,18 @@ namespace MaskEffect
 
         private void CreateHealthBar()
         {
-            if (_healthBar != null) return;
-            GameObject pivot = new GameObject("HealthBarPivot");
-            pivot.transform.SetParent(transform, false);
-            _healthBar = pivot.AddComponent<MechHealthBar>();
-            _healthBar.Initialize(this);
+            if (_healthBar == null)
+            {
+                GameObject pivot = new GameObject("HealthBarPivot");
+                pivot.transform.SetParent(transform, false);
+                _healthBar = pivot.AddComponent<MechHealthBar>();
+                _healthBar.Initialize(this);
+            }
+            if (_shieldVisual == null)
+            {
+                _shieldVisual = gameObject.AddComponent<ShieldVisual>();
+                _shieldVisual.Initialize(this);
+            }
         }
 
         // Helper methods for SetupVisuals (copied from MechSpawner)
@@ -426,6 +446,8 @@ namespace MaskEffect
             if (_healthBar != null && maxHP > 0)
                 _healthBar.UpdateHealth((float)currentHP / maxHP);
 
+            SyncShieldVisual();
+
             // Notify ability of incoming damage
             if (activeAbility != null)
                 activeAbility.OnTakeDamage(attacker, actualDamage);
@@ -447,9 +469,14 @@ namespace MaskEffect
             isAlive = false;
             currentHP = 0;
 
+            currentShield = 0f;
+
             // Hide health bar before destruction
             if (_healthBar != null)
                 _healthBar.ForceHide();
+
+            if (_shieldVisual != null)
+                _shieldVisual.ForceHide();
 
             // Cleanup ability via NetworkMask (it owns the ability now)
             if (networkMask != null)
@@ -539,6 +566,7 @@ namespace MaskEffect
             if (statusHandler.IsStunned())
             {
                 isCharging = false;
+                SyncShieldVisual();
                 return;
             }
 
@@ -607,6 +635,19 @@ namespace MaskEffect
                     TryAttack();
                 }
             }
+
+            SyncShieldVisual();
+        }
+
+        private void SyncShieldVisual()
+        {
+            if (!NetworkHelper.IsServerOrOffline) return;
+            float shield = statusHandler.GetShieldAmount();
+            if (Mathf.Abs(shield - currentShield) > 0.05f)
+                currentShield = shield;
+            // Drive local visual directly (SyncVar hook won't fire server-side)
+            if (_shieldVisual != null)
+                _shieldVisual.UpdateShield(shield, maxHP);
         }
 
         private void TryAttack()

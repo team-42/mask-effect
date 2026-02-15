@@ -14,7 +14,7 @@ namespace MaskEffect
         private bool _initialized;
         private bool _positionedForFlying;
 
-        private const float BASE_HEIGHT = 1.6f;
+        public const float BASE_HEIGHT = 1.6f;
         private static readonly int HealthPercentProperty = Shader.PropertyToID("_HealthPercent");
 
         /// <summary>
